@@ -4,24 +4,24 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-// Hero images with links - some link to properties, some to community/area pages
+// Hero images with links and individual captions
 const heroImages = [
-  { src: '/hero-1.jpg', alt: 'Snowy coastal sunset with dock', link: '/communities/southport', type: 'area' },
-  { src: '/hero-2.jpg', alt: 'Waterfront view with oak trees', link: '/communities/wilmington', type: 'area' },
-  { src: '/hero-3.jpg', alt: 'Twilight over the water', link: '/communities/oak-island', type: 'area' },
-  { src: '/hero-4.jpg', alt: 'Historic lighthouse tower', link: '/communities/southport', type: 'area' },
-  { src: '/hero-5.jpg', alt: 'Waterfront home with porch', link: '/properties', type: 'property' },
-  { src: '/hero-6.jpg', alt: 'Aerial marsh and waterway view', link: '/communities/wilmington', type: 'area' },
-  { src: '/hero-7.jpg', alt: 'Coastal bay with fence', link: '/communities/oak-island', type: 'area' },
-  { src: '/hero-8.jpg', alt: 'Marina sunset with boats', link: '/communities/southport', type: 'area' },
-  { src: '/hero-9.jpg', alt: 'Marina sunset silhouette', link: '/communities/wilmington', type: 'area' },
-  { src: '/hero-img8441.jpeg', alt: 'Beautiful coastal home with wrap-around porch', link: '/properties', type: 'property' },
-  { src: '/hero-img3688.jpeg', alt: 'Stunning NC sunset over marshland', link: '/communities', type: 'area' },
-  { src: '/hero-img7296.jpeg', alt: 'Spacious ranch home with large yard', link: '/properties', type: 'property' },
-  { src: '/hero-img7199.jpeg', alt: 'Golf course community clubhouse', link: '/communities', type: 'area' },
-  { src: '/hero-img7031.jpeg', alt: 'Charming country home with front porch', link: '/properties', type: 'property' },
-  { src: '/hero-img7021.jpeg', alt: 'Rural property with spacious lot', link: '/properties', type: 'property' },
-  { src: '/hero-img7024.jpeg', alt: 'Ranch-style home with metal roof', link: '/properties', type: 'property' },
+  { src: '/hero-1.jpg', alt: 'Snowy coastal sunset with dock', link: '/communities/southport', caption: 'Explore Southport Living' },
+  { src: '/hero-2.jpg', alt: 'Waterfront view with oak trees', link: '/communities/wilmington', caption: 'Discover Wilmington Homes' },
+  { src: '/hero-3.jpg', alt: 'Twilight over the water', link: '/communities/oak-island', caption: 'Oak Island Beach Life' },
+  { src: '/hero-4.jpg', alt: 'Historic lighthouse tower', link: '/communities/southport', caption: 'Historic Southport Charm' },
+  { src: '/hero-5.jpg', alt: 'Waterfront home with porch', link: '/properties', caption: 'Waterfront Properties Available' },
+  { src: '/hero-6.jpg', alt: 'Aerial marsh and waterway view', link: '/communities/wilmington', caption: 'Coastal Carolina Beauty' },
+  { src: '/hero-7.jpg', alt: 'Coastal bay with fence', link: '/communities/oak-island', caption: 'Island Living at Its Best' },
+  { src: '/hero-8.jpg', alt: 'Marina sunset with boats', link: '/communities/southport', caption: 'Marina & Waterfront Communities' },
+  { src: '/hero-9.jpg', alt: 'Marina sunset silhouette', link: '/communities/wilmington', caption: 'Sunset Views Every Day' },
+  { src: '/hero-img8441.jpeg', alt: 'Beautiful coastal home with wrap-around porch', link: '/properties', caption: 'Coastal Home with Wrap-Around Porch' },
+  { src: '/hero-img3688.jpeg', alt: 'Stunning NC sunset over marshland', link: '/communities', caption: 'Natural Beauty of North Carolina' },
+  { src: '/hero-img7296.jpeg', alt: 'Spacious ranch home with large yard', link: '/properties', caption: 'Spacious Ranch on Large Lot' },
+  { src: '/hero-img7199.jpeg', alt: 'Golf course community clubhouse', link: '/communities', caption: 'Golf Course Community Living' },
+  { src: '/hero-img7031.jpeg', alt: 'Charming country home with front porch', link: '/properties', caption: 'Country Home with Front Porch' },
+  { src: '/hero-img7021.jpeg', alt: 'Rural property with spacious lot', link: '/properties', caption: 'Rural Property with Acreage' },
+  { src: '/hero-img7024.jpeg', alt: 'Ranch-style home with metal roof', link: '/properties', caption: 'Updated Ranch-Style Home' },
 ]
 
 export default function HeroCarousel() {
@@ -58,19 +58,16 @@ export default function HeroCarousel() {
         </Link>
       ))}
       
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none" />
+      {/* Reduced Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40 pointer-events-none" />
       
       {/* Content */}
       <div className="absolute bottom-12 left-0 right-0 text-center text-white px-4 pointer-events-none">
         <h2 className="text-5xl font-bold mb-4 drop-shadow-lg">
-          Discover Your North Carolina Home
+          Find Your NC Home
         </h2>
-        <p className="text-2xl mb-2 drop-shadow-md">
-          From the Coast to the Mountains - We're Here to Help
-        </p>
-        <p className="text-lg opacity-90 drop-shadow-md">
-          {currentImage.type === 'property' ? 'Click to explore properties' : 'Click to explore communities'}
+        <p className="text-2xl drop-shadow-md">
+          {currentImage.caption}
         </p>
       </div>
 

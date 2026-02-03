@@ -101,3 +101,8 @@
 - [x] Add new property and landscape hero images to carousel
 - [x] Implement clickable links for property listings and area pages
 - [x] Configure carousel to support mixed content (properties + areas)
+
+## 🎨 Hero Carousel Refinements
+- [x] Reduce overlay darkness on hero images
+- [x] Simplify tagline to "Find Your NC Home"
+- [x] Add individual captions for each image based on link destination
