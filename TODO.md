@@ -106,3 +106,11 @@
 - [x] Reduce overlay darkness on hero images
 - [x] Simplify tagline to "Find Your NC Home"
 - [x] Add individual captions for each image based on link destination
+
+## 🎯 Buyer Preference Collection Tool
+- [x] Create database table for buyer preferences/analysis
+- [x] Build multi-step interactive preference wizard component
+- [x] Add preference categories: HUD/Government programs, property types, lifestyle features, locations
+- [x] Create education page with buyer preference tool
+- [x] Submit preferences to back office database for follow-up
+- [ ] Add admin view to review submitted buyer preferences
