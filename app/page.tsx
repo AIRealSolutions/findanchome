@@ -252,61 +252,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Contact Form Section */}
-      <section className="py-16 bg-gradient-to-br from-[#0ea5e9]/5 to-[#fbbf24]/5">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <h2 className="text-3xl font-bold text-center mb-8 text-[#1e3a8a]">Schedule a Private Tour</h2>
-          <form className="bg-white p-8 rounded-lg shadow-lg border-t-4 border-[#0ea5e9] space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2 text-[#1e3a8a]">Name</label>
-              <input 
-                type="text" 
-                id="name"
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2 text-[#1e3a8a]">Email</label>
-              <input 
-                type="email" 
-                id="email"
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium mb-2 text-[#1e3a8a]">Phone Number</label>
-              <input 
-                type="tel" 
-                id="phone"
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium mb-2 text-[#1e3a8a]">Message</label>
-              <textarea 
-                id="message"
-                rows={4}
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none transition-all"
-              ></textarea>
-            </div>
-            <button 
-              type="submit"
-              className="w-full bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white px-6 py-3 rounded-lg hover:opacity-90 font-medium transition-opacity shadow-md"
-            >
-              Submit
-            </button>
-          </form>
-          <div className="text-center mt-8 space-y-2">
-            <p className="text-gray-700">
-              Call or text Marc Spencer at <a href="tel:9103636147" className="text-[#0ea5e9] font-bold hover:underline">(910) 363-6147</a>
-            </p>
-            <p className="text-gray-700">
-              or email <a href="mailto:marcspencer28461@gmail.com" className="text-[#0ea5e9] hover:underline">marcspencer28461@gmail.com</a>
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Communities Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">

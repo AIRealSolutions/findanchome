@@ -127,3 +127,6 @@
 - [x] Add appointment scheduling CTA
 - [x] Add seller page to main navigation
 - [x] Create Supabase table for CMA requests
+
+## 🗑️ Homepage Cleanup
+- [x] Remove private tour form section from main page
