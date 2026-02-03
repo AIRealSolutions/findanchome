@@ -34,6 +34,14 @@ export default function SellPage() {
     {
       image: '/IMG_8287.jpeg',
       alt: 'Happy couple at their sold home with Lightkeeper Realty sign'
+    },
+    {
+      image: '/IMG_6658.jpeg',
+      alt: 'Happy clients with Lightkeeper Realty agents at closing'
+    },
+    {
+      image: '/IMG_6656.jpeg',
+      alt: 'Satisfied home buyers with Lightkeeper Realty team'
     }
   ]
 
@@ -172,7 +180,7 @@ export default function SellPage() {
             </div>
 
             {/* Testimonial Images Grid */}
-            <div className="grid md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
               {testimonials.map((testimonial, index) => (
                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden shadow-xl border-4 border-white/20">
                   <Image 
