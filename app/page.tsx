@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search, Home, DollarSign, Users, BookOpen } from 'lucide-react'
 
 export default function HomePage() {
@@ -8,10 +9,14 @@ export default function HomePage() {
       <header className="bg-white border-b sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-[oklch(55%_0.2_240)] rounded-full flex items-center justify-center text-white font-bold text-xl">
-                L
-              </div>
+            <Link href="/" className="flex items-center gap-3">
+              <Image 
+                src="/lightkeeper-logo.jpg" 
+                alt="Lightkeeper Realty Logo" 
+                width={50} 
+                height={50}
+                className="object-contain"
+              />
               <span className="font-bold text-xl">Lightkeeper Realty</span>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
@@ -146,7 +151,16 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="font-bold text-lg mb-4">Lightkeeper Realty</div>
+              <div className="flex items-center gap-3 mb-4">
+                <Image 
+                  src="/lightkeeper-logo.jpg" 
+                  alt="Lightkeeper Realty Logo" 
+                  width={40} 
+                  height={40}
+                  className="object-contain"
+                />
+                <div className="font-bold text-lg">Lightkeeper Realty</div>
+              </div>
               <p className="text-gray-400">
                 Your trusted HUD Buyer's Agency in North Carolina
               </p>
