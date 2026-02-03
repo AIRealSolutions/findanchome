@@ -96,3 +96,8 @@
 - [x] Update communities section to include mountain regions (Asheville, Boone, etc.)
 - [x] Emphasize general real estate services as primary offering
 - [x] Add financing programs information (FHA, VA, USDA, Down Payment Assistance)
+
+## 🖼️ Hero Carousel Updates
+- [x] Add new property and landscape hero images to carousel
+- [x] Implement clickable links for property listings and area pages
+- [x] Configure carousel to support mixed content (properties + areas)
