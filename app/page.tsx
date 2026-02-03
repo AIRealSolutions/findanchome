@@ -228,6 +228,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Buyer Preference Tool CTA */}
+      <section className="py-16 bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Find Your Perfect NC Home
+            </h2>
+            <p className="text-xl mb-8 opacity-90">
+              Tell us what you're looking for and we'll match you with properties that fit your needs and budget.
+            </p>
+            <Link 
+              href="/education/buyer-preferences"
+              className="inline-block bg-[#fbbf24] text-[#1e3a8a] px-8 py-4 rounded-lg hover:bg-[#fcd34d] transition-colors font-bold text-lg shadow-lg"
+            >
+              Start Your Home Search →
+            </Link>
+            <p className="text-sm mt-4 opacity-80">
+              Quick 7-step questionnaire • Get personalized recommendations • Free consultation
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Form Section */}
       <section className="py-16 bg-gradient-to-br from-[#0ea5e9]/5 to-[#fbbf24]/5">
         <div className="container mx-auto px-4 max-w-2xl">

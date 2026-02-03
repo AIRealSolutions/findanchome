@@ -114,3 +114,8 @@
 - [x] Create education page with buyer preference tool
 - [x] Submit preferences to back office database for follow-up
 - [ ] Add admin view to review submitted buyer preferences
+
+## 🔗 Navigation Links for Buyer Preference Tool
+- [x] Add CTA button on homepage for buyer preference tool
+- [x] Add link in education section dropdown menu
+- [x] Add link in footer resources section
