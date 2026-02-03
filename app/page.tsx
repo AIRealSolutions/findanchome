@@ -63,26 +63,33 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header with Coastal Colors */}
-      <header className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#fbbf24] text-white sticky top-0 z-50 shadow-lg">
+      {/* Header */}
+      <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center py-6">
-            <Link href="/" className="flex items-center gap-3 mb-2">
+          <div className="flex items-center justify-between py-4">
+            {/* Logo and Site Name */}
+            <Link href="/" className="flex items-center gap-3">
               <Image 
                 src="/lightkeeper-logo.jpg" 
                 alt="Lightkeeper Realty Logo" 
-                width={70} 
-                height={70}
-                className="object-contain drop-shadow-lg"
+                width={50} 
+                height={50}
+                className="object-contain"
               />
+              <div>
+                <h1 className="text-2xl font-bold">FindaNChome.com</h1>
+                <p className="text-xs opacity-90">Where Coastal Carolina Living Begins</p>
+              </div>
             </Link>
-            <h1 className="text-4xl font-bold drop-shadow-md bg-gradient-to-r from-white via-yellow-100 to-white bg-clip-text text-transparent">
-              FindAnCHome.com
-            </h1>
-            <p className="text-sm opacity-90 mt-1 drop-shadow">Where Coastal Carolina Living Begins</p>
-            <p className="text-xs mt-2 bg-white/20 px-4 py-1 rounded-full backdrop-blur-sm">
-              Presented by Marc Spencer, Lightkeeper Realty
-            </p>
+            
+            {/* Navigation Menu */}
+            <nav className="hidden md:flex items-center gap-6">
+              <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
+              <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
+              <Link href="/agents" className="hover:text-[#fbbf24] transition-colors">Agents</Link>
+              <Link href="/education" className="hover:text-[#fbbf24] transition-colors">Education</Link>
+              <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>
+            </nav>
           </div>
         </div>
       </header>
