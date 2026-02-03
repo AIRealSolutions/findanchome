@@ -30,34 +30,40 @@ export default function HomePage() {
 
   const communities = [
     {
-      name: "Southport, NC",
-      description: "Charming and historic, Southport is the heart of coastal living. Stroll through oak-lined streets and vibrant waterfront shops.",
-      slug: "southport"
+      name: "Asheville, NC",
+      description: "Nestled in the Blue Ridge Mountains, Asheville offers vibrant arts, craft breweries, and stunning mountain views with four-season living.",
+      slug: "asheville",
+      region: "Mountains"
+    },
+    {
+      name: "Boone & Blowing Rock",
+      description: "High country living at its finest with ski resorts, hiking trails, and charming mountain towns. Perfect for outdoor enthusiasts.",
+      slug: "boone",
+      region: "Mountains"
     },
     {
       name: "Wilmington, NC",
       description: "A vibrant port city with riverwalk charm, film history, and a growing real estate market. Close to Wrightsville Beach and UNCW.",
-      slug: "wilmington"
+      slug: "wilmington",
+      region: "Coast"
     },
     {
-      name: "Oak Island & Caswell Beach",
-      description: "Family-friendly and laid-back, with miles of beaches and easy access to the Cape Fear River. Great for full-time or vacation living.",
-      slug: "oak-island"
+      name: "Southport & Oak Island",
+      description: "Charming coastal communities with historic downtown, beautiful beaches, and easy access to the Cape Fear River.",
+      slug: "southport",
+      region: "Coast"
     },
     {
-      name: "Shallotte & Ocean Isle Beach",
-      description: "Convenient shopping and coastal escapes meet here. A growing hub between Wilmington and Myrtle Beach.",
-      slug: "shallotte"
+      name: "Charlotte Metro",
+      description: "North Carolina's largest city offers urban amenities, strong job market, and diverse neighborhoods from uptown to suburban communities.",
+      slug: "charlotte",
+      region: "Piedmont"
     },
     {
-      name: "Leland, NC",
-      description: "Just outside Wilmington, Leland is booming with new neighborhoods and amenities perfect for commuters and families.",
-      slug: "leland"
-    },
-    {
-      name: "Carolina & Wrightsville Beach",
-      description: "Your destination for surfing, boating, and beachfront living with strong year-round and seasonal housing appeal.",
-      slug: "beach-life"
+      name: "Raleigh-Durham-Chapel Hill",
+      description: "The Research Triangle combines top universities, tech jobs, and excellent schools with diverse housing options and cultural attractions.",
+      slug: "triangle",
+      region: "Piedmont"
     }
   ]
 
@@ -78,7 +84,7 @@ export default function HomePage() {
               />
               <div>
                 <h1 className="text-2xl font-bold">FindaNChome.com</h1>
-                <p className="text-xs opacity-90">Where Coastal Carolina Living Begins</p>
+                <p className="text-xs opacity-90">From the Coast to the Mountains - Your NC Real Estate Connection</p>
               </div>
             </Link>
             
@@ -135,6 +141,89 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HUD Homes & REO Programs Section */}
+      <section className="py-16 bg-gradient-to-br from-[#1e3a8a]/5 via-[#0ea5e9]/5 to-[#fbbf24]/5">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-4 text-[#1e3a8a]">
+              Affordable Home Opportunities
+            </h2>
+            <p className="text-center text-gray-700 mb-12 text-lg">
+              Discover HUD homes, REO properties, and special financing programs designed to help you find your dream home.
+            </p>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* HUD Homes */}
+              <div className="bg-white p-6 rounded-lg shadow-lg border-t-4 border-[#0ea5e9] hover:shadow-xl transition-shadow">
+                <div className="w-12 h-12 bg-[#0ea5e9] rounded-full flex items-center justify-center mb-4">
+                  <Home className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-bold text-xl mb-3 text-[#1e3a8a]">HUD Homes</h3>
+                <p className="text-gray-700 mb-4">
+                  Government-owned properties available at competitive prices. Perfect for first-time buyers and investors.
+                </p>
+                <Link 
+                  href="/properties?type=hud"
+                  className="text-[#0ea5e9] font-medium hover:underline inline-flex items-center gap-1"
+                >
+                  Browse HUD Homes →
+                </Link>
+              </div>
+
+              {/* REO Properties */}
+              <div className="bg-white p-6 rounded-lg shadow-lg border-t-4 border-[#fbbf24] hover:shadow-xl transition-shadow">
+                <div className="w-12 h-12 bg-[#fbbf24] rounded-full flex items-center justify-center mb-4">
+                  <DollarSign className="w-6 h-6 text-[#1e3a8a]" />
+                </div>
+                <h3 className="font-bold text-xl mb-3 text-[#1e3a8a]">REO Properties</h3>
+                <p className="text-gray-700 mb-4">
+                  Bank-owned real estate at below-market prices. Great opportunities for buyers seeking value.
+                </p>
+                <Link 
+                  href="/properties?type=reo"
+                  className="text-[#0ea5e9] font-medium hover:underline inline-flex items-center gap-1"
+                >
+                  View REO Listings →
+                </Link>
+              </div>
+
+              {/* First-Time Buyer Programs */}
+              <div className="bg-white p-6 rounded-lg shadow-lg border-t-4 border-[#1e3a8a] hover:shadow-xl transition-shadow">
+                <div className="w-12 h-12 bg-[#1e3a8a] rounded-full flex items-center justify-center mb-4">
+                  <BookOpen className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-bold text-xl mb-3 text-[#1e3a8a]">Buyer Programs</h3>
+                <p className="text-gray-700 mb-4">
+                  Learn about FHA, VA, USDA loans, and down payment assistance programs available to you.
+                </p>
+                <Link 
+                  href="/education/financing"
+                  className="text-[#0ea5e9] font-medium hover:underline inline-flex items-center gap-1"
+                >
+                  Explore Financing Options →
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-12 bg-white p-8 rounded-lg shadow-lg text-center">
+              <h3 className="text-2xl font-bold mb-4 text-[#1e3a8a]">
+                Why Choose Lightkeeper Realty for HUD Homes?
+              </h3>
+              <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+                As a specialized HUD Buyer's Agency, we guide you through every step of purchasing government-owned properties. 
+                From finding the right home to navigating the bidding process, we're here to help you succeed.
+              </p>
+              <Link 
+                href="/contact"
+                className="inline-block bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white px-8 py-3 rounded-lg hover:opacity-90 font-medium transition-opacity shadow-md"
+              >
+                Get Started Today
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -197,7 +286,8 @@ export default function HomePage() {
       {/* Communities Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-[#1e3a8a]">Explore Communities We Serve</h2>
+          <h2 className="text-3xl font-bold text-center mb-4 text-[#1e3a8a]">Explore Communities Across North Carolina</h2>
+          <p className="text-center text-gray-700 mb-12 text-lg">From the mountains to the coast, we serve communities throughout the state</p>
           <div className="grid md:grid-cols-3 gap-6">
             {communities.map((community) => (
               <div key={community.slug} className="bg-gradient-to-br from-[#0ea5e9]/5 to-[#fbbf24]/5 p-6 rounded-lg border-2 border-transparent hover:border-[#0ea5e9] transition-all">
