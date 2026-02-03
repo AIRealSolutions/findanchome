@@ -92,6 +92,7 @@ export default function HomePage() {
             <nav className="hidden md:flex items-center gap-6">
               <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
               <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
+              <Link href="/sell" className="hover:text-[#fbbf24] transition-colors">Sell</Link>
               <Link href="/agents" className="hover:text-[#fbbf24] transition-colors">Agents</Link>
               <Link href="/education" className="hover:text-[#fbbf24] transition-colors">Education</Link>
               <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>

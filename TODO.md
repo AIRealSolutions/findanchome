@@ -119,3 +119,11 @@
 - [x] Add CTA button on homepage for buyer preference tool
 - [x] Add link in education section dropdown menu
 - [x] Add link in footer resources section
+
+## 🏡 Seller Page Development
+- [x] Copy testimonial images to public directory
+- [x] Create seller landing page with hero testimonials
+- [x] Add free CMA request form
+- [x] Add appointment scheduling CTA
+- [x] Add seller page to main navigation
+- [x] Create Supabase table for CMA requests
