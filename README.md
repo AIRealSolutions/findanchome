@@ -147,3 +147,5 @@ Proprietary - All rights reserved by Lightkeeper Realty
 ---
 
 **Lightkeeper Realty** - Your trusted HUD Buyer's Agency helping families find affordable homes in North Carolina for over 25 years.
+
+<!-- Vercel deployment trigger - v1.0.1 -->
