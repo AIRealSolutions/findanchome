@@ -1,147 +1,237 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Home, DollarSign, Users, BookOpen } from 'lucide-react'
+import { Search, Home, DollarSign, Users, BookOpen, Phone, Mail, Facebook, Twitter } from 'lucide-react'
 
 export default function HomePage() {
+  // Sample featured properties - will be replaced with IDX/database data
+  const featuredProperties = [
+    {
+      id: 1,
+      address: "955 Mt Pisgah Rd SW, Supply, NC",
+      beds: 3,
+      baths: 2.5,
+      sqft: 4201,
+      price: 624900,
+      description: "+/- 2.5 acres with a pool, pool house, and outdoor kitchen. Over 4,000 sq ft with metal frame construction, 2 kitchens, and an ideal setup for multi-generational living.",
+      image: "/placeholder-property.jpg"
+    },
+    {
+      id: 2,
+      address: "129 Cape Fear Drive, Southport, NC",
+      beds: 3,
+      baths: 2,
+      sqft: 1441,
+      price: 479000,
+      description: "Classic brick home on a high, well-drained 1.5-lot site with majestic live oaks. Updated kitchen, 2-car carport, and large workshop.",
+      image: "/placeholder-property.jpg"
+    }
+  ]
+
+  const communities = [
+    {
+      name: "Southport, NC",
+      description: "Charming and historic, Southport is the heart of coastal living. Stroll through oak-lined streets and vibrant waterfront shops.",
+      slug: "southport"
+    },
+    {
+      name: "Wilmington, NC",
+      description: "A vibrant port city with riverwalk charm, film history, and a growing real estate market. Close to Wrightsville Beach and UNCW.",
+      slug: "wilmington"
+    },
+    {
+      name: "Oak Island & Caswell Beach",
+      description: "Family-friendly and laid-back, with miles of beaches and easy access to the Cape Fear River. Great for full-time or vacation living.",
+      slug: "oak-island"
+    },
+    {
+      name: "Shallotte & Ocean Isle Beach",
+      description: "Convenient shopping and coastal escapes meet here. A growing hub between Wilmington and Myrtle Beach.",
+      slug: "shallotte"
+    },
+    {
+      name: "Leland, NC",
+      description: "Just outside Wilmington, Leland is booming with new neighborhoods and amenities perfect for commuters and families.",
+      slug: "leland"
+    },
+    {
+      name: "Carolina & Wrightsville Beach",
+      description: "Your destination for surfing, boating, and beachfront living with strong year-round and seasonal housing appeal.",
+      slug: "beach-life"
+    }
+  ]
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
+      <header className="bg-gray-900 text-white sticky top-0 z-50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-3">
+          <div className="flex flex-col items-center py-6">
+            <Link href="/" className="flex items-center gap-3 mb-2">
               <Image 
                 src="/lightkeeper-logo.jpg" 
                 alt="Lightkeeper Realty Logo" 
-                width={50} 
-                height={50}
+                width={60} 
+                height={60}
                 className="object-contain"
               />
-              <span className="font-bold text-xl">Lightkeeper Realty</span>
             </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="hover:text-[oklch(55%_0.2_240)]">Home</Link>
-              <Link href="/properties" className="hover:text-[oklch(55%_0.2_240)]">Properties</Link>
-              <Link href="/communities" className="hover:text-[oklch(55%_0.2_240)]">Communities</Link>
-              <Link href="/agents" className="hover:text-[oklch(55%_0.2_240)]">Agents</Link>
-              <Link href="/education" className="hover:text-[oklch(55%_0.2_240)]">Education</Link>
-              <Link href="/contact" className="hover:text-[oklch(55%_0.2_240)]">Contact</Link>
-            </nav>
-            <Link 
-              href="/login"
-              className="bg-[oklch(55%_0.2_240)] text-white px-4 py-2 rounded-lg hover:opacity-90"
-            >
-              Sign In
-            </Link>
+            <h1 className="text-3xl font-bold">FindAnCHome.com</h1>
+            <p className="text-sm opacity-80 mt-1">Where Coastal Carolina Living Begins</p>
+            <p className="text-xs mt-2">Presented by Marc Spencer, Lightkeeper Realty</p>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[oklch(55%_0.2_240)] to-[oklch(45%_0.2_240)] text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl font-bold mb-6">
-              Find Your Dream Home in North Carolina
-            </h1>
-            <p className="text-xl mb-8 opacity-90">
-              Lightkeeper Realty - Your trusted HUD Buyer's Agency helping families find affordable homes for over 25 years.
-            </p>
-            
-            {/* Search Bar */}
-            <div className="bg-white rounded-lg p-2 flex gap-2">
-              <input
-                type="text"
-                placeholder="Search by city, ZIP, or address..."
-                className="flex-1 px-4 py-3 text-black outline-none"
-              />
-              <button className="bg-[oklch(55%_0.2_240)] text-white px-8 py-3 rounded-lg hover:opacity-90 flex items-center gap-2">
-                <Search className="w-5 h-5" />
-                Search
-              </button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 mt-12">
-              <div>
-                <div className="text-4xl font-bold">25+</div>
-                <div className="opacity-80">Years Experience</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold">1000+</div>
-                <div className="opacity-80">Homes Sold</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold">100%</div>
-                <div className="opacity-80">Client Satisfaction</div>
-              </div>
-            </div>
-          </div>
+      {/* Hero Image Section */}
+      <section className="relative h-[500px] bg-gray-200">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50" />
+        <div className="absolute bottom-8 left-0 right-0 text-center text-white">
+          <h2 className="text-4xl font-bold mb-2">Discover Coastal Carolina Living</h2>
+          <p className="text-xl">Your trusted guide to homes in Southeastern North Carolina</p>
         </div>
       </section>
 
-      {/* Programs Section */}
-      <section className="py-16 bg-gray-50">
+      {/* Featured Properties */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Affordable Home Programs
-          </h2>
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <Home className="w-12 h-12 text-[oklch(55%_0.2_240)] mb-4" />
-              <h3 className="font-bold text-lg mb-2">HUD Homes</h3>
-              <p className="text-gray-600">
-                Government-owned properties with $100 down payment options
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <DollarSign className="w-12 h-12 text-[oklch(55%_0.2_240)] mb-4" />
-              <h3 className="font-bold text-lg mb-2">REO Properties</h3>
-              <p className="text-gray-600">
-                Bank-owned homes at below-market prices
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <Users className="w-12 h-12 text-[oklch(55%_0.2_240)] mb-4" />
-              <h3 className="font-bold text-lg mb-2">VA & FHA</h3>
-              <p className="text-gray-600">
-                Special financing for veterans and first-time buyers
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <BookOpen className="w-12 h-12 text-[oklch(55%_0.2_240)] mb-4" />
-              <h3 className="font-bold text-lg mb-2">Education</h3>
-              <p className="text-gray-600">
-                Free resources and guides for buyers and sellers
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Properties Placeholder */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8">Featured Properties</h2>
-          <p className="text-gray-600 mb-8">
-            Properties will be loaded from Supabase database. Connect your database and add properties to see them here.
-          </p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white border rounded-lg overflow-hidden">
-                <div className="h-48 bg-gray-200"></div>
-                <div className="p-4">
-                  <div className="text-2xl font-bold text-[oklch(55%_0.2_240)] mb-2">$XXX,XXX</div>
-                  <div className="font-semibold mb-2">Property Title</div>
-                  <div className="text-sm text-gray-600">City, NC</div>
-                  <div className="flex gap-4 mt-4 text-sm">
-                    <span>X beds</span>
-                    <span>X baths</span>
-                    <span>X sqft</span>
+          <h2 className="text-3xl font-bold text-center mb-12">Featured Properties</h2>
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {featuredProperties.map((property) => (
+              <div key={property.id} className="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div className="h-64 bg-gray-200"></div>
+                <div className="p-6">
+                  <h3 className="font-bold text-lg mb-2">{property.address}</h3>
+                  <div className="flex gap-4 text-sm text-gray-600 mb-3">
+                    <span>{property.beds} Bed</span>
+                    <span>|</span>
+                    <span>{property.baths} Bath</span>
+                    <span>|</span>
+                    <span>{property.sqft.toLocaleString()} sq ft</span>
+                  </div>
+                  <div className="text-2xl font-bold text-[oklch(55%_0.2_240)] mb-3">
+                    ${property.price.toLocaleString()}
+                  </div>
+                  <p className="text-gray-700 text-sm mb-4">{property.description}</p>
+                  <div className="flex gap-3">
+                    <Link 
+                      href={`/property/${property.id}`}
+                      className="flex-1 bg-[oklch(55%_0.2_240)] text-white px-4 py-2 rounded text-center hover:opacity-90"
+                    >
+                      View Details
+                    </Link>
+                    <Link 
+                      href="/contact"
+                      className="flex-1 border border-[oklch(55%_0.2_240)] text-[oklch(55%_0.2_240)] px-4 py-2 rounded text-center hover:bg-[oklch(55%_0.2_240)] hover:text-white transition-colors"
+                    >
+                      Contact
+                    </Link>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <h2 className="text-3xl font-bold text-center mb-8">Schedule a Private Tour</h2>
+          <form className="bg-white p-8 rounded-lg shadow-sm space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
+              <input 
+                type="text" 
+                id="name"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[oklch(55%_0.2_240)] outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
+              <input 
+                type="email" 
+                id="email"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[oklch(55%_0.2_240)] outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium mb-2">Phone Number</label>
+              <input 
+                type="tel" 
+                id="phone"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[oklch(55%_0.2_240)] outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
+              <textarea 
+                id="message"
+                rows={4}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[oklch(55%_0.2_240)] outline-none"
+              ></textarea>
+            </div>
+            <button 
+              type="submit"
+              className="w-full bg-[oklch(55%_0.2_240)] text-white px-6 py-3 rounded-lg hover:opacity-90 font-medium"
+            >
+              Submit
+            </button>
+          </form>
+          <div className="text-center mt-8 space-y-2">
+            <p className="text-gray-700">
+              Call or text Marc Spencer at <a href="tel:9103636147" className="text-[oklch(55%_0.2_240)] font-bold">(910) 363-6147</a>
+            </p>
+            <p className="text-gray-700">
+              or email <a href="mailto:marcspencer28461@gmail.com" className="text-[oklch(55%_0.2_240)]">marcspencer28461@gmail.com</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Communities Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Explore Communities We Serve</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {communities.map((community) => (
+              <div key={community.slug} className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="font-bold text-xl mb-3">{community.name}</h3>
+                <p className="text-gray-700 mb-4">{community.description}</p>
+                <Link 
+                  href={`/communities/${community.slug}`}
+                  className="text-[oklch(55%_0.2_240)] font-medium hover:underline"
+                >
+                  Explore {community.name.split(',')[0]} →
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Social Sharing */}
+      <section className="py-8 bg-gray-50 border-t">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-gray-700 mb-4">Share FindAnCHome.com</p>
+          <div className="flex justify-center gap-4">
+            <a 
+              href="https://www.facebook.com/sharer/sharer.php?u=https://findanchome.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              <Facebook className="w-5 h-5" />
+              Share on Facebook
+            </a>
+            <a 
+              href="https://twitter.com/intent/tweet?url=https://findanchome.com&text=Check%20out%20FindAnCHome.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600"
+            >
+              <Twitter className="w-5 h-5" />
+              Tweet This
+            </a>
           </div>
         </div>
       </section>
@@ -183,8 +273,8 @@ export default function HomePage() {
             <div>
               <div className="font-bold mb-4">Contact</div>
               <div className="text-gray-400 space-y-2">
-                <div>Phone: (XXX) XXX-XXXX</div>
-                <div>Email: info@lightkeeperrealty.com</div>
+                <div>Phone: (910) 363-6147</div>
+                <div>Email: marcspencer28461@gmail.com</div>
               </div>
             </div>
           </div>
