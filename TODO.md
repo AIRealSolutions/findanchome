@@ -180,3 +180,8 @@
 - [ ] drip_campaigns
 - [ ] communications
 - [ ] property_shares (social media tracking)
+
+## 🚨 Urgent Fixes
+- [x] Fix deployment error on Vercel (installed missing dependencies)
+- [x] Add login link to main page navigation
+- [ ] Verify Supabase environment variables are set in Vercel
