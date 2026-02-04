@@ -1,16 +1,8 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClient } from './supabase/client';
-
-let supabase: ReturnType<typeof createClient> | null = null;
-
-try {
-  supabase = createClient();
-} catch (error) {
-  console.error('Failed to initialize Supabase client:', error);
-}
 
 interface UserProfile {
   id: string;
@@ -59,13 +51,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null);
 
   useEffect(() => {
-    if (!supabase) {
-      console.error('Supabase client not initialized');
+    // Initialize Supabase client only after component mounts
+    try {
+      supabaseRef.current = createClient();
+    } catch (error) {
+      console.error('Failed to initialize Supabase client:', error);
       setLoading(false);
       return;
     }
+
+    const supabase = supabaseRef.current;
 
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -97,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchProfile = async (userId: string) => {
+    const supabase = supabaseRef.current;
     if (!supabase) {
       console.error('Supabase client not initialized');
       setLoading(false);
@@ -120,6 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    const supabase = supabaseRef.current;
     if (!supabase) {
       return { error: new Error('Supabase client not initialized') };
     }
@@ -132,6 +132,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    const supabase = supabaseRef.current;
     if (!supabase) {
       return;
     }
