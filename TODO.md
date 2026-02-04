@@ -141,8 +141,9 @@
 - [x] Build admin dashboard layout
 - [x] Properties list page with search and filters
 - [x] Property create form
-- [ ] Property edit form
-- [ ] Property view/detail page
+- [x] Property edit form
+- [x] Property view/detail page
+- [x] Properties CRUD complete (Create, Read, Update, Delete)
 - [ ] Clients CRUD with full management
 - [ ] Event log viewer for all system actions
 - [ ] User/broker management interface
