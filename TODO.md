@@ -185,3 +185,10 @@
 - [x] Fix deployment error on Vercel (installed missing dependencies)
 - [x] Add login link to main page navigation
 - [ ] Verify Supabase environment variables are set in Vercel
+
+## 🔧 Supabase Import Fixes
+- [x] Replace deprecated createClientComponentClient imports with lib/supabase/client
+- [x] Fix property view page imports
+- [x] Fix property edit page imports
+- [x] Fix properties list page imports
+- [x] Fix new property page imports

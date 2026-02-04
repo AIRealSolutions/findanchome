@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { ArrowLeft, Edit, Trash2, MapPin, Home, DollarSign, Calendar } from 'lucide-react';
 
@@ -35,7 +35,7 @@ interface Property {
 export default function PropertyDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
 
