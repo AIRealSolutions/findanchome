@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Image from 'next/image';
@@ -10,8 +10,23 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initError, setInitError] = useState('');
   const router = useRouter();
   const { signIn } = useAuth();
+
+  useEffect(() => {
+    // Check if Supabase is properly initialized
+    const checkSupabase = () => {
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      if (!url || !key) {
+        setInitError(`Configuration Error: Missing Supabase credentials. URL: ${url ? 'Set' : 'Missing'}, Key: ${key ? 'Set' : 'Missing'}`);
+      }
+    };
+    
+    checkSupabase();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +44,8 @@ export default function LoginPage() {
 
       // Redirect will happen automatically via auth context
       router.push('/dashboard');
-    } catch (err) {
-      setError('An unexpected error occurred');
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred');
       setLoading(false);
     }
   };
@@ -59,6 +74,15 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <div className="bg-white rounded-lg shadow-xl p-8">
+          {/* Initialization Error */}
+          {initError && (
+            <div className="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md text-sm">
+              <p className="font-semibold">Initialization Error:</p>
+              <p className="mt-1">{initError}</p>
+              <p className="mt-2 text-xs">Please contact support if this persists.</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
@@ -115,7 +139,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !!initError}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign In'}
