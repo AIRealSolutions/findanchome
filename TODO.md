@@ -208,3 +208,12 @@
 - [x] Fix dashboard page infinite loading/grinding
 - [x] Check database table names (should use fanc_ prefix)
 - [x] Fixed: Updated all queries to use fanc_properties, fanc_clients, fanc_events
+
+## 👤 User Profile Setup
+- [ ] Verify admin user profile exists in fanc_user_profiles
+- [ ] Ensure role is set to 'admin' for marcspencer28461@gmail.com
+- [ ] Test dashboard access after profile creation
+
+## 🐛 Auth Context Table Name Bug
+- [x] Fix auth-context.tsx using 'user_profiles' instead of 'fanc_user_profiles'
+- [x] Fixed: Updated fetchProfile to query fanc_user_profiles
