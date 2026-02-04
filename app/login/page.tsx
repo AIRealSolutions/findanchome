@@ -42,7 +42,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Image
-              src="/lightkeeper-logo.png"
+              src="/lightkeeper-logo.jpg"
               alt="Lightkeeper Realty"
               width={80}
               height={80}
