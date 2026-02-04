@@ -2,7 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from './supabase/client';
+import { createClient } from './supabase/client';
+
+const supabase = createClient();
 
 interface UserProfile {
   id: string;

@@ -192,3 +192,13 @@
 - [x] Fix property edit page imports
 - [x] Fix properties list page imports
 - [x] Fix new property page imports
+
+## 🔌 FlexMLS IDX Integration
+- [ ] Research FlexMLS API/IDX feed integration options
+- [ ] Portal: https://my.flexmls.com/marcspencer
+- [ ] Set up IDX data sync for property listings
+- [ ] Create property import workflow from FlexMLS
+- [ ] Map FlexMLS fields to fanc_properties table
+- [ ] Implement automatic property updates
+- [x] Fix dashboard page Supabase import
+- [x] Fix auth-context Supabase import
