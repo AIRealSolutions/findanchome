@@ -4,7 +4,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClient } from './supabase/client';
 
-const supabase = createClient();
+let supabase: ReturnType<typeof createClient> | null = null;
+
+try {
+  supabase = createClient();
+} catch (error) {
+  console.error('Failed to initialize Supabase client:', error);
+}
 
 interface UserProfile {
   id: string;
@@ -55,6 +61,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      setLoading(false);
+      return;
+    }
+
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -63,6 +75,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setLoading(false);
       }
+    }).catch((error) => {
+      console.error('Error getting session:', error);
+      setLoading(false);
     });
 
     // Listen for auth changes
@@ -82,6 +97,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchProfile = async (userId: string) => {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('fanc_user_profiles')
@@ -99,6 +120,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) {
+      return { error: new Error('Supabase client not initialized') };
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -107,6 +132,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!supabase) {
+      return;
+    }
+
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
