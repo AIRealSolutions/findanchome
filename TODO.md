@@ -130,3 +130,52 @@
 
 ## 🗑️ Homepage Cleanup
 - [x] Remove private tour form section from main page
+
+## 🔐 Authentication & Role-Based System
+- [x] Create Supabase auth schema with roles (client, broker, admin)
+- [x] Build login/signup pages
+- [x] Implement role-based routing and access control
+- [ ] Create user profile management
+
+## 📊 Admin Dashboard
+- [x] Build admin dashboard layout
+- [x] Properties list page with search and filters
+- [x] Property create form
+- [ ] Property edit form
+- [ ] Property view/detail page
+- [ ] Clients CRUD with full management
+- [ ] Event log viewer for all system actions
+- [ ] User/broker management interface
+
+## 💼 Broker Dashboard
+- [ ] Build broker dashboard layout
+- [ ] Property listing management
+- [ ] Property details page with marketing tools
+- [ ] Social media sharing (Facebook, X, Instagram, LinkedIn)
+- [ ] Dynamic social media preview generation
+- [ ] Client CRM interface
+- [ ] Communication tools (email, phone, text)
+- [ ] Drip campaign management
+- [ ] Client details page with full history
+- [ ] Lead assignment and acceptance workflow
+
+## 👤 Client Dashboard
+- [ ] Build client welcome dashboard
+- [ ] Saved properties feature
+- [ ] Profile management
+- [ ] Communication history view
+
+## 📝 Events & Logging System
+- [ ] Create events database table
+- [ ] Implement automatic event logging for all actions
+- [ ] Event types: login, property_created, property_updated, client_created, email_sent, text_sent, call_made, etc.
+- [ ] Event viewer in admin/broker dashboards
+
+## 🗄️ Database Tables
+- [ ] users (with role field)
+- [ ] properties (full property details)
+- [ ] clients (CRM data)
+- [ ] events (action logging)
+- [ ] drip_campaigns
+- [ ] communications
+- [ ] property_shares (social media tracking)
