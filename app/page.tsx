@@ -1,9 +1,13 @@
+'use client';
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Home, DollarSign, Users, BookOpen, Phone, Mail, Facebook, Twitter } from 'lucide-react'
+import { Search, Home, DollarSign, Users, BookOpen, Phone, Mail, Facebook, Twitter, Menu, X } from 'lucide-react'
 import HeroCarousel from '@/components/HeroCarousel'
+import { useState } from 'react'
 
 export default function HomePage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Sample featured properties - will be replaced with IDX/database data
   const featuredProperties = [
     {
@@ -88,7 +92,7 @@ export default function HomePage() {
               </div>
             </Link>
             
-            {/* Navigation Menu */}
+            {/* Desktop Navigation Menu */}
             <nav className="hidden md:flex items-center gap-6">
               <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
               <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
@@ -98,7 +102,31 @@ export default function HomePage() {
               <Link href="/login" className="hover:text-[#fbbf24] transition-colors">Login</Link>
               <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>
             </nav>
+
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
+
+          {/* Mobile Navigation Menu */}
+          {mobileMenuOpen && (
+            <nav className="md:hidden py-4 border-t border-white/20">
+              <div className="flex flex-col gap-3">
+                <Link href="/properties" className="hover:text-[#fbbf24] transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Properties</Link>
+                <Link href="/communities" className="hover:text-[#fbbf24] transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Communities</Link>
+                <Link href="/sell" className="hover:text-[#fbbf24] transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Sell</Link>
+                <Link href="/agents" className="hover:text-[#fbbf24] transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Agents</Link>
+                <Link href="/education" className="hover:text-[#fbbf24] transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Education</Link>
+                <Link href="/login" className="hover:text-[#fbbf24] transition-colors py-2 font-medium" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+                <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium text-center mt-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+              </div>
+            </nav>
+          )}
         </div>
       </header>
 
