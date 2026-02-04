@@ -40,17 +40,17 @@ export default function DashboardPage() {
     try {
       // Fetch properties count
       const { count: totalProperties } = await supabase
-        .from('properties')
+        .from('fanc_properties')
         .select('*', { count: 'exact', head: true });
 
       const { count: activeProperties } = await supabase
-        .from('properties')
+        .from('fanc_properties')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'active');
 
       // Fetch clients count
       const { count: totalClients } = await supabase
-        .from('clients')
+        .from('fanc_clients')
         .select('*', { count: 'exact', head: true });
 
       // Fetch new clients this month
@@ -59,13 +59,13 @@ export default function DashboardPage() {
       firstDayOfMonth.setHours(0, 0, 0, 0);
 
       const { count: newClientsThisMonth } = await supabase
-        .from('clients')
+        .from('fanc_clients')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', firstDayOfMonth.toISOString());
 
       // Fetch recent events count
       const { count: recentEvents } = await supabase
-        .from('events')
+        .from('fanc_events')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
 
