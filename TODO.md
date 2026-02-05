@@ -266,3 +266,8 @@
 - [x] Update Supabase client to properly access NEXT_PUBLIC_ vars in browser
 - [x] Created next.config.js to explicitly expose env vars
 - [x] Added Supabase domain to image configuration
+
+## 🔍 Create Diagnostic Page
+- [x] Create /debug page to show env var status
+- [x] Display Supabase initialization errors clearly
+- [x] Shows env vars, Supabase init status, and database connection test
