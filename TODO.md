@@ -261,3 +261,8 @@
 - [x] Prevent initialization during SSR/initial render
 - [x] Only initialize after component mounts on client
 - [x] Use useRef to store Supabase client instance
+
+## 🔧 Fix Next.js Environment Variable Access
+- [x] Update Supabase client to properly access NEXT_PUBLIC_ vars in browser
+- [x] Created next.config.js to explicitly expose env vars
+- [x] Added Supabase domain to image configuration
