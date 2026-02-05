@@ -271,3 +271,13 @@
 - [x] Create /debug page to show env var status
 - [x] Display Supabase initialization errors clearly
 - [x] Shows env vars, Supabase init status, and database connection test
+
+## 🔧 Add Diagnostics to Login Page
+- [ ] Show env var status directly on login page
+- [ ] Display exact Supabase error instead of generic "Load failed"
+- [ ] Add expandable debug section for troubleshooting
+
+## 🔧 Create Standalone Login Page
+- [x] Remove Image component from login page (potential source of "Load failed")
+- [x] Replace with simple text logo to eliminate image loading issues
+- [ ] Test if error persists without Image component

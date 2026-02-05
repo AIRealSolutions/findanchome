@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -56,13 +56,9 @@ export default function LoginPage() {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <Image
-              src="/lightkeeper-logo.jpg"
-              alt="Lightkeeper Realty"
-              width={80}
-              height={80}
-              className="rounded-full"
-            />
+            <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+              LK
+            </div>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
             FindaNChome.com
