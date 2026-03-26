@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,35 +9,46 @@ export async function POST(request: NextRequest) {
 
     if (!supabaseUrl || !supabaseKey) {
       return NextResponse.json(
-        { error: 'Server configuration error: Missing Supabase credentials' },
+        { error: `Server config error: URL=${supabaseUrl ? 'SET' : 'MISSING'}, KEY=${supabaseKey ? 'SET' : 'MISSING'}` },
         { status: 500 }
       );
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    // Call Supabase Auth REST API directly using native fetch
+    const authUrl = `${supabaseUrl}/auth/v1/token?grant_type=password`;
+    
+    const response = await fetch(authUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      return NextResponse.json(
+        { error: data.error_description || data.error || 'Authentication failed' },
+        { status: 401 }
+      );
     }
 
-    // Return session data to client
     return NextResponse.json({
       success: true,
-      access_token: data.session?.access_token,
-      refresh_token: data.session?.refresh_token,
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
       user: {
         id: data.user?.id,
         email: data.user?.email,
       },
     });
+
   } catch (err: any) {
     return NextResponse.json(
-      { error: err.message || 'Internal server error' },
+      { error: `Fetch error: ${err.message || 'Unknown error'}` },
       { status: 500 }
     );
   }

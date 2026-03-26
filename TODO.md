@@ -292,3 +292,7 @@
 - [x] Created /api/auth/login route that calls Supabase server-side
 - [x] Updated login page to POST to /api/auth/login
 - [x] Bypasses all client-side Supabase initialization issues
+
+## 🔍 Test Deployed API Route
+- [ ] Test /api/auth/login directly with curl
+- [ ] Check if env vars are available server-side in Vercel
