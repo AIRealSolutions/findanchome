@@ -296,3 +296,8 @@
 ## 🔍 Test Deployed API Route
 - [ ] Test /api/auth/login directly with curl
 - [ ] Check if env vars are available server-side in Vercel
+
+## 🔧 Switch Login API to Edge Runtime
+- [ ] Add export const runtime = 'edge' to login API route
+- [ ] Edge Runtime has better network connectivity than serverless
+- [ ] Test after deployment
