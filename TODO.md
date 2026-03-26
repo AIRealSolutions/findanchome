@@ -281,3 +281,9 @@
 - [x] Remove Image component from login page (potential source of "Load failed")
 - [x] Replace with simple text logo to eliminate image loading issues
 - [ ] Test if error persists without Image component
+
+## 🔑 Fix Supabase Env Var Name Mismatch
+- [x] Updated lib/supabase/client.ts to use NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+- [x] Updated lib/supabase/server.ts
+- [x] Updated app/login/page.tsx, app/debug/page.tsx, next.config.js
+- [x] All 5 files updated via sed replacement

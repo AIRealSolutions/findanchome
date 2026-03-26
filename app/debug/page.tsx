@@ -12,7 +12,7 @@ export default function DebugPage() {
         timestamp: new Date().toISOString(),
         envVars: {
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || 'NOT SET',
-          supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET (hidden)' : 'NOT SET',
+          supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ? 'SET (hidden)' : 'NOT SET',
         },
         supabaseInit: 'Not attempted',
       };
@@ -67,7 +67,7 @@ export default function DebugPage() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span>NEXT_PUBLIC_SUPABASE_ANON_KEY:</span>
+              <span>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY:</span>
               <span className={diagnostics.envVars?.supabaseKey === 'NOT SET' ? 'text-red-600' : 'text-green-600'}>
                 {diagnostics.envVars?.supabaseKey}
               </span>

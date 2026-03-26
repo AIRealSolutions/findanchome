@@ -18,7 +18,7 @@ export default function LoginPage() {
     // Check if Supabase is properly initialized
     const checkSupabase = () => {
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
       
       if (!url || !key) {
         setInitError(`Configuration Error: Missing Supabase credentials. URL: ${url ? 'Set' : 'Missing'}, Key: ${key ? 'Set' : 'Missing'}`);
