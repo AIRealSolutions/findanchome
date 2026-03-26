@@ -1,51 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
-// import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [initError, setInitError] = useState('');
   const router = useRouter();
-  const { signIn } = useAuth();
 
-  useEffect(() => {
-    // Check if Supabase is properly initialized
-    const checkSupabase = () => {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
-      
-      if (!url || !key) {
-        setInitError(`Configuration Error: Missing Supabase credentials. URL: ${url ? 'Set' : 'Missing'}, Key: ${key ? 'Set' : 'Missing'}`);
-      }
-    };
-    
-    checkSupabase();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
-      
-      if (error) {
-        setError(error.message || 'Invalid email or password');
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        setError(data.error || 'Login failed. Please check your credentials.');
         setLoading(false);
         return;
       }
 
-      // Redirect will happen automatically via auth context
+      // Store tokens in localStorage for the auth context to pick up
+      if (data.access_token) {
+        localStorage.setItem('sb_access_token', data.access_token);
+        localStorage.setItem('sb_refresh_token', data.refresh_token || '');
+        localStorage.setItem('sb_user', JSON.stringify(data.user));
+      }
+
+      // Redirect to dashboard
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred');
+      setError('Network error: ' + (err.message || 'Please try again'));
       setLoading(false);
     }
   };
@@ -64,104 +60,95 @@ export default function LoginPage() {
             FindaNChome.com
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Admin & Broker Portal
+            Admin &amp; Broker Portal
           </p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          {/* Initialization Error */}
-          {initError && (
-            <div className="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md text-sm">
-              <p className="font-semibold">Initialization Error:</p>
-              <p className="mt-1">{initError}</p>
-              <p className="mt-2 text-xs">Please contact support if this persists.</p>
+        {/* Login Form */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                {error}
-              </div>
-            )}
-
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
               </label>
               <input
                 id="email"
                 type="email"
-                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="you@example.com"
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
                 id="password"
                 type="password"
-                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="••••••••"
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
               />
             </div>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 text-blue-600"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
-              </div>
-
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
+                <span className="text-sm text-gray-600">Remember me</span>
+              </label>
+              <a href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
                 Forgot password?
               </a>
             </div>
 
             <button
               type="submit"
-              disabled={loading || !!initError}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+              disabled={loading}
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-lg transition duration-200 flex items-center justify-center gap-2"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                  Signing in...
+                </>
+              ) : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Client portal?{' '}
-              <a href="/" className="text-blue-600 hover:text-blue-500 font-medium">
-                Return to main site
-              </a>
-            </p>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-8 text-center text-sm text-gray-600">
-          <p>© 2024 Lightkeeper Realty. All rights reserved.</p>
-          <p className="mt-1">
-            Need help? Contact{' '}
-            <a href="tel:9103636147" className="text-blue-600 hover:text-blue-500">
-              (910) 363-6147
+          <p className="mt-6 text-center text-sm text-gray-500">
+            Client portal?{' '}
+            <a href="/" className="text-blue-600 hover:text-blue-800 font-medium">
+              Return to main site
             </a>
           </p>
         </div>
+
+        <p className="mt-6 text-center text-xs text-gray-400">
+          © 2024 Lightkeeper Realty. All rights reserved.<br />
+          Need help? Contact{' '}
+          <a href="tel:9103636147" className="text-blue-500">(910) 363-6147</a>
+        </p>
       </div>
     </div>
   );

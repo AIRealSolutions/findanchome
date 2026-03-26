@@ -287,3 +287,8 @@
 - [x] Updated lib/supabase/server.ts
 - [x] Updated app/login/page.tsx, app/debug/page.tsx, next.config.js
 - [x] All 5 files updated via sed replacement
+
+## 🔧 Rewrite Login to Use Server-Side API Route
+- [x] Created /api/auth/login route that calls Supabase server-side
+- [x] Updated login page to POST to /api/auth/login
+- [x] Bypasses all client-side Supabase initialization issues
