@@ -301,3 +301,7 @@
 - [ ] Add export const runtime = 'edge' to login API route
 - [ ] Edge Runtime has better network connectivity than serverless
 - [ ] Test after deployment
+
+## 🔒 Check Supabase Network Restrictions
+- [ ] Check if Supabase project has network restrictions blocking Vercel IPs
+- [ ] Disable or add Vercel IP ranges to allowed list

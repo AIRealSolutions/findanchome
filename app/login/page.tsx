@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // Step 1: Get tokens from our server-side API route
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -31,14 +33,22 @@ export default function LoginPage() {
         return;
       }
 
-      // Store tokens in localStorage for the auth context to pick up
-      if (data.access_token) {
-        localStorage.setItem('sb_access_token', data.access_token);
-        localStorage.setItem('sb_refresh_token', data.refresh_token || '');
-        localStorage.setItem('sb_user', JSON.stringify(data.user));
+      // Step 2: Set the session in the Supabase client so auth context picks it up
+      if (data.access_token && data.refresh_token) {
+        const supabase = createClient();
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        });
+
+        if (sessionError) {
+          setError('Session error: ' + sessionError.message);
+          setLoading(false);
+          return;
+        }
       }
 
-      // Redirect to dashboard
+      // Step 3: Redirect to dashboard
       router.push('/dashboard');
     } catch (err: any) {
       setError('Network error: ' + (err.message || 'Please try again'));
