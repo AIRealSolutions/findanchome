@@ -305,3 +305,8 @@
 ## 🔒 Check Supabase Network Restrictions
 - [ ] Check if Supabase project has network restrictions blocking Vercel IPs
 - [ ] Disable or add Vercel IP ranges to allowed list
+
+## 🐛 Dashboard White Screen After Login
+- [ ] Check dashboard page for JavaScript errors
+- [ ] Check dashboard layout for rendering issues
+- [ ] Fix and verify dashboard loads after login

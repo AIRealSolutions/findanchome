@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
-
-const supabase = createClient();
 import Link from 'next/link';
 import {
   BuildingOfficeIcon,
@@ -42,6 +40,7 @@ export default function DashboardPage() {
 
   const fetchDashboardStats = async () => {
     console.log('Fetching dashboard stats...');
+    const supabase = createClient();
     
     // Set a timeout to prevent infinite loading
     const timeout = setTimeout(() => {
