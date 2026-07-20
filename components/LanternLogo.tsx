@@ -7,9 +7,10 @@ export default function LanternLogo({ size = 48 }: { size?: number }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Inner glow - golden light */}
-      <ellipse cx="32" cy="38" rx="10" ry="12" fill="#fbbf24" opacity="0.4" />
-      <circle cx="32" cy="38" r="6" fill="#fbbf24" opacity="0.6" />
+      {/* Inner glow - golden light - more prominent */}
+      <ellipse cx="32" cy="38" rx="11" ry="13" fill="#fbbf24" opacity="0.5" />
+      <ellipse cx="32" cy="36" rx="8" ry="10" fill="#fcd34d" opacity="0.7" />
+      <circle cx="32" cy="35" r="5" fill="#fef3c7" opacity="0.9" />
 
       {/* Top handle - white */}
       <path d="M 20 6 Q 20 2 32 2 Q 44 2 44 6" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
