@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Award, Users, Heart, Target } from 'lucide-react';
 
@@ -18,11 +19,17 @@ export default function AboutPage() {
       <section className="py-16 bg-white flex-1">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="mb-12 text-center">
-            <div className="w-32 h-32 bg-gradient-to-br from-[#0ea5e9] to-[#fbbf24] rounded-full mx-auto mb-6 flex items-center justify-center">
-              <div className="text-6xl">👨‍💼</div>
+            <div className="w-48 h-64 mx-auto mb-6 rounded-lg shadow-lg overflow-hidden">
+              <Image
+                src="/marc-spencer.jpg"
+                alt="Marc Spencer"
+                width={300}
+                height={400}
+                className="w-full h-full object-cover"
+              />
             </div>
             <h2 className="text-3xl font-bold text-[#1e3a8a] mb-2">Marc Spencer</h2>
-            <p className="text-xl text-[#0ea5e9] font-medium mb-4">Broker & HUD Specialist</p>
+            <p className="text-xl text-[#0ea5e9] font-medium mb-4">CEO & HUD Specialist</p>
             <p className="text-gray-700">Based in Southport, North Carolina</p>
           </div>
 

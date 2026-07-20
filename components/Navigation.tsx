@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, Phone, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
+import LanternLogo from './LanternLogo';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -32,8 +33,8 @@ export default function Navigation() {
         <div className="flex items-center justify-between py-4">
           {/* Logo and Site Name */}
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-[#fbbf24] rounded-full flex items-center justify-center font-bold text-[#1e3a8a] text-lg lg:text-xl flex-shrink-0">
-              F
+            <div className="flex-shrink-0">
+              <LanternLogo size={40} />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl lg:text-2xl font-bold">FindaNChome.com</h1>
