@@ -2,14 +2,30 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { LogOut, Menu, X, Home, Settings, FileText, Layers } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { LogOut, Menu, X, Home, Settings, FileText, Layers, Loader } from 'lucide-react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { authService } from '@/lib/services/auth';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth('admin');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+      await authService.signOut();
+      router.push('/auth/login');
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
 
   const adminMenuItems = [
     { label: 'Dashboard', href: '/admin', icon: Home },
@@ -17,6 +33,14 @@ export default function AdminLayout({
     { label: 'Properties', href: '/admin/properties', icon: Layers },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
   ];
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader size={32} className="animate-spin text-[#0ea5e9]" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -33,10 +57,14 @@ export default function AdminLayout({
             <h1 className="text-2xl font-bold">FindaNChome Admin</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm">Admin User</span>
-            <button className="p-2 hover:bg-[#0ea5e9] rounded flex items-center gap-2">
+            <span className="text-sm">{user?.full_name || 'Admin'}</span>
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="p-2 hover:bg-[#0ea5e9] rounded flex items-center gap-2 disabled:opacity-50"
+            >
               <LogOut size={20} />
-              Logout
+              {loggingOut ? 'Logging out...' : 'Logout'}
             </button>
           </div>
         </div>

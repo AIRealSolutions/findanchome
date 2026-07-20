@@ -1,22 +1,74 @@
 'use client';
 
-import { TrendingUp, Users, DollarSign, CheckCircle, Phone, Mail, Calendar, Home } from 'lucide-react';
+import { TrendingUp, Users, DollarSign, CheckCircle, Phone, Mail, Calendar, Home, Loader } from 'lucide-react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { leadsService, Lead } from '@/lib/services/leads';
 
 export default function CRMDashboard() {
-  const stats = [
-    { label: 'Total Leads', value: '156', icon: Users, color: 'bg-blue-100 text-blue-600' },
-    { label: 'Active Deals', value: '12', icon: TrendingUp, color: 'bg-green-100 text-green-600' },
-    { label: 'This Month Sales', value: '$2.4M', icon: DollarSign, color: 'bg-orange-100 text-orange-600' },
-    { label: 'Closed Deals', value: '8', icon: CheckCircle, color: 'bg-purple-100 text-purple-600' },
-  ];
+  const { user, loading: authLoading } = useAuth('broker');
+  const [stats, setStats] = useState([
+    { label: 'Total Leads', value: '0', icon: Users, color: 'bg-blue-100 text-blue-600' },
+    { label: 'Active Deals', value: '0', icon: TrendingUp, color: 'bg-green-100 text-green-600' },
+    { label: 'This Month Sales', value: '$0', icon: DollarSign, color: 'bg-orange-100 text-orange-600' },
+    { label: 'Closed Deals', value: '0', icon: CheckCircle, color: 'bg-purple-100 text-purple-600' },
+  ]);
+  const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const recentLeads = [
-    { name: 'John Smith', status: 'Contacted', county: 'Brunswick', days_ago: 2 },
-    { name: 'Sarah Johnson', status: 'Qualified', county: 'New Hanover', days_ago: 1 },
-    { name: 'Mike Davis', status: 'Scheduled', county: 'Onslow', days_ago: 3 },
-    { name: 'Emily Chen', status: 'Offer Pending', county: 'Pender', days_ago: 5 },
-  ];
+  useEffect(() => {
+    async function fetchDashboardData() {
+      if (!user) return;
+      try {
+        const { data, count } = await leadsService.getLeads(user.id, 100);
+
+        const closedCount = (data || []).filter(l => l.status === 'closed').length;
+        const contactedCount = (data || []).filter(l =>
+          ['contacted', 'qualified', 'scheduled', 'offer_pending'].includes(l.status || '')
+        ).length;
+
+        setStats([
+          { ...stats[0], value: String(count || 0) },
+          { ...stats[1], value: String(contactedCount) },
+          { ...stats[2], value: '$0' },
+          { ...stats[3], value: String(closedCount) },
+        ]);
+
+        const recent = (data || []).slice(0, 4);
+        setRecentLeads(recent);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (!authLoading) {
+      fetchDashboardData();
+    }
+  }, [user, authLoading]);
+
+  const statusColors: Record<string, string> = {
+    contacted: 'bg-blue-100 text-blue-700',
+    qualified: 'bg-green-100 text-green-700',
+    scheduled: 'bg-purple-100 text-purple-700',
+    offer_pending: 'bg-orange-100 text-orange-700',
+  };
+
+  const formatDaysAgo = (dateStr?: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    return diff === 0 ? 'Today' : `${diff}d ago`;
+  };
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader size={32} className="animate-spin text-[#0ea5e9]" />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -51,18 +103,29 @@ export default function CRMDashboard() {
             </Link>
           </div>
           <div className="space-y-4">
-            {recentLeads.map((lead, idx) => (
-              <div key={idx} className="flex items-center justify-between pb-4 border-b last:border-0">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{lead.name}</h3>
-                  <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
-                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">{lead.status}</span>
-                    <span>{lead.county} County</span>
+            {recentLeads.length === 0 ? (
+              <p className="text-gray-600 text-sm">No leads yet.</p>
+            ) : (
+              recentLeads.map((lead) => (
+                <div key={lead.id} className="flex items-center justify-between pb-4 border-b last:border-0">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{lead.name}</h3>
+                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                      <span
+                        className={`px-2 py-1 rounded text-sm ${
+                          statusColors[lead.status || 'new'] || 'bg-gray-100 text-gray-700'
+                        }`}
+                      >
+                        {(lead.status || 'new').replace('_', ' ').charAt(0).toUpperCase() +
+                          (lead.status || 'new').replace('_', ' ').slice(1)}
+                      </span>
+                      {lead.county && <span>{lead.county}</span>}
+                    </div>
                   </div>
+                  <span className="text-xs text-gray-500">{formatDaysAgo(lead.created_at)}</span>
                 </div>
-                <span className="text-xs text-gray-500">{lead.days_ago}d ago</span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

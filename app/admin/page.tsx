@@ -1,15 +1,55 @@
 'use client';
 
-import { Users, Home, FileText, TrendingUp } from 'lucide-react';
+import { Users, Home, FileText, TrendingUp, Loader } from 'lucide-react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { leadsService } from '@/lib/services/leads';
+import { propertiesService } from '@/lib/services/properties';
 
 export default function AdminDashboard() {
-  const stats = [
-    { label: 'Total Leads', value: '1,234', icon: Users, color: 'bg-blue-100 text-blue-600' },
-    { label: 'Properties', value: '456', icon: Home, color: 'bg-green-100 text-green-600' },
+  const { loading: authLoading } = useAuth('admin');
+  const [stats, setStats] = useState([
+    { label: 'Total Leads', value: '0', icon: Users, color: 'bg-blue-100 text-blue-600' },
+    { label: 'Properties', value: '0', icon: Home, color: 'bg-green-100 text-green-600' },
     { label: 'Pages', value: '19', icon: FileText, color: 'bg-purple-100 text-purple-600' },
-    { label: 'Conversions', value: '89', icon: TrendingUp, color: 'bg-orange-100 text-orange-600' },
-  ];
+    { label: 'Conversions', value: '0', icon: TrendingUp, color: 'bg-orange-100 text-orange-600' },
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const [leadsResult, propertiesResult] = await Promise.all([
+          leadsService.getAllLeads(1, 0),
+          propertiesService.getProperties(1, 0),
+        ]);
+
+        const closedLeads = (leadsResult.data || []).filter(l => l.status === 'closed').length;
+
+        setStats([
+          { ...stats[0], value: String(leadsResult.count || 0) },
+          { ...stats[1], value: String(propertiesResult.count || 0) },
+          { ...stats[2], value: '19' },
+          { ...stats[3], value: String(closedLeads) },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (!authLoading) {
+      fetchStats();
+    }
+  }, [authLoading]);
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader size={32} className="animate-spin text-[#0ea5e9]" />
+      </div>
+    );
+  }
 
   return (
     <div>

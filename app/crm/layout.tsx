@@ -2,14 +2,30 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { LogOut, Menu, X, BarChart3, Users, Home, Calendar, FileText } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { LogOut, Menu, X, BarChart3, Users, Home, Calendar, FileText, Loader } from 'lucide-react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { authService } from '@/lib/services/auth';
 
 export default function CRMLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth('broker');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+      await authService.signOut();
+      router.push('/auth/login');
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
 
   const crmMenuItems = [
     { label: 'Dashboard', href: '/crm', icon: BarChart3 },
@@ -18,6 +34,14 @@ export default function CRMLayout({
     { label: 'Tasks', href: '/crm/tasks', icon: Calendar },
     { label: 'Reports', href: '/crm/reports', icon: FileText },
   ];
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader size={32} className="animate-spin text-[#0ea5e9]" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -34,10 +58,14 @@ export default function CRMLayout({
             <h1 className="text-2xl font-bold">Lightkeeper CRM</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm">Marc Spencer</span>
-            <button className="p-2 hover:bg-white/20 rounded flex items-center gap-2">
+            <span className="text-sm">{user?.full_name || 'Broker'}</span>
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="p-2 hover:bg-white/20 rounded flex items-center gap-2 disabled:opacity-50"
+            >
               <LogOut size={20} />
-              Logout
+              {loggingOut ? 'Logging out...' : 'Logout'}
             </button>
           </div>
         </div>
