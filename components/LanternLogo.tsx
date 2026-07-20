@@ -7,33 +7,36 @@ export default function LanternLogo({ size = 48 }: { size?: number }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Inner glow */}
-      <circle cx="32" cy="32" r="14" fill="#fbbf24" opacity="0.4" />
-      <circle cx="32" cy="32" r="10" fill="#fbbf24" opacity="0.6" />
-      <circle cx="32" cy="32" r="6" fill="#fbbf24" opacity="0.8" />
+      {/* Inner glow - golden light */}
+      <ellipse cx="32" cy="35" rx="12" ry="14" fill="#fbbf24" opacity="0.3" />
+      <ellipse cx="32" cy="35" rx="9" ry="11" fill="#fbbf24" opacity="0.5" />
+      <ellipse cx="32" cy="35" rx="6" ry="8" fill="#fbbf24" opacity="0.7" />
 
-      {/* Lantern hanger hook - white line */}
-      <path d="M 28 4 Q 28 8 32 8 Q 36 8 36 4" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      {/* Top handle - white arc */}
+      <path d="M 22 8 Q 22 2 32 2 Q 42 2 42 8" stroke="white" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
 
-      {/* Lantern frame - top - white line */}
-      <rect x="14" y="10" width="36" height="4" rx="1" fill="none" stroke="white" strokeWidth="2.5" />
+      {/* Top ring/frame - white */}
+      <ellipse cx="32" cy="10" rx="16" ry="4" fill="none" stroke="white" strokeWidth="2" />
 
-      {/* Lantern frame - sides - white line */}
-      <line x1="14" y1="14" x2="14" y2="50" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="50" y1="14" x2="50" y2="50" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Left glass side - oval white line */}
+      <path d="M 18 10 Q 14 16 14 35 Q 14 50 18 54" stroke="white" strokeWidth="2.2" fill="none" strokeLinecap="round" />
 
-      {/* Lantern frame - bottom - white line */}
-      <rect x="14" y="48" width="36" height="4" rx="1" fill="none" stroke="white" strokeWidth="2.5" />
+      {/* Right glass side - oval white line */}
+      <path d="M 46 10 Q 50 16 50 35 Q 50 50 46 54" stroke="white" strokeWidth="2.2" fill="none" strokeLinecap="round" />
 
-      {/* Glass panes divider - white line */}
-      <line x1="32" y1="14" x2="32" y2="52" stroke="white" strokeWidth="1.5" opacity="0.7" />
-      <line x1="14" y1="32" x2="50" y2="32" stroke="white" strokeWidth="1.5" opacity="0.7" />
+      {/* Bottom frame - white */}
+      <ellipse cx="32" cy="54" rx="16" ry="4" fill="none" stroke="white" strokeWidth="2" />
 
-      {/* Corner accents */}
-      <circle cx="14" cy="14" r="1.5" fill="white" opacity="0.6" />
-      <circle cx="50" cy="14" r="1.5" fill="white" opacity="0.6" />
-      <circle cx="14" cy="50" r="1.5" fill="white" opacity="0.6" />
-      <circle cx="50" cy="50" r="1.5" fill="white" opacity="0.6" />
+      {/* Bottom base extension - white */}
+      <rect x="28" y="54" width="8" height="6" rx="1" fill="none" stroke="white" strokeWidth="1.8" />
+
+      {/* Vertical center line - white semi-transparent */}
+      <line x1="32" y1="10" x2="32" y2="54" stroke="white" strokeWidth="1" opacity="0.5" />
+
+      {/* Glass pane divisions - horizontal white lines */}
+      <path d="M 18 25 Q 25 24 32 24 Q 39 24 46 25" stroke="white" strokeWidth="1" opacity="0.6" />
+      <path d="M 17 35 Q 24 34 32 34 Q 40 34 47 35" stroke="white" strokeWidth="1" opacity="0.6" />
+      <path d="M 18 45 Q 25 46 32 46 Q 39 46 46 45" stroke="white" strokeWidth="1" opacity="0.6" />
     </svg>
   );
 }
