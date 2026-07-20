@@ -21,6 +21,11 @@ export default function Navigation() {
     { label: 'Contact', href: '/contact', isButton: true },
   ];
 
+  const authItems = [
+    { label: 'Login', href: '/auth/login', isAuth: true },
+    { label: 'Sign Up', href: '/auth/signup', isAuthButton: true },
+  ];
+
   return (
     <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
       <div className="container mx-auto px-4">
@@ -51,6 +56,21 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
+            <div className="border-l border-white/20 ml-2 pl-2 flex items-center gap-2">
+              {authItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={
+                    item.isAuthButton
+                      ? 'bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium'
+                      : 'px-3 py-2 text-sm hover:text-[#fbbf24] transition-colors font-medium'
+                  }
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </nav>
 
           {/* Mobile Contact Bar & Menu Button */}
@@ -99,6 +119,22 @@ export default function Navigation() {
                   {item.label}
                 </Link>
               ))}
+              <div className="border-t border-white/20 mt-2 pt-2 flex flex-col gap-2">
+                {authItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={
+                      item.isAuthButton
+                        ? 'bg-[#fbbf24] text-[#1e3a8a] px-4 py-3 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium text-center'
+                        : 'px-4 py-2 hover:text-[#fbbf24] transition-colors font-medium'
+                    }
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </nav>
         )}
