@@ -3,40 +3,50 @@ export default function LanternLogo({ size = 48 }: { size?: number }) {
     <svg
       width={size}
       height={size}
-      viewBox="0 0 64 64"
+      viewBox="0 0 64 80"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       {/* Inner glow - golden light */}
-      <ellipse cx="32" cy="35" rx="12" ry="14" fill="#fbbf24" opacity="0.3" />
-      <ellipse cx="32" cy="35" rx="9" ry="11" fill="#fbbf24" opacity="0.5" />
-      <ellipse cx="32" cy="35" rx="6" ry="8" fill="#fbbf24" opacity="0.7" />
+      <ellipse cx="32" cy="38" rx="10" ry="12" fill="#fbbf24" opacity="0.4" />
+      <circle cx="32" cy="38" r="6" fill="#fbbf24" opacity="0.6" />
 
-      {/* Top handle - white arc */}
-      <path d="M 22 8 Q 22 2 32 2 Q 42 2 42 8" stroke="white" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Top handle - white */}
+      <path d="M 20 6 Q 20 2 32 2 Q 44 2 44 6" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
 
-      {/* Top ring/frame - white */}
-      <ellipse cx="32" cy="10" rx="16" ry="4" fill="none" stroke="white" strokeWidth="2" />
+      {/* Top ring/collar with decorative dots - white */}
+      <ellipse cx="32" cy="8" rx="14" ry="3.5" fill="none" stroke="white" strokeWidth="2" />
+      <circle cx="22" cy="8" r="1.2" fill="white" opacity="0.7" />
+      <circle cx="28" cy="8" r="1.2" fill="white" opacity="0.7" />
+      <circle cx="36" cy="8" r="1.2" fill="white" opacity="0.7" />
+      <circle cx="42" cy="8" r="1.2" fill="white" opacity="0.7" />
 
-      {/* Left glass side - oval white line */}
-      <path d="M 18 10 Q 14 16 14 35 Q 14 50 18 54" stroke="white" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      {/* Upper glass/globe - oval - white */}
+      <path d="M 18 8 Q 14 14 14 28 Q 14 35 18 40" stroke="white" strokeWidth="2.3" fill="none" strokeLinecap="round" />
+      <path d="M 46 8 Q 50 14 50 28 Q 50 35 46 40" stroke="white" strokeWidth="2.3" fill="none" strokeLinecap="round" />
 
-      {/* Right glass side - oval white line */}
-      <path d="M 46 10 Q 50 16 50 35 Q 50 50 46 54" stroke="white" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      {/* Middle frame ring - white */}
+      <ellipse cx="32" cy="40" rx="14" ry="3" fill="none" stroke="white" strokeWidth="2" />
 
-      {/* Bottom frame - white */}
-      <ellipse cx="32" cy="54" rx="16" ry="4" fill="none" stroke="white" strokeWidth="2" />
+      {/* Lower cage/frame structure - white */}
+      <path d="M 18 40 Q 16 46 16 54" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M 46 40 Q 48 46 48 54" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" />
 
-      {/* Bottom base extension - white */}
-      <rect x="28" y="54" width="8" height="6" rx="1" fill="none" stroke="white" strokeWidth="1.8" />
+      {/* Cage vertical supports - white */}
+      <line x1="24" y1="40" x2="22" y2="54" stroke="white" strokeWidth="1.5" opacity="0.8" />
+      <line x1="32" y1="40" x2="32" y2="54" stroke="white" strokeWidth="1.5" opacity="0.8" />
+      <line x1="40" y1="40" x2="42" y2="54" stroke="white" strokeWidth="1.5" opacity="0.8" />
 
-      {/* Vertical center line - white semi-transparent */}
-      <line x1="32" y1="10" x2="32" y2="54" stroke="white" strokeWidth="1" opacity="0.5" />
+      {/* Cage horizontal rings - white */}
+      <ellipse cx="32" cy="47" rx="12" ry="2.5" fill="none" stroke="white" strokeWidth="1.5" opacity="0.7" />
+      <ellipse cx="32" cy="52" rx="13" ry="3" fill="none" stroke="white" strokeWidth="1.5" opacity="0.7" />
 
-      {/* Glass pane divisions - horizontal white lines */}
-      <path d="M 18 25 Q 25 24 32 24 Q 39 24 46 25" stroke="white" strokeWidth="1" opacity="0.6" />
-      <path d="M 17 35 Q 24 34 32 34 Q 40 34 47 35" stroke="white" strokeWidth="1" opacity="0.6" />
-      <path d="M 18 45 Q 25 46 32 46 Q 39 46 46 45" stroke="white" strokeWidth="1" opacity="0.6" />
+      {/* Base/platform - white */}
+      <ellipse cx="32" cy="56" rx="14" ry="3.5" fill="none" stroke="white" strokeWidth="2" />
+      <path d="M 18 56 L 18 60 Q 18 62 20 62 L 44 62 Q 46 62 46 60 L 46 56" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+
+      {/* Bottom platform - white */}
+      <ellipse cx="32" cy="62" rx="14" ry="3" fill="none" stroke="white" strokeWidth="1.8" />
     </svg>
   );
 }
