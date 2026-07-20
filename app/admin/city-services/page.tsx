@@ -7,7 +7,8 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { cityServicesService, CityService } from '@/lib/services/city-services';
 
 const BRUNSWICK_CITIES = ['Southport', 'Oak Island', 'Holden Beach', 'Ocean Isle Beach', 'Sunset Beach'];
-const SERVICE_TYPES = ['power', 'water', 'trash', 'internet'];
+const SERVICE_TYPES = ['power', 'water', 'trash', 'internet'] as const;
+type ServiceType = typeof SERVICE_TYPES[number];
 
 export default function CityServicesAdmin() {
   const { loading: authLoading } = useAuth('admin');
@@ -58,7 +59,7 @@ export default function CityServicesAdmin() {
       setFormData({
         city_name: BRUNSWICK_CITIES[0],
         county: 'Brunswick',
-        service_type: SERVICE_TYPES[0],
+        service_type: SERVICE_TYPES[0] as ServiceType,
         is_active: true,
       });
       setEditingId(null);
@@ -107,7 +108,7 @@ export default function CityServicesAdmin() {
             setFormData({
               city_name: BRUNSWICK_CITIES[0],
               county: 'Brunswick',
-              service_type: SERVICE_TYPES[0],
+              service_type: SERVICE_TYPES[0] as ServiceType,
               is_active: true,
             });
             setShowForm(!showForm);
@@ -154,7 +155,7 @@ export default function CityServicesAdmin() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
               <select
                 value={formData.service_type || ''}
-                onChange={(e) => setFormData({ ...formData, service_type: e.target.value as any })}
+                onChange={(e) => setFormData({ ...formData, service_type: e.target.value as ServiceType })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 required
               >
