@@ -54,14 +54,25 @@ export default function BrunswickPage() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-[#1e3a8a] mb-12 text-center">Key Communities</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {communities.map((community, idx) => (
-              <div key={idx} className="p-6 bg-green-50 border-2 border-green-200 rounded-lg hover:shadow-lg transition-all">
-                <MapPin className="w-5 h-5 text-[#0ea5e9] mb-3" />
-                <h3 className="font-bold text-xl text-[#1e3a8a] mb-2">{community.name}</h3>
-                <p className="text-gray-700 mb-3">{community.description}</p>
-                <div className="text-sm text-gray-600">Population: {community.population}</div>
-              </div>
-            ))}
+            {communities.map((community, idx) => {
+              const cityPath = community.name
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/'/g, '');
+              return (
+                <Link
+                  key={idx}
+                  href={`/explore/brunswick/${cityPath}`}
+                  className="p-6 bg-green-50 border-2 border-green-200 rounded-lg hover:shadow-lg hover:border-green-400 transition-all group"
+                >
+                  <MapPin className="w-5 h-5 text-[#0ea5e9] mb-3 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-bold text-xl text-[#1e3a8a] mb-2 group-hover:text-green-600 transition-colors">{community.name}</h3>
+                  <p className="text-gray-700 mb-3">{community.description}</p>
+                  <div className="text-sm text-gray-600">Population: {community.population}</div>
+                  <div className="text-sm text-green-600 font-semibold mt-3">Learn More →</div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

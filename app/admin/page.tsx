@@ -92,6 +92,18 @@ export default function AdminDashboard() {
               → Manage Properties
             </Link>
             <Link
+              href="/admin/city-services"
+              className="block p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg text-yellow-600 font-medium transition-colors"
+            >
+              → Manage City Services
+            </Link>
+            <Link
+              href="/admin/business-partners"
+              className="block p-4 bg-orange-50 hover:bg-orange-100 rounded-lg text-orange-600 font-medium transition-colors"
+            >
+              → Manage Business Partners
+            </Link>
+            <Link
               href="/crm"
               className="block p-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-purple-600 font-medium transition-colors"
             >
