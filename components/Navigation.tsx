@@ -34,7 +34,7 @@ export default function Navigation() {
           {/* Logo and Site Name */}
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <div className="flex-shrink-0">
-              <LanternLogo size={40} />
+              <LanternLogo size={50} />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl lg:text-2xl font-bold">FindaNChome.com</h1>
