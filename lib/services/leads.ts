@@ -109,4 +109,16 @@ export const leadsService = {
     if (error) throw error;
     return data;
   },
+
+  // Get all leads (admin only)
+  async getAllLeads(limit = 100, offset = 0) {
+    const { data, error, count } = await supabase
+      .from('leads')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return { data, count };
+  },
 };
