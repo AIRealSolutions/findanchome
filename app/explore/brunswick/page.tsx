@@ -10,7 +10,12 @@ export default function BrunswickPage() {
     { name: "Oak Island", description: "Family-friendly beach community with golf courses and waterfront living.", population: "~7,500" },
     { name: "Holden Beach", description: "Quiet residential beach community perfect for families and retirees.", population: "~750" },
     { name: "Ocean Isle Beach", description: "Upscale beach community with excellent golf and resort amenities.", population: "~600" },
-    { name: "Sunset Beach", description: "Small exclusive community with bridge access and residential charm.", population: "~350" }
+    { name: "Sunset Beach", description: "Small exclusive community with bridge access and residential charm.", population: "~350" },
+    { name: "Bald Head Island", description: "Exclusive maritime island destination accessible by ferry with historic light tower.", population: "~150" },
+    { name: "Bolivia", description: "Charming rural community with countryside atmosphere and natural beauty.", population: "~500" },
+    { name: "Boiling Spring Lakes", description: "Beautiful lake community with natural springs and waterfront living.", population: "~2,500" },
+    { name: "Leland", description: "Growing family-friendly community with modern amenities and affordable homes.", population: "~4,000+" },
+    { name: "Navasa", description: "Small rural community with agricultural heritage and peaceful countryside setting.", population: "~300" }
   ];
 
   return (
