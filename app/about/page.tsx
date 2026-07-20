@@ -10,7 +10,7 @@ export default function AboutPage() {
       <Navigation />
       <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About Marc Spencer</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our CEO/BIC Marc Spencer</h1>
           <p className="text-xl opacity-90">Local real estate expert serving Southeastern North Carolina</p>
         </div>
       </section>

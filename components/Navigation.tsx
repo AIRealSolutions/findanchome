@@ -17,7 +17,7 @@ export default function Navigation() {
     { label: 'Buyers', href: '/buyers' },
     { label: 'Sellers', href: '/sellers' },
     { label: 'Investments', href: '/investments' },
-    { label: 'About Marc', href: '/about' },
+    { label: 'Our Leadership', href: '/about' },
     { label: 'Contact', href: '/contact', isButton: true },
   ];
 
