@@ -1,9 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Use consistent env var name for anon key
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY');
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export interface AuthUser {
   id: string;
@@ -28,12 +35,12 @@ export const authService = {
     // Create user profile
     if (data.user) {
       const { error: profileError } = await supabase
-        .from('users')
+        .from('user_profiles')
         .insert([
           {
             id: data.user.id,
-            email,
-            full_name: userData.full_name || '',
+            first_name: userData.full_name?.split(' ')[0] || '',
+            last_name: userData.full_name?.split(' ').slice(1).join(' ') || '',
             role: userData.role || 'user',
             phone: userData.phone,
             avatar_url: userData.avatar_url,
@@ -72,7 +79,7 @@ export const authService = {
     if (data.user) {
       // Get user profile
       const { data: profile, error: profileError } = await supabase
-        .from('users')
+        .from('user_profiles')
         .select('*')
         .eq('id', data.user.id)
         .single();
@@ -88,7 +95,7 @@ export const authService = {
   // Get user profile
   async getUserProfile(userId: string) {
     const { data, error } = await supabase
-      .from('users')
+      .from('user_profiles')
       .select('*')
       .eq('id', userId)
       .single();
@@ -100,7 +107,7 @@ export const authService = {
   // Update user profile
   async updateUserProfile(userId: string, updates: Partial<AuthUser>) {
     const { data, error } = await supabase
-      .from('users')
+      .from('user_profiles')
       .update(updates)
       .eq('id', userId)
       .select()
@@ -113,7 +120,7 @@ export const authService = {
   // Get all users (admin only)
   async getAllUsers() {
     const { data, error } = await supabase
-      .from('users')
+      .from('user_profiles')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -124,7 +131,7 @@ export const authService = {
   // Get brokers
   async getBrokers() {
     const { data, error } = await supabase
-      .from('users')
+      .from('user_profiles')
       .select('*')
       .eq('role', 'broker');
 
@@ -144,12 +151,12 @@ export const authService = {
 
     if (data.user) {
       const { error: profileError } = await supabase
-        .from('users')
+        .from('user_profiles')
         .insert([
           {
             id: data.user.id,
-            email,
-            full_name: userData.full_name || '',
+            first_name: userData.full_name?.split(' ')[0] || '',
+            last_name: userData.full_name?.split(' ').slice(1).join(' ') || '',
             role: userData.role || 'broker',
             phone: userData.phone,
             avatar_url: userData.avatar_url,
@@ -172,7 +179,7 @@ export const authService = {
     if (!userId) return false;
 
     const { data, error } = await supabase
-      .from('users')
+      .from('user_profiles')
       .select('role')
       .eq('id', userId)
       .single();
@@ -191,7 +198,7 @@ export const authService = {
     if (!userId) return false;
 
     const { data, error } = await supabase
-      .from('users')
+      .from('user_profiles')
       .select('role')
       .eq('id', userId)
       .single();

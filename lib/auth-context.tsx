@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const { data, error } = await supabase
-        .from('fanc_user_profiles')
+        .from('user_profiles')
         .select('*')
         .eq('id', userId)
         .single();
