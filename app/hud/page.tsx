@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
-import { Home, BookOpen, DollarSign, CheckCircle } from 'lucide-react';
+import { Home, BookOpen, DollarSign, CheckCircle, ExternalLink, Bell, Globe } from 'lucide-react';
+import { usaHudHomes } from '@/lib/sisterSites';
 
 export default function HUDPage() {
   return (
@@ -53,12 +54,12 @@ export default function HUDPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <Link href="/search" className="block p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-[#0ea5e9] rounded-lg hover:shadow-lg transition-all text-center">
+            <a href={usaHudHomes.ncListings('hud_page_card')} target="_blank" rel="noopener" className="block p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-[#0ea5e9] rounded-lg hover:shadow-lg transition-all text-center">
               <Home className="w-8 h-8 text-[#0ea5e9] mx-auto mb-3" />
               <h3 className="font-bold text-[#1e3a8a] mb-2">Search HUD Listings</h3>
-              <p className="text-gray-700 text-sm mb-4">Browse available HUD homes across NC</p>
-              <div className="text-[#0ea5e9] font-medium">Browse →</div>
-            </Link>
+              <p className="text-gray-700 text-sm mb-4">Browse live NC HUD homes on our sister site, USAhudhomes.com</p>
+              <div className="text-[#0ea5e9] font-medium inline-flex items-center gap-1">Browse <ExternalLink size={14} /></div>
+            </a>
 
             <Link href="/contact" className="block p-6 bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-[#fbbf24] rounded-lg hover:shadow-lg transition-all text-center">
               <BookOpen className="w-8 h-8 text-[#fbbf24] mx-auto mb-3" />
@@ -66,6 +67,39 @@ export default function HUDPage() {
               <p className="text-gray-700 text-sm mb-4">Request representation for a property</p>
               <div className="text-[#0ea5e9] font-medium">Contact Marc →</div>
             </Link>
+          </div>
+
+          {/* USAhudhomes.com sister site */}
+          <div className="mt-8 p-8 rounded-lg bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white shadow-lg">
+            <div className="flex items-center gap-2 text-[#fbbf24] text-sm font-semibold uppercase tracking-wide mb-2">
+              <Globe size={16} /> Our Sister Site
+            </div>
+            <h2 className="text-2xl font-bold mb-2">USAhudhomes.com</h2>
+            <p className="opacity-90 mb-6">
+              Our nationwide HUD home search. Browse current HUD listings by state and city, learn how HUD bidding works, and sign up for alerts when new homes hit the market.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                { href: usaHudHomes.ncListings('hud_page_banner'), icon: Home, label: 'North Carolina HUD Homes', primary: true },
+                { href: usaHudHomes.alerts('hud_page_banner'), icon: Bell, label: 'New Listing Alerts' },
+                { href: usaHudHomes.howItWorks('hud_page_banner'), icon: BookOpen, label: 'How HUD Bidding Works' },
+                { href: usaHudHomes.allStates('hud_page_banner'), icon: Globe, label: 'HUD Homes in Other States' },
+              ].map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener"
+                  className={
+                    link.primary
+                      ? 'inline-flex items-center justify-center gap-2 bg-[#fbbf24] text-[#1e3a8a] px-4 py-3 rounded-lg hover:bg-[#fcd34d] transition-colors font-bold'
+                      : 'inline-flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 border border-white/40 px-4 py-3 rounded-lg transition-colors font-medium'
+                  }
+                >
+                  <link.icon size={18} /> {link.label}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -91,6 +125,7 @@ export default function HUDPage() {
                 <Link href="/buyers" className="block text-gray-300 hover:text-[#fbbf24]">Buyers</Link>
                 <Link href="/sellers" className="block text-gray-300 hover:text-[#fbbf24]">Sellers</Link>
                 <Link href="/hud" className="block text-gray-300 hover:text-[#fbbf24]">HUD Homes</Link>
+                <a href={usaHudHomes.home('footer')} target="_blank" rel="noopener" className="block text-gray-300 hover:text-[#fbbf24]">USAhudhomes.com (Sister Site)</a>
               </div>
             </div>
             <div>

@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link'
-import { Search, Map, Heart, Home, DollarSign, Users, BookOpen, ChevronRight } from 'lucide-react'
+import { Search, Map, Heart, Home, DollarSign, Users, BookOpen, ChevronRight, ExternalLink, Bell, Globe } from 'lucide-react'
 import Navigation from '@/components/Navigation'
+import { usaHudHomes } from '@/lib/sisterSites'
 import { useState } from 'react'
 
 export default function HomePage() {
@@ -210,6 +211,43 @@ export default function HomePage() {
                 </div>
               </Link>
             </div>
+
+            {/* USAhudhomes.com sister site */}
+            <div className="mt-8 p-8 rounded-lg bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white shadow-lg">
+              <div className="flex items-center gap-2 text-[#fbbf24] text-sm font-semibold uppercase tracking-wide mb-2">
+                <Globe size={16} /> Our Sister Site
+              </div>
+              <h3 className="text-2xl font-bold mb-2">Live HUD Listings on USAhudhomes.com</h3>
+              <p className="opacity-90 mb-6">
+                See every HUD home currently for sale in North Carolina and place your bid with Lightkeeper Realty as your registered HUD buyer&apos;s agent. Shopping out of state? USAhudhomes.com covers HUD homes nationwide.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href={usaHudHomes.ncListings('home_hud_section')}
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-flex items-center justify-center gap-2 bg-[#fbbf24] text-[#1e3a8a] px-6 py-3 rounded-lg hover:bg-[#fcd34d] transition-colors font-bold"
+                >
+                  <Home size={18} /> NC HUD Homes <ExternalLink size={16} />
+                </a>
+                <a
+                  href={usaHudHomes.alerts('home_hud_section')}
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 border border-white/40 px-6 py-3 rounded-lg transition-colors font-medium"
+                >
+                  <Bell size={18} /> Get HUD Listing Alerts
+                </a>
+                <a
+                  href={usaHudHomes.allStates('home_hud_section')}
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 border border-white/40 px-6 py-3 rounded-lg transition-colors font-medium"
+                >
+                  <Globe size={18} /> All States
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -262,6 +300,7 @@ export default function HomePage() {
                 <Link href="/buyers" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Buyers</Link>
                 <Link href="/sellers" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Sellers</Link>
                 <Link href="/hud" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">HUD Homes</Link>
+                <a href={usaHudHomes.home('footer')} target="_blank" rel="noopener" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">USAhudhomes.com (Sister Site)</a>
               </div>
             </div>
             <div>
