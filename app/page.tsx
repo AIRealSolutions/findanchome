@@ -292,6 +292,7 @@ export default function HomePage() {
                 <Link href="/explore" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Counties</Link>
                 <Link href="/lifestyle" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Lifestyles</Link>
                 <Link href="/search" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Search Homes</Link>
+                <Link href="/site-map" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Site Map</Link>
               </div>
             </div>
             <div>

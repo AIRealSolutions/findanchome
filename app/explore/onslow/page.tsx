@@ -121,7 +121,7 @@ export default function OnslowPage() {
             {communities.map((community, idx) => (
               <Link
                 key={idx}
-                href={`/community/onslow/${community.name.toLowerCase().replace(/\s+/g, '-')}`}
+                href={`/properties?city=${encodeURIComponent(community.name)}`}
                 className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 hover:border-[#0ea5e9] rounded-lg hover:shadow-lg transition-all group"
               >
                 <MapPin className="w-5 h-5 text-[#0ea5e9] mb-3" />
