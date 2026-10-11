@@ -49,6 +49,14 @@ export const siteRoutes: SiteRoute[] = [
     changeFrequency: 'daily',
   },
   {
+    path: '/properties',
+    title: 'Featured Homes for Sale in Southeastern NC | HUD, REO & Conventional',
+    description: 'Featured listings from Lightkeeper Realty across Onslow, Pender, New Hanover, Brunswick and Columbus counties — HUD homes, bank-owned and conventional homes for sale.',
+    section: 'Buy',
+    priority: 0.9,
+    changeFrequency: 'daily',
+  },
+  {
     path: '/hud',
     title: 'HUD Homes in North Carolina | HUD Buyer’s Agent',
     description: 'Buy a HUD home in North Carolina with an experienced HUD buyer’s agency. How HUD bidding works, owner-occupant incentives, $100 down FHA, and current NC HUD listings.',
@@ -197,7 +205,7 @@ export const siteRoutes: SiteRoute[] = [
 export const sectionOrder: RouteSection[] = ['Main', 'Buy', 'Sell & Invest', 'Explore Counties', 'Learn', 'Company'];
 
 // Private / app areas that must never be indexed.
-export const privatePaths = ['/admin', '/crm', '/dashboard', '/debug', '/auth', '/login', '/api'];
+export const privatePaths = ['/admin', '/crm', '/dashboard', '/debug', '/auth', '/login', '/forgot-password', '/api'];
 
 export const externalResources = [
   { title: 'NC HUD home listings (USAhudhomes.com)', url: usaHudHomes.ncListings('llms'), description: 'Current HUD homes for sale in North Carolina, from our nationwide sister site.' },

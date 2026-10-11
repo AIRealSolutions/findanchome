@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { externalResources, pageMetadata, sectionOrder, siteRoutes } from '@/lib/siteRoutes';
+import { lifestyles } from '@/lib/lifestyles';
 
 export const metadata = pageMetadata('/site-map');
 
@@ -37,6 +38,20 @@ export default function SiteMapPage() {
               </section>
             );
           })}
+
+          <section>
+            <h2 className="text-2xl font-bold text-[#1e3a8a] mb-4">Lifestyle Guides</h2>
+            <ul className="space-y-4">
+              {lifestyles.map((l) => (
+                <li key={l.slug}>
+                  <Link href={`/lifestyle/${l.slug}`} className="font-semibold text-[#0ea5e9] hover:underline">
+                    {l.emoji} {l.name}
+                  </Link>
+                  <p className="text-sm text-gray-600">{l.description}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           <section>
             <h2 className="text-2xl font-bold text-[#1e3a8a] mb-4">Related Sites</h2>

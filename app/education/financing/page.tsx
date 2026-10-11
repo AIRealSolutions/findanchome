@@ -99,8 +99,8 @@ export default function FinancingPage() {
             
             <nav className="hidden md:flex items-center gap-6">
               <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
-              <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
-              <Link href="/agents" className="hover:text-[#fbbf24] transition-colors">Agents</Link>
+              <Link href="/explore" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
+              <Link href="/about" className="hover:text-[#fbbf24] transition-colors">Our Agent</Link>
               <Link href="/education" className="hover:text-[#fbbf24] transition-colors">Education</Link>
               <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>
             </nav>
@@ -299,8 +299,8 @@ export default function FinancingPage() {
               <div className="font-bold mb-4 text-[#fbbf24]">Quick Links</div>
               <div className="space-y-2">
                 <Link href="/properties" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Properties</Link>
-                <Link href="/communities" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Communities</Link>
-                <Link href="/agents" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Agents</Link>
+                <Link href="/explore" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Communities</Link>
+                <Link href="/about" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Our Agent</Link>
               </div>
             </div>
             <div>

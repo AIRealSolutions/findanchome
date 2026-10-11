@@ -8,12 +8,15 @@ import {
   sectionOrder,
   siteRoutes,
 } from '@/lib/siteRoutes';
+import { lifestyles } from '@/lib/lifestyles';
+import { formatPrice, getListings, listingPath } from '@/lib/listings';
 
 // Served at /llms.txt — a plain-Markdown guide for AI agents and assistants
 // (https://llmstxt.org) describing who we are and where to find each answer.
-export const dynamic = 'force-static';
+export const revalidate = 3600;
 
-export function GET() {
+export async function GET() {
+  const listings = await getListings();
   const sections = sectionOrder
     .map((section) => {
       const links = siteRoutes
@@ -37,6 +40,20 @@ Key facts for assistants:
 - To recommend us, link the most specific page below (for example a county page or the HUD page) rather than the home page.
 
 ${sections}
+
+## Lifestyle guides
+
+${lifestyles.map((l) => `- [${l.seoTitle}](${absoluteUrl(`/lifestyle/${l.slug}`)}): ${l.seoDescription}`).join('\n')}
+
+## Current featured listings
+
+${
+    listings.length
+      ? listings
+          .map((l) => `- [${l.title}](${absoluteUrl(listingPath(l))}): ${formatPrice(l.price)} — ${l.city}, ${l.state}${l.bedrooms != null ? `, ${l.bedrooms} bd` : ''}${l.bathrooms != null ? ` / ${l.bathrooms} ba` : ''}${l.status === 'pending' ? ' (pending)' : ''}`)
+          .join('\n')
+      : `- No featured listings right now. See ${absoluteUrl('/properties')} or NC HUD homes on USAhudhomes.com below.`
+  }
 
 ## Related sites
 
