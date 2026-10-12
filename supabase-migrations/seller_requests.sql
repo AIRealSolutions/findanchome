@@ -1,3 +1,6 @@
+-- NOTE: The live table and its policies are defined in security_hardening.sql (public insert-only,
+-- brokers/admins read). The 'Allow authenticated read' policy below was never applied; do not use it.
+
 -- Create seller_requests table for CMA and appointment requests
 CREATE TABLE IF NOT EXISTS seller_requests (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
