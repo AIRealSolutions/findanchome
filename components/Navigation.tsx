@@ -53,7 +53,7 @@ export default function Navigation() {
               <LanternLogo size={50} />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl lg:text-2xl font-bold">FindaNChome.com</h1>
+              <div className="text-xl lg:text-2xl font-bold">FindaNChome.com</div>
               <p className="text-xs opacity-90">Southeastern North Carolina</p>
             </div>
           </Link>

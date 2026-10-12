@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lightkeeper Realty - Find Your Dream Home in North Carolina",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Lightkeeper Realty - Find Your Dream Home in North Carolina",
+    template: "%s | FindaNChome.com",
+  },
   description: "Your trusted HUD Buyer's Agency helping families find affordable homes in NC for over 25 years. HUD homes, REO properties, and conventional listings.",
 };
 
