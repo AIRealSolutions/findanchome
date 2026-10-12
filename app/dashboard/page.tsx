@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
+import LeadsSummaryCard from '@/components/LeadsSummaryCard';
 import {
   BuildingOfficeIcon,
   UserGroupIcon,
@@ -152,6 +153,8 @@ export default function DashboardPage() {
           <p className="text-red-800 text-sm">{error}</p>
         </div>
       )}
+
+      {(isAdmin || isBroker) && <LeadsSummaryCard />}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

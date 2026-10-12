@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
@@ -8,11 +9,10 @@ import Image from 'next/image';
 import {
   HomeIcon,
   BuildingOfficeIcon,
-  UserGroupIcon,
-  ClipboardDocumentListIcon,
-  ChartBarIcon,
-  Cog6ToothIcon,
+  InboxStackIcon,
   ArrowRightOnRectangleIcon,
+  Bars3Icon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 
 export default function DashboardLayout({
@@ -23,12 +23,33 @@ export default function DashboardLayout({
   const { user, profile, loading, signOut, isAdmin, isBroker } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [newLeads, setNewLeads] = useState(0);
+  const isStaff = isAdmin || isBroker;
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  // Close the mobile menu after navigating.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setMenuOpen(false);
+  }
+
+  // Badge with the number of new consultation leads; refreshed on navigation.
+  useEffect(() => {
+    if (!isStaff) return;
+    createClient()
+      .from('fanc_consultation_requests')
+      .select('id')
+      .eq('status', 'new')
+      .limit(500)
+      .then(({ data }) => setNewLeads(data?.length ?? 0));
+  }, [isStaff, pathname]);
 
   if (loading) {
     return (
@@ -47,11 +68,8 @@ export default function DashboardLayout({
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['admin', 'broker', 'client'] },
+    { name: 'Leads', href: '/dashboard/leads', icon: InboxStackIcon, roles: ['admin', 'broker'], badge: newLeads },
     { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon, roles: ['admin', 'broker'] },
-    { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
-    { name: 'Events Log', href: '/dashboard/events', icon: ClipboardDocumentListIcon, roles: ['admin'] },
-    { name: 'Reports', href: '/dashboard/reports', icon: ChartBarIcon, roles: ['admin', 'broker'] },
-    { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon, roles: ['admin', 'broker', 'client'] },
   ];
 
   const filteredNavigation = navigation.filter(item =>
@@ -65,8 +83,20 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Mobile top bar */}
+      <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+        <Link href="/dashboard" className="font-bold text-gray-900">FindaNChome</Link>
+        <button onClick={() => setMenuOpen(true)} aria-label="Open menu" className="p-2 -mr-2 text-gray-700">
+          <Bars3Icon className="w-6 h-6" />
+        </button>
+      </div>
+      {menuOpen && <div className="lg:hidden fixed inset-0 z-40 bg-black/40" onClick={() => setMenuOpen(false)} />}
+
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200">
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform lg:translate-x-0 ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="lg:hidden absolute top-4 right-3 p-1 text-gray-500">
+          <XMarkIcon className="w-6 h-6" />
+        </button>
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-200">
           <Image
@@ -89,7 +119,7 @@ export default function DashboardLayout({
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-1">
           {filteredNavigation.map((item) => {
-            const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+            const isActive = item.href === '/dashboard' ? pathname === item.href : pathname === item.href || pathname?.startsWith(item.href + '/');
             return (
               <Link
                 key={item.name}
@@ -101,7 +131,10 @@ export default function DashboardLayout({
                 }`}
               >
                 <item.icon className="w-5 h-5" />
-                {item.name}
+                <span className="flex-1">{item.name}</span>
+                {'badge' in item && item.badge ? (
+                  <span className="min-w-6 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs font-semibold text-center">{item.badge}</span>
+                ) : null}
               </Link>
             );
           })}
@@ -133,8 +166,8 @@ export default function DashboardLayout({
       </div>
 
       {/* Main Content */}
-      <div className="pl-64">
-        <div className="max-w-7xl mx-auto px-8 py-8">
+      <div className="lg:pl-64">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
           {children}
         </div>
       </div>
