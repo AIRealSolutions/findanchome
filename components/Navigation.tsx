@@ -24,7 +24,6 @@ export default function Navigation() {
 
   const authItems = [
     { label: 'Login', href: '/login', isAuth: true },
-    { label: 'Sign Up', href: '/auth/signup', isAuthButton: true },
   ];
 
   return (
@@ -62,11 +61,7 @@ export default function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={
-                    item.isAuthButton
-                      ? 'bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium'
-                      : 'px-3 py-2 text-sm hover:text-[#fbbf24] transition-colors font-medium'
-                  }
+                  className='px-3 py-2 text-sm hover:text-[#fbbf24] transition-colors font-medium'
                 >
                   {item.label}
                 </Link>
@@ -125,11 +120,7 @@ export default function Navigation() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={
-                      item.isAuthButton
-                        ? 'bg-[#fbbf24] text-[#1e3a8a] px-4 py-3 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium text-center'
-                        : 'px-4 py-2 hover:text-[#fbbf24] transition-colors font-medium'
-                    }
+                    className='px-4 py-2 hover:text-[#fbbf24] transition-colors font-medium'
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
