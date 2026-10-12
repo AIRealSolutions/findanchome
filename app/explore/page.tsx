@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { ChevronRight, MapPin, Users, Home, ShoppingCart, Briefcase, Heart } from 'lucide-react';
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function ExplorePage() {
   const counties = [
@@ -177,6 +178,8 @@ export default function ExplorePage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Not Sure Which County Fits You?" />
 
       {/* Footer */}
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">

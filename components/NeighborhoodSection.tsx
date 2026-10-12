@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Flag, Hammer, MapPin } from 'lucide-react';
 import { getLifestyle } from '@/lib/lifestyles';
 import { getCommunityBySlug, communityPath } from '@/lib/communities';
+import { ConsultationButton } from './ConsultationLauncher';
 import { NEIGHBORHOODS_UPDATED, STATUS_LABELS, type Neighborhood } from '@/lib/neighborhoods';
 
 const STATUS_STYLES: Record<Neighborhood['status'], string> = {
@@ -55,7 +56,14 @@ export function NeighborhoodCard({ n, showNearest = true }: { n: Neighborhood; s
         ))}
       </ul>
 
-      <div className="mt-auto pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+      <ConsultationButton
+        context={{ counties: [n.county], neighborhoods: [n.slug], communities: n.near.slice(0, 1), lifestyles: n.lifestyles }}
+        className="mt-auto mb-3 w-full inline-flex justify-center items-center gap-2 border-2 border-[#1e3a8a] text-[#1e3a8a] hover:bg-[#1e3a8a] hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors"
+      >
+        Ask about {n.name}
+      </ConsultationButton>
+
+      <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
         {lifestyles.map((l) => (
           <Link key={l.slug} href={`/lifestyle/${l.slug}`} className="text-[#0ea5e9] hover:underline">
             <span aria-hidden>{l.emoji}</span> {l.name}

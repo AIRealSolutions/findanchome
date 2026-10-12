@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { BookOpen, DollarSign, Home, Users, TrendingUp, FileText } from 'lucide-react'
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function EducationPage() {
   const resources = [
@@ -148,6 +149,8 @@ export default function EducationPage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Ready to Put a Plan Together?" />
 
       {/* Footer */}
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12 mt-auto">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import ConsultationLauncher from "@/components/ConsultationLauncher";
 import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
@@ -35,6 +36,7 @@ export default function RootLayout({
       >
         <Providers>
           {children}
+          <ConsultationLauncher />
         </Providers>
       </body>
     </html>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
+import ConsultationCTA from '@/components/ConsultationCTA';
 import { getCommunitiesByCounty, communityPath } from '@/lib/communities';
 import { MapPin } from 'lucide-react';
 
@@ -65,20 +66,11 @@ export default function PenderPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 bg-gradient-to-r from-amber-500 to-yellow-400 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Find Your Home in Pender County?</h2>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/search" className="bg-[#1e3a8a] text-white px-8 py-3 rounded-lg hover:opacity-90 font-bold">
-              Search Pender Homes
-            </Link>
-            <Link href="/contact" className="bg-white/20 hover:bg-white/30 px-8 py-3 rounded-lg border border-white/40 font-bold">
-              Schedule Consultation
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ConsultationCTA
+        title="Ready to Find Your Home in Pender County?"
+        text="Tell us which towns, neighborhoods and lifestyles you're considering in Pender County, and we'll follow up with homes and a plan that fit your goals."
+        context={{ counties: ['pender'] }}
+      />
 
       {/* Footer */}
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">

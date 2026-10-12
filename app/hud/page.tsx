@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { Home, BookOpen, DollarSign, CheckCircle, ExternalLink, Bell, Globe } from 'lucide-react';
 import { usaHudHomes } from '@/lib/sisterSites';
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function HUDPage() {
   return (
@@ -103,6 +104,8 @@ export default function HUDPage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Get Help Buying a HUD Home" context={{ intent: ['hud'] }} />
 
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">

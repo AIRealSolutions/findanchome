@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { TrendingUp, Building2, Percent, Target } from 'lucide-react';
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function InvestmentsPage() {
   return (
@@ -46,6 +47,8 @@ export default function InvestmentsPage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Talk Through Your Investment Goals" context={{ intent: ['invest'], lifestyles: ['investment'] }} />
 
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">

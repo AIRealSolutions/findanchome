@@ -3,86 +3,32 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import ConsultationForm from '@/components/ConsultationForm';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: ''
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Form submission logic would go here
-    console.log('Form submitted:', formData);
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
 
       <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Get in Touch</h1>
-          <p className="text-xl opacity-90">Have questions? Let's talk about your real estate goals.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Request a Free Consultation</h1>
+          <p className="text-xl opacity-90">Have questions? Let&apos;s talk about your real estate goals and the areas you love.</p>
         </div>
       </section>
 
       <section className="py-16 bg-white flex-1">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="grid md:grid-cols-2 gap-12">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid lg:grid-cols-[1.6fr_1fr] gap-12">
             {/* Contact Form */}
             <div>
-              <h2 className="text-2xl font-bold text-[#1e3a8a] mb-6">Send a Message</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#1e3a8a] mb-2">Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent"
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1e3a8a] mb-2">Email</label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1e3a8a] mb-2">Phone</label>
-                  <input
-                    type="tel"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1e3a8a] mb-2">Message</label>
-                  <textarea
-                    rows={5}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent"
-                    value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white py-3 rounded-lg hover:opacity-90 font-bold transition-opacity"
-                >
-                  Send Message
-                </button>
-              </form>
+              <h2 className="text-2xl font-bold text-[#1e3a8a] mb-2">Request a Free Consultation</h2>
+              <p className="text-gray-600 mb-6">Tell us about your goals and the areas you&apos;re interested in, and we&apos;ll be in touch within one business day.</p>
+              <Suspense fallback={<ConsultationForm />}>
+                <ContactConsultationForm />
+              </Suspense>
             </div>
 
             {/* Contact Information */}
@@ -184,5 +130,22 @@ export default function ContactPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// Lets other pages deep-link with interests pre-selected, e.g. /contact?community=southport&neighborhood=st-james-plantation
+function ContactConsultationForm() {
+  const params = useSearchParams();
+  const get = (key: string) => params.getAll(key).flatMap((v) => v.split(',')).filter(Boolean);
+  return (
+    <ConsultationForm
+      context={{
+        counties: get('county'),
+        communities: get('community'),
+        neighborhoods: get('neighborhood'),
+        lifestyles: get('lifestyle'),
+        intent: get('intent'),
+      }}
+    />
   );
 }

@@ -5,6 +5,7 @@ import SiteFooter from '@/components/SiteFooter';
 import { ChevronRight } from 'lucide-react';
 import { lifestyles } from '@/lib/lifestyles';
 import { SITE_NAME, absoluteUrl } from '@/lib/site';
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 const title = 'Coastal NC Lifestyles: Beach, Golf, Waterfront & More';
 const description =
@@ -135,6 +136,8 @@ export default function LifestylePage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Not Sure Which Lifestyle Fits?" />
 
       <SiteFooter />
     </div>

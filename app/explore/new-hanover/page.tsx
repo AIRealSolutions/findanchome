@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
+import ConsultationCTA from '@/components/ConsultationCTA';
 import { getCommunitiesByCounty, communityPath } from '@/lib/communities';
 import { MapPin } from 'lucide-react';
 
@@ -62,19 +63,11 @@ export default function NewHanoverPage() {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-r from-purple-600 to-pink-500 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Find Your Home in New Hanover County?</h2>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/search" className="bg-[#fbbf24] text-[#1e3a8a] px-8 py-3 rounded-lg hover:opacity-90 font-bold">
-              Search New Hanover Homes
-            </Link>
-            <Link href="/contact" className="bg-white/20 hover:bg-white/30 px-8 py-3 rounded-lg border border-white/40 font-bold">
-              Schedule Consultation
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ConsultationCTA
+        title="Ready to Find Your Home in New Hanover County?"
+        text="Tell us which towns, neighborhoods and lifestyles you're considering in New Hanover County, and we'll follow up with homes and a plan that fit your goals."
+        context={{ counties: ['new-hanover'] }}
+      />
 
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">

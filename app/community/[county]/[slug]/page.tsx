@@ -5,6 +5,8 @@ import { ChevronRight, MapPin, CheckCircle2, AlertTriangle, Phone } from 'lucide
 import Navigation from '@/components/Navigation';
 import SiteFooter from '@/components/SiteFooter';
 import NeighborhoodSection from '@/components/NeighborhoodSection';
+import ConsultationCTA from '@/components/ConsultationCTA';
+import { ConsultationButton } from '@/components/ConsultationLauncher';
 import { getNeighborhoodsNear } from '@/lib/neighborhoods';
 import { communities, getCommunity, getCommunityBySlug, communityPath } from '@/lib/communities';
 import { getLifestyle, COUNTY_NAMES } from '@/lib/lifestyles';
@@ -155,12 +157,12 @@ export default async function CommunityDetailPage({ params }: Props) {
               >
                 Search {community.name} Homes <ChevronRight size={18} />
               </Link>
-              <Link
-                href="/contact"
+              <ConsultationButton
+                context={{ counties: [community.county], communities: [community.slug] }}
                 className="inline-flex justify-center items-center gap-2 bg-white/20 hover:bg-white/30 px-6 py-3 rounded-lg border border-white/40 font-bold"
               >
-                Talk to a Local Agent
-              </Link>
+                Request a Free Consultation
+              </ConsultationButton>
             </div>
           </div>
         </div>
@@ -320,6 +322,9 @@ export default async function CommunityDetailPage({ params }: Props) {
                   >
                     <Phone size={16} /> {BROKERAGE.phone}
                   </a>
+                  <a href="#consultation" className="mt-2 flex items-center justify-center bg-white/15 hover:bg-white/25 px-4 py-2 rounded-lg font-bold border border-white/30">
+                    Request a Consultation
+                  </a>
                 </div>
               </div>
             </aside>
@@ -327,23 +332,11 @@ export default async function CommunityDetailPage({ params }: Props) {
         </div>
       </main>
 
-      {/* CTA */}
-      <section className="py-16 bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h2 className="text-3xl font-bold mb-4">Ready to Find Your Home in {community.name}?</h2>
-          <p className="text-lg opacity-95 mb-8">
-            Let&apos;s talk about what you&apos;re looking for and find the right fit in {community.name} and the rest of {countyName}.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-8 py-3 rounded-lg hover:bg-[#fcd34d] font-bold">
-              Schedule a Free Consultation
-            </Link>
-            <Link href={`/explore/${community.county}`} className="bg-white/20 hover:bg-white/30 px-8 py-3 rounded-lg border border-white/40 font-bold">
-              Explore {countyName}
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ConsultationCTA
+        title={`Ready to Find Your Home in ${community.name}?`}
+        text={`Tell us what you're looking for in ${community.name} and the rest of ${countyName}, and ${BROKERAGE.agent} will follow up with homes, neighborhoods and next steps that fit.`}
+        context={{ counties: [community.county], communities: [community.slug] }}
+      />
 
       <SiteFooter />
     </div>

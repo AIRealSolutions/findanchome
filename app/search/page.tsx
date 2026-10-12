@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { Search, MapPin, DollarSign, Home } from 'lucide-react';
 import { useState } from 'react';
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function SearchPage() {
   const [filters, setFilters] = useState({
@@ -161,6 +162,8 @@ export default function SearchPage() {
           </Link>
         </div>
       </section>
+
+      <ConsultationCTA title="Can't Find the Right Home?" />
 
       {/* Footer */}
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">

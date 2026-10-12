@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { BookOpen, Users, Home, FileText } from 'lucide-react';
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function BuyersPage() {
   return (
@@ -48,6 +49,8 @@ export default function BuyersPage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Start Your Home Search With a Plan" context={{ intent: ['buy'] }} />
 
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">

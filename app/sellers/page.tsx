@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { Home, Hammer, TrendingUp, FileText } from 'lucide-react';
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function SellersPage() {
   return (
@@ -43,6 +44,8 @@ export default function SellersPage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Thinking About Selling?" context={{ intent: ['sell'] }} />
 
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">

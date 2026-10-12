@@ -5,6 +5,7 @@ import { Search, Map, Heart, Home, DollarSign, Users, BookOpen, ChevronRight, Ex
 import Navigation from '@/components/Navigation'
 import { usaHudHomes } from '@/lib/sisterSites'
 import { useState } from 'react'
+import ConsultationCTA from '@/components/ConsultationCTA';
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -275,6 +276,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ConsultationCTA title="Let's Find Your Place in Southeastern NC" />
 
       {/* Footer */}
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">

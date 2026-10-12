@@ -9,6 +9,8 @@ import { BROKERAGE, SITE_NAME, absoluteUrl } from '@/lib/site';
 import { usaHudHomes } from '@/lib/sisterSites';
 import { findCommunityByName, communityPath } from '@/lib/communities';
 import NeighborhoodSection from '@/components/NeighborhoodSection';
+import ConsultationCTA from '@/components/ConsultationCTA';
+import { ConsultationButton } from '@/components/ConsultationLauncher';
 import { getNeighborhoodsForLifestyle } from '@/lib/neighborhoods';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -148,12 +150,12 @@ export default async function LifestyleDetailPage({ params }: Props) {
               >
                 Search Homes <ChevronRight size={18} />
               </Link>
-              <Link
-                href="/contact"
+              <ConsultationButton
+                context={{ lifestyles: [lifestyle.slug] }}
                 className="inline-flex justify-center items-center gap-2 bg-white/20 hover:bg-white/30 px-6 py-3 rounded-lg border border-white/40 font-bold"
               >
-                Talk to a Local Agent
-              </Link>
+                Request a Free Consultation
+              </ConsultationButton>
             </div>
           </div>
         </div>
@@ -345,6 +347,9 @@ export default async function LifestyleDetailPage({ params }: Props) {
                   >
                     <Phone size={16} /> {BROKERAGE.phone}
                   </a>
+                  <a href="#consultation" className="mt-2 flex items-center justify-center bg-white/15 hover:bg-white/25 px-4 py-2 rounded-lg font-bold border border-white/30">
+                    Request a Consultation
+                  </a>
                 </div>
               </div>
             </aside>
@@ -352,21 +357,7 @@ export default async function LifestyleDetailPage({ params }: Props) {
         </div>
       </main>
 
-      {/* CTA */}
-      <section className="py-16 bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h2 className="text-3xl font-bold mb-4">{lifestyle.ctaTitle}</h2>
-          <p className="text-lg opacity-95 mb-8">{lifestyle.ctaText}</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-8 py-3 rounded-lg hover:bg-[#fcd34d] font-bold">
-              Schedule a Free Consultation
-            </Link>
-            <Link href="/search" className="bg-white/20 hover:bg-white/30 px-8 py-3 rounded-lg border border-white/40 font-bold">
-              Search Homes
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ConsultationCTA title={lifestyle.ctaTitle} text={lifestyle.ctaText} context={{ lifestyles: [lifestyle.slug] }} />
 
       <SiteFooter />
     </div>
