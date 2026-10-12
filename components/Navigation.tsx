@@ -23,7 +23,7 @@ export default function Navigation() {
   ];
 
   const authItems = [
-    { label: 'Login', href: '/auth/login', isAuth: true },
+    { label: 'Login', href: '/login', isAuth: true },
     { label: 'Sign Up', href: '/auth/signup', isAuthButton: true },
   ];
 

@@ -31,7 +31,7 @@ export function ConsultationButton({
 }
 
 // No floating button in the back office, auth screens, or the contact page (which has the form inline).
-const HIDDEN_PREFIXES = ['/admin', '/dashboard', '/crm', '/auth', '/login', '/debug', '/contact'];
+const HIDDEN_PREFIXES = ['/admin', '/dashboard', '/crm', '/auth', '/login', '/forgot-password', '/reset-password', '/debug', '/contact'];
 
 /** Site-wide floating "Free Consultation" button and pop-up form. Mounted once in the root layout. */
 export default function ConsultationLauncher() {
