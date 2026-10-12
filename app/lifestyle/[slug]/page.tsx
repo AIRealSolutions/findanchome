@@ -8,6 +8,8 @@ import { lifestyles, getLifestyle, COUNTY_NAMES } from '@/lib/lifestyles';
 import { BROKERAGE, SITE_NAME, absoluteUrl } from '@/lib/site';
 import { usaHudHomes } from '@/lib/sisterSites';
 import { findCommunityByName, communityPath } from '@/lib/communities';
+import NeighborhoodSection from '@/components/NeighborhoodSection';
+import { getNeighborhoodsForLifestyle } from '@/lib/neighborhoods';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -54,9 +56,12 @@ export default async function LifestyleDetailPage({ params }: Props) {
     .map((s) => getLifestyle(s))
     .filter((l): l is NonNullable<typeof l> => Boolean(l));
 
+  const neighborhoods = getNeighborhoodsForLifestyle(lifestyle.slug);
+
   const toc = [
     { id: 'overview', label: 'Overview' },
     { id: 'communities', label: lifestyle.communitiesHeading },
+    ...(neighborhoods.length > 0 ? [{ id: 'neighborhoods', label: 'Brunswick County Neighborhoods' }] : []),
     { id: 'living', label: lifestyle.livingHeading },
     { id: 'before-you-buy', label: lifestyle.considerationsHeading },
     { id: 'faq', label: 'Frequently Asked Questions' },
@@ -210,6 +215,17 @@ export default async function LifestyleDetailPage({ params }: Props) {
                   })}
                 </div>
               </section>
+
+              {/* Brunswick County neighborhoods */}
+              {neighborhoods.length > 0 && (
+                <section id="neighborhoods" className="scroll-mt-24 mb-14">
+                  <NeighborhoodSection
+                    neighborhoods={neighborhoods}
+                    title={`Brunswick County Neighborhoods for ${lifestyle.name}`}
+                    intro="Specific Brunswick County communities that fit this lifestyle, with golf courses, builders and amenities at a glance."
+                  />
+                </section>
+              )}
 
               {/* Living */}
               <section id="living" className="scroll-mt-24 mb-14">

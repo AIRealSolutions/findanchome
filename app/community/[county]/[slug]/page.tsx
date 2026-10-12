@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import { ChevronRight, MapPin, CheckCircle2, AlertTriangle, Phone } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import SiteFooter from '@/components/SiteFooter';
+import NeighborhoodSection from '@/components/NeighborhoodSection';
+import { getNeighborhoodsNear } from '@/lib/neighborhoods';
 import { communities, getCommunity, getCommunityBySlug, communityPath } from '@/lib/communities';
 import { getLifestyle, COUNTY_NAMES } from '@/lib/lifestyles';
 import { BROKERAGE, SITE_NAME, absoluteUrl } from '@/lib/site';
@@ -56,11 +58,13 @@ export default async function CommunityDetailPage({ params }: Props) {
   const nearby = community.nearby
     .map((s) => getCommunityBySlug(s))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
+  const neighborhoods = getNeighborhoodsNear(community.slug);
 
   const toc = [
     { id: 'overview', label: 'Overview' },
     { id: 'highlights', label: `Why People Love ${community.name}` },
     { id: 'housing', label: 'Homes & Real Estate' },
+    ...(neighborhoods.length > 0 ? [{ id: 'neighborhoods', label: 'Golf & New Construction' }] : []),
     { id: 'before-you-buy', label: 'Before You Buy' },
     { id: 'faq', label: 'Frequently Asked Questions' },
   ];
@@ -227,6 +231,18 @@ export default async function CommunityDetailPage({ params }: Props) {
                   </div>
                 )}
               </section>
+
+              {/* Golf & new construction neighborhoods */}
+              {neighborhoods.length > 0 && (
+                <section id="neighborhoods" className="scroll-mt-24 mb-14">
+                  <NeighborhoodSection
+                    neighborhoods={neighborhoods}
+                    title={`Golf & New Construction Near ${community.name}`}
+                    intro={`Neighborhoods near ${community.name} worth a look, from golf course communities to new homes from local and national builders.`}
+                    showNearest={false}
+                  />
+                </section>
+              )}
 
               {/* Before you buy */}
               <section id="before-you-buy" className="scroll-mt-24 mb-14">

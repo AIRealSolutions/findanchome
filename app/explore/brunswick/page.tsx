@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { getCommunitiesByCounty, communityPath } from '@/lib/communities';
 import { MapPin } from 'lucide-react';
+import NeighborhoodSection from '@/components/NeighborhoodSection';
+import { getNeighborhoodsByCounty } from '@/lib/neighborhoods';
 
 export default function BrunswickPage() {
   const communities = getCommunitiesByCounty('brunswick');
@@ -59,6 +61,16 @@ export default function BrunswickPage() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="new-construction" className="py-16 bg-gradient-to-br from-green-50 to-teal-50 scroll-mt-24">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <NeighborhoodSection
+            neighborhoods={getNeighborhoodsByCounty('brunswick')}
+            title="New Construction & Golf Communities in Brunswick County"
+            intro="Brunswick County is one of the fastest-growing counties in North Carolina, with master-planned golf communities, 55+ neighborhoods and new home builders from Leland to Calabash. Here are the communities buyers ask us about most."
+          />
         </div>
       </section>
 

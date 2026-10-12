@@ -521,7 +521,7 @@ export const communities: Community[] = [
       { question: 'Is Wilmington a good place to retire?', answer: 'Many retirees choose Wilmington for its mild climate, health care, cultural amenities, and proximity to the beach.' },
     ],
     lifestyles: ['historic', 'waterfront', 'retirement', 'first-time'],
-    nearby: ['wrightsville-beach', 'landfall', 'carolina-beach', 'hampstead'],
+    nearby: ['leland', 'wrightsville-beach', 'landfall', 'carolina-beach'],
   },
   {
     slug: 'wrightsville-beach',
@@ -699,6 +699,50 @@ export const communities: Community[] = [
 
   // ───────────────────────── Brunswick County ─────────────────────────
   {
+    slug: 'leland',
+    county: 'brunswick',
+    name: 'Leland',
+    type: 'Town',
+    population: '~23,500',
+    summary: 'Fast-growing town across the river from Wilmington with master-planned golf communities and lots of new construction.',
+    tagline: 'Brunswick County\'s new construction hub, minutes from downtown Wilmington',
+    seoTitle: 'Leland NC Homes for Sale & New Construction Guide',
+    metaDescription:
+      'Living in Leland, NC: Brunswick Forest, Compass Pointe, Del Webb and other new home communities, golf, schools, and a 15-minute commute to Wilmington.',
+    quickFacts: [
+      { label: 'Population', value: '~23,500' },
+      { label: 'To downtown Wilmington', value: '~15 minutes' },
+      { label: 'Schools', value: 'Brunswick County Schools' },
+      { label: 'Main routes', value: 'US 17, US 74/76 & I-140' },
+    ],
+    overview: [
+      'Leland sits just across the Cape Fear River from downtown Wilmington and has become one of the fastest-growing towns in North Carolina. Buyers come for newer homes, Brunswick County\'s lower property taxes compared with New Hanover, and a commute that can be shorter than driving across Wilmington itself.',
+      'Much of the growth is in large master-planned communities such as Brunswick Forest, Compass Pointe and Del Webb at Mallory Creek, with golf, resort-style pools, trails and clubhouses. Shopping and dining along US 17 and Village Road have grown with them, and the Brunswick County beaches are about 30–40 minutes south.',
+    ],
+    highlights: [
+      { title: 'Close to Wilmington', text: 'Downtown Wilmington, the Riverwalk and Wilmington International Airport are a short drive across the river.' },
+      { title: 'Master-planned communities', text: 'Golf, lazy rivers, fitness centers, trails and lifestyle programming in communities like Brunswick Forest and Compass Pointe.' },
+      { title: 'New construction choice', text: 'National and regional builders offer everything from first homes to 55+ active adult living.' },
+      { title: 'Brunswick County taxes', text: 'Many buyers find Brunswick County property taxes lower than in New Hanover County.' },
+    ],
+    housing: [
+      'Most Leland buyers are shopping new construction or homes built in the last 20 years. Options run from townhomes and first homes in smaller subdivisions to golf course homes and 55+ communities with full amenity packages.',
+      'Older neighborhoods such as Magnolia Greens and Westport offer more established landscaping and often lower prices than brand-new homes.',
+    ],
+    considerations: [
+      { title: 'Bridge traffic', text: 'Commutes into Wilmington cross the Cape Fear Memorial Bridge or the I-140 bridge. Rush hour and bridge work can add time.' },
+      { title: 'HOA and amenity fees', text: 'Master-planned communities carry HOA dues, and golf or club memberships are often separate. Compare total monthly costs.' },
+      { title: 'Builder contracts', text: 'New construction contracts favor the builder. Having your own agent at the first visit helps protect you on price, upgrades and inspections.' },
+    ],
+    faqs: [
+      { question: 'How far is Leland from Wilmington?', answer: 'Downtown Wilmington is about 15 minutes from much of Leland, depending on traffic over the bridges.' },
+      { question: 'What are the main new construction communities in Leland?', answer: 'Brunswick Forest, Compass Pointe, Del Webb Wilmington at Mallory Creek, Terrapin and East Lake are among the active communities, along with several smaller subdivisions.' },
+      { question: 'Does Leland have golf communities?', answer: 'Yes. Brunswick Forest (Cape Fear National), Compass Pointe (The Pointe) and Magnolia Greens all have golf courses.' },
+    ],
+    lifestyles: ['new-construction', 'golf', 'retirement', 'first-time'],
+    nearby: ['wilmington', 'southport', 'rocky-point'],
+  },
+  {
     slug: 'southport',
     county: 'brunswick',
     name: 'Southport',
@@ -739,7 +783,7 @@ export const communities: Community[] = [
       { question: 'How far is Southport from Wilmington?', answer: 'About 45 minutes by car, or you can take the Fort Fisher ferry.' },
     ],
     lifestyles: ['historic', 'retirement', 'golf', 'waterfront'],
-    nearby: ['oak-island', 'kure-beach', 'holden-beach'],
+    nearby: ['oak-island', 'leland', 'kure-beach', 'holden-beach'],
   },
   {
     slug: 'oak-island',
