@@ -7,6 +7,7 @@ import SiteFooter from '@/components/SiteFooter';
 import { lifestyles, getLifestyle, COUNTY_NAMES } from '@/lib/lifestyles';
 import { BROKERAGE, SITE_NAME, absoluteUrl } from '@/lib/site';
 import { usaHudHomes } from '@/lib/sisterSites';
+import { findCommunityByName, communityPath } from '@/lib/communities';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -185,9 +186,13 @@ export default async function LifestyleDetailPage({ params }: Props) {
               <section id="communities" className="scroll-mt-24 mb-14">
                 <h2 className="text-2xl md:text-3xl font-bold text-[#1e3a8a] mb-6">{lifestyle.communitiesHeading}</h2>
                 <div className="grid md:grid-cols-2 gap-5">
-                  {lifestyle.communities.map((c) => (
+                  {lifestyle.communities.map((c) => {
+                    const guide = findCommunityByName(c.county, c.name);
+                    return (
                     <div key={c.name} className="p-5 bg-sky-50 border border-sky-100 rounded-lg">
-                      <h3 className="font-bold text-lg text-[#1e3a8a] mb-1">{c.name}</h3>
+                      <h3 className="font-bold text-lg text-[#1e3a8a] mb-1">
+                        {guide ? <Link href={communityPath(guide)} className="hover:text-[#0ea5e9]">{c.name}</Link> : c.name}
+                      </h3>
                       <Link
                         href={`/explore/${c.county}`}
                         className="inline-flex items-center gap-1 text-sm text-[#0ea5e9] hover:underline mb-3"
@@ -195,8 +200,14 @@ export default async function LifestyleDetailPage({ params }: Props) {
                         <MapPin size={14} /> {COUNTY_NAMES[c.county]}
                       </Link>
                       <p className="text-gray-700 text-sm leading-relaxed">{c.description}</p>
+                      {guide && (
+                        <Link href={communityPath(guide)} className="inline-block mt-3 text-sm font-semibold text-[#0ea5e9] hover:underline">
+                          {c.name} community guide →
+                        </Link>
+                      )}
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
 

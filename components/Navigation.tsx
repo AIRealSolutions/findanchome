@@ -2,10 +2,9 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, Phone, MessageCircle, ExternalLink } from 'lucide-react';
+import { Menu, X, Phone, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import LanternLogo from './LanternLogo';
-import { usaHudHomes } from '@/lib/sisterSites';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,21 +29,6 @@ export default function Navigation() {
 
   return (
     <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
-      {/* Sister site bar */}
-      <div className="bg-[#0c4a6e] text-xs sm:text-sm">
-        <div className="container mx-auto px-4 py-1.5 flex items-center justify-center gap-2 text-center">
-          <span className="opacity-90">Looking for HUD homes anywhere in the U.S.?</span>
-          <a
-            href={usaHudHomes.home('nav_bar')}
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center gap-1 font-semibold text-[#fbbf24] hover:text-[#fcd34d] transition-colors whitespace-nowrap"
-          >
-            Visit our sister site USAhudhomes.com
-            <ExternalLink size={14} />
-          </a>
-        </div>
-      </div>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           {/* Logo and Site Name */}

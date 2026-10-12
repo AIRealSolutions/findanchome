@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { lifestyles } from '@/lib/lifestyles';
+import { communities, communityPath } from '@/lib/communities';
 import { absoluteUrl } from '@/lib/site';
 
 const staticPaths = [
@@ -29,6 +30,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...lifestyles.map((l) => ({
       url: absoluteUrl(`/lifestyle/${l.slug}`),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+    ...communities.map((c) => ({
+      url: absoluteUrl(communityPath(c)),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),

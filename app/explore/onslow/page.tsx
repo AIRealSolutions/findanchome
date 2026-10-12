@@ -2,36 +2,11 @@
 
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
+import { getCommunitiesByCounty, communityPath } from '@/lib/communities';
 import { ChevronRight, MapPin, Briefcase, ShoppingCart, Home, Users } from 'lucide-react';
 
 export default function OnslowPage() {
-  const communities = [
-    {
-      name: "Jacksonville",
-      description: "County seat and largest city, home to Camp Lejeune. Offers urban amenities with military family focus.",
-      population: "~70,000"
-    },
-    {
-      name: "Swansboro",
-      description: "Historic coastal town with charming downtown, waterfront dining, and beach access.",
-      population: "~2,500"
-    },
-    {
-      name: "North Topsail Beach",
-      description: "Quiet beach community perfect for families. Pristine beaches and residential neighborhoods.",
-      population: "~1,200"
-    },
-    {
-      name: "Sneads Ferry",
-      description: "Small coastal village with beach access, fishing opportunities, and outdoor recreation.",
-      population: "~2,000"
-    },
-    {
-      name: "Richlands",
-      description: "Inland community offering more affordable options with rural charm and local amenities.",
-      population: "~1,000"
-    }
-  ];
+  const communities = getCommunitiesByCounty('onslow');
 
   const lifestyle_highlights = [
     {
@@ -118,16 +93,16 @@ export default function OnslowPage() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-[#1e3a8a] mb-12 text-center">Key Communities</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {communities.map((community, idx) => (
+            {communities.map((community) => (
               <Link
-                key={idx}
-                href={`/community/onslow/${community.name.toLowerCase().replace(/\s+/g, '-')}`}
+                key={community.slug}
+                href={communityPath(community)}
                 className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 hover:border-[#0ea5e9] rounded-lg hover:shadow-lg transition-all group"
               >
                 <MapPin className="w-5 h-5 text-[#0ea5e9] mb-3" />
                 <h3 className="font-bold text-xl text-[#1e3a8a] mb-2 group-hover:text-[#0ea5e9]">{community.name}</h3>
-                <p className="text-gray-700 mb-3">{community.description}</p>
-                <div className="text-sm text-gray-600">Population: {community.population}</div>
+                <p className="text-gray-700 mb-3">{community.summary}</p>
+                <div className="text-sm text-gray-600">{community.population.startsWith('~') ? `Population: ${community.population}` : community.type}</div>
               </Link>
             ))}
           </div>

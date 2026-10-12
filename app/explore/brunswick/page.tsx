@@ -2,16 +2,11 @@
 
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
+import { getCommunitiesByCounty, communityPath } from '@/lib/communities';
 import { MapPin } from 'lucide-react';
 
 export default function BrunswickPage() {
-  const communities = [
-    { name: "Southport", description: "Historic port town with charming downtown, riverfront dining, and cultural appeal.", population: "~3,500" },
-    { name: "Oak Island", description: "Family-friendly beach community with golf courses and waterfront living.", population: "~7,500" },
-    { name: "Holden Beach", description: "Quiet residential beach community perfect for families and retirees.", population: "~750" },
-    { name: "Ocean Isle Beach", description: "Upscale beach community with excellent golf and resort amenities.", population: "~600" },
-    { name: "Sunset Beach", description: "Small exclusive community with bridge access and residential charm.", population: "~350" }
-  ];
+  const communities = getCommunitiesByCounty('brunswick');
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -54,13 +49,14 @@ export default function BrunswickPage() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-[#1e3a8a] mb-12 text-center">Key Communities</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {communities.map((community, idx) => (
-              <div key={idx} className="p-6 bg-green-50 border-2 border-green-200 rounded-lg hover:shadow-lg transition-all">
+            {communities.map((community) => (
+              <Link key={community.slug} href={communityPath(community)} className="block p-6 bg-green-50 border-2 border-green-200 rounded-lg hover:shadow-lg transition-all group">
                 <MapPin className="w-5 h-5 text-[#0ea5e9] mb-3" />
-                <h3 className="font-bold text-xl text-[#1e3a8a] mb-2">{community.name}</h3>
-                <p className="text-gray-700 mb-3">{community.description}</p>
-                <div className="text-sm text-gray-600">Population: {community.population}</div>
-              </div>
+                <h3 className="font-bold text-xl text-[#1e3a8a] mb-2 group-hover:text-[#0ea5e9]">{community.name}</h3>
+                <p className="text-gray-700 mb-3">{community.summary}</p>
+                <div className="text-sm text-gray-600">{community.population.startsWith('~') ? `Population: ${community.population}` : community.type}</div>
+                <div className="mt-3 text-sm font-semibold text-[#0ea5e9]">Explore {community.name} →</div>
+              </Link>
             ))}
           </div>
         </div>
