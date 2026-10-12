@@ -32,6 +32,21 @@ export default function ResetPasswordPage() {
       return () => clearTimeout(t);
     }
 
+    // Links sent from the Supabase dashboard use tokens in the URL hash instead of a code.
+    const accessToken = hash.get('access_token');
+    const refreshToken = hash.get('refresh_token');
+    if (accessToken && refreshToken) {
+      supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(({ error: err }) => {
+        window.history.replaceState(null, '', window.location.pathname);
+        if (err) {
+          setError(err.message);
+          setStatus('invalid');
+        } else {
+          setStatus('ready');
+        }
+      });
+    }
+
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (session && (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
         setStatus((s) => (s === 'checking' ? 'ready' : s));

@@ -54,6 +54,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null);
 
   useEffect(() => {
+    // Password reset emails can land on any page (Supabase falls back to the Site URL when the
+    // requested redirect isn't on its allow list). Send recovery links to the reset page.
+    const onResetPage = window.location.pathname === '/reset-password';
+    const hash = window.location.hash;
+    if (!onResetPage && /(^#|&)(type=recovery|error_code=)/.test(hash)) {
+      window.location.replace(`/reset-password${window.location.search}${hash}`);
+      return;
+    }
+
     // Initialize Supabase client only after component mounts
     try {
       supabaseRef.current = createClient();
@@ -81,7 +90,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' && window.location.pathname !== '/reset-password') {
+        window.location.assign('/reset-password');
+        return;
+      }
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
