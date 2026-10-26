@@ -11,6 +11,7 @@ import {
   BuildingOfficeIcon,
   InboxStackIcon,
   UserGroupIcon,
+  CalendarDaysIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -71,6 +72,7 @@ export default function DashboardLayout({
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['admin', 'broker', 'client'] },
     { name: 'Leads', href: '/dashboard/leads', icon: InboxStackIcon, roles: ['admin', 'broker'], badge: newLeads },
     { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
+    { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarDaysIcon, roles: ['admin', 'broker'] },
     { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon, roles: ['admin', 'broker'] },
   ];
 

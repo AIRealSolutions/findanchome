@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Phone, MessageCircle, Mail, CalendarClock, Pencil, Trash2, Cake, Home, Plus } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import ClientDates from '@/components/ClientDates';
 import { createClient } from '@/lib/supabase/client';
 import { ACTIVITY_KINDS, dialable, formatDateTime, relativeTime, toLocalInput } from '@/lib/leads';
 import { NO_YEAR, cleanEmail, cleanPhone, cleanState, splitList } from '@/lib/client-import';
@@ -263,6 +264,7 @@ export default function ClientDetailPage() {
   }
 
   const dates = upcomingDates(client, 30);
+  const lastClosing = transactions.map((t) => t.closing_date).filter(Boolean).sort().pop() ?? null;
   const d = (k: string) => draft[k] ?? '';
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setDraft({ ...draft, [k]: e.target.value });
   const address = [client.address_line1, client.address_line2].filter(Boolean).join(', ');
@@ -400,6 +402,8 @@ export default function ClientDetailPage() {
               )}
             </Section>
           )}
+
+          <ClientDates clientId={client.id} suggestedWarrantyEnd={lastClosing && `${+lastClosing.slice(0, 4) + 1}${lastClosing.slice(4, 10)}`} />
 
           <Section title="Closed transactions" action={
             !txn && <button onClick={() => setTxn({ ...emptyTxn, property_address: client.address_line1 ?? '', city: client.city ?? '', zip_code: client.zip_code ?? '' })}

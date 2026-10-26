@@ -167,6 +167,26 @@ export default function ClientImportPage() {
         closings += part.length;
       }
 
+      // Important dates (wedding anniversaries), skipping kinds the client already has.
+      const updateIds = [...new Set(plan.filter((p) => p.action === 'update' && p.dates.length).map((p) => p.id!))];
+      const haveKinds = new Set<string>();
+      for (const ids of chunks(updateIds, 100)) {
+        const { data, error: e } = await supabase.from('fanc_client_dates').select('client_id, kind').in('client_id', ids);
+        if (e) throw e;
+        (data ?? []).forEach((d) => haveKinds.add(`${d.client_id}|${d.kind}`));
+      }
+      const dateRows: Record<string, unknown>[] = [];
+      creates.forEach((p, i) => p.dates.forEach((d) => dateRows.push({ ...d, client_id: newRows[i].id })));
+      plan.filter((p) => p.action === 'update').forEach((p) => p.dates.forEach((d) => {
+        if (haveKinds.has(`${p.id}|${d.kind}`)) return;
+        haveKinds.add(`${p.id}|${d.kind}`);
+        dateRows.push({ ...d, client_id: p.id });
+      }));
+      for (const part of chunks(dateRows)) {
+        const { error: e } = await supabase.from('fanc_client_dates').insert(part);
+        if (e) throw e;
+      }
+
       // Timeline entries.
       const note = (body: string, clientId: string) => ({ client_id: clientId, kind: 'import', body, author_id: user.id, author_name: authorName });
       const activity = [
