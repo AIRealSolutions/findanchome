@@ -10,6 +10,7 @@ import { CLIENT_STATUSES, clientName, fetchAllClients, type ClientImport, type C
 import {
   IMPORT_FIELDS,
   autoMap,
+  decodeFile,
   hasTransaction,
   parseCsv,
   planImport,
@@ -39,7 +40,7 @@ export default function ClientImportPage() {
   const [fileName, setFileName] = useState('');
   const [csv, setCsv] = useState<ParsedCsv | null>(null);
   const [mapping, setMapping] = useState<FieldMapping>({});
-  const [status, setStatus] = useState<ClientStatus>('past_client');
+  const [status, setStatus] = useState<ClientStatus>('prospect');
   const [tag, setTag] = useState(`Flexmls import ${new Date().toISOString().slice(0, 10)}`);
   const [mode, setMode] = useState<MergeMode>('fill');
   const [plan, setPlan] = useState<PlannedRow[]>([]);
@@ -63,7 +64,7 @@ export default function ClientImportPage() {
 
   const readFile = async (file: File) => {
     setError('');
-    const text = await file.text();
+    const text = decodeFile(await file.arrayBuffer());
     const parsed = parseCsv(text);
     if (parsed.headers.length === 0 || parsed.rows.length === 0) {
       setError('That file has no rows. Export your contacts from Flexmls as a CSV file and try again.');
@@ -313,7 +314,8 @@ export default function ClientImportPage() {
               </select>
             </label>
             <p className="md:col-span-3 text-gray-500">
-              Existing clients are matched by Flexmls ID, then email, then phone number + last name. Tags are always added and notes appended;
+              Existing clients are matched by Flexmls ID, then email, then phone number + last name. Contacts in a Flexmls group like &quot;Bought&quot;, &quot;Closed&quot; or &quot;Past Client&quot; are marked Past client
+              whatever status you pick. Tags are always added and notes appended;
               status and do-not-contact flags you&apos;ve set are never changed.
             </p>
           </section>

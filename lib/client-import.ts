@@ -11,6 +11,15 @@ export interface ParsedCsv {
   rows: Record<string, string>[];
 }
 
+/** File text as UTF-8, falling back to Windows-1252 (what Excel and many CRM exports write). */
+export function decodeFile(buf: ArrayBuffer) {
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(buf);
+  } catch {
+    return new TextDecoder('windows-1252').decode(buf);
+  }
+}
+
 /** RFC 4180 CSV (quoted fields, embedded commas/newlines, "" escapes). Tab-separated files are detected too. */
 export function parseCsv(text: string): ParsedCsv {
   const src = text.replace(/^﻿/, '');
@@ -65,33 +74,37 @@ export function parseCsv(text: string): ParsedCsv {
 
 export type FieldKey =
   | 'flexmls_id' | 'full_name' | 'first_name' | 'last_name' | 'email' | 'secondary_email'
-  | 'mobile_phone' | 'home_phone' | 'work_phone' | 'address_line1' | 'address_line2' | 'city' | 'state' | 'zip_code'
-  | 'company' | 'spouse_name' | 'birthday' | 'home_anniversary' | 'lead_type' | 'tags' | 'notes' | 'source_created_at'
+  | 'primary_phone' | 'mobile_phone' | 'home_phone' | 'work_phone' | 'address_line1' | 'address_line2' | 'city' | 'state' | 'zip_code'
+  | 'company' | 'spouse_name' | 'spouse_last_name' | 'birthday' | 'home_anniversary' | 'lead_type' | 'tags' | 'notes' | 'other_info' | 'referred_by' | 'source_created_at'
   | 'closing_date' | 'sale_price' | 'mls_number' | 'transaction_address';
 
 export const IMPORT_FIELDS: { key: FieldKey; label: string; group: 'Contact' | 'Address' | 'Details' | 'Closed sale'; aliases: string[] }[] = [
   { key: 'first_name', label: 'First name', group: 'Contact', aliases: ['firstname', 'first', 'givenname', 'fname', 'contactfirstname', 'buyerfirstname'] },
   { key: 'last_name', label: 'Last name', group: 'Contact', aliases: ['lastname', 'last', 'familyname', 'surname', 'lname', 'contactlastname', 'buyerlastname'] },
-  { key: 'full_name', label: 'Full name (split automatically)', group: 'Contact', aliases: ['name', 'fullname', 'displayname', 'contactname', 'contact', 'clientname'] },
+  { key: 'full_name', label: 'Full name (split automatically)', group: 'Contact', aliases: ['name', 'fullname', 'displayname', 'primaryname', 'contactname', 'contact', 'clientname'] },
   { key: 'email', label: 'Email', group: 'Contact', aliases: ['email', 'emailaddress', 'primaryemail', 'email1', 'emailaddress1', 'personalemail', 'homeemail'] },
   { key: 'secondary_email', label: 'Second email', group: 'Contact', aliases: ['secondaryemail', 'email2', 'emailaddress2', 'alternateemail', 'otheremail', 'workemail', 'tertiaryemail'] },
-  { key: 'mobile_phone', label: 'Mobile phone', group: 'Contact', aliases: ['mobilephone', 'mobile', 'cellphone', 'cell', 'mobilephonenumber', 'cellphonenumber', 'phone', 'phonenumber', 'primaryphone'] },
+  { key: 'primary_phone', label: 'Primary phone', group: 'Contact', aliases: ['phoneprimary', 'primaryphone', 'phone', 'phonenumber', 'phone1', 'mainphone'] },
+  { key: 'mobile_phone', label: 'Mobile phone', group: 'Contact', aliases: ['phonemobile', 'mobilephone', 'mobile', 'cellphone', 'cell', 'mobilephonenumber', 'cellphonenumber'] },
   { key: 'home_phone', label: 'Home phone', group: 'Contact', aliases: ['homephone', 'home', 'homephonenumber', 'phone2', 'otherphone', 'otherphonenumber'] },
   { key: 'work_phone', label: 'Work phone', group: 'Contact', aliases: ['workphone', 'work', 'businessphone', 'officephone', 'workphonenumber'] },
-  { key: 'address_line1', label: 'Street address', group: 'Address', aliases: ['address', 'streetaddress', 'address1', 'addressline1', 'homeaddress', 'homestreetaddress', 'mailingaddress', 'street', 'homestreet', 'homeaddress1'] },
-  { key: 'address_line2', label: 'Address line 2', group: 'Address', aliases: ['address2', 'addressline2', 'unit', 'apt', 'suite', 'homeaddress2'] },
-  { key: 'city', label: 'City', group: 'Address', aliases: ['city', 'homecity', 'homelocality', 'locality', 'mailingcity', 'town'] },
-  { key: 'state', label: 'State', group: 'Address', aliases: ['state', 'homestate', 'homeregion', 'region', 'stateorprovince', 'mailingstate', 'province'] },
-  { key: 'zip_code', label: 'Zip', group: 'Address', aliases: ['zip', 'zipcode', 'postalcode', 'homezip', 'homepostalcode', 'mailingzip', 'postcode', 'zip5'] },
+  { key: 'address_line1', label: 'Street address', group: 'Address', aliases: ['address', 'streetaddress', 'address1', 'addressline1', 'homeaddress', 'homestreetaddress', 'mailingaddress', 'street', 'homestreet', 'homeaddress1', 'addresshomestreet1', 'addresshomestreet', 'addresshome'] },
+  { key: 'address_line2', label: 'Address line 2', group: 'Address', aliases: ['address2', 'addressline2', 'unit', 'apt', 'suite', 'homeaddress2', 'addresshomestreet2'] },
+  { key: 'city', label: 'City', group: 'Address', aliases: ['city', 'homecity', 'addresshomecity', 'homelocality', 'locality', 'mailingcity', 'town'] },
+  { key: 'state', label: 'State', group: 'Address', aliases: ['state', 'homestate', 'addresshomestate', 'homeregion', 'region', 'stateorprovince', 'mailingstate', 'province'] },
+  { key: 'zip_code', label: 'Zip', group: 'Address', aliases: ['zip', 'zipcode', 'postalcode', 'homezip', 'addresshomezip', 'addresshomepostalcode', 'homepostalcode', 'mailingzip', 'postcode', 'zip5'] },
   { key: 'company', label: 'Company', group: 'Details', aliases: ['company', 'companyname', 'organization', 'business', 'employer'] },
   { key: 'spouse_name', label: 'Spouse / partner', group: 'Details', aliases: ['spouse', 'spousename', 'partner', 'spousepartner', 'significantother', 'cobuyer', 'spousefirstname'] },
+  { key: 'spouse_last_name', label: 'Spouse last name', group: 'Details', aliases: ['spouselastname', 'partnerlastname'] },
   { key: 'birthday', label: 'Birthday', group: 'Details', aliases: ['birthday', 'birthdate', 'dateofbirth', 'dob', 'bday'] },
-  { key: 'home_anniversary', label: 'Home anniversary', group: 'Details', aliases: ['anniversary', 'homeanniversary', 'purchaseanniversary', 'closeanniversary'] },
+  { key: 'home_anniversary', label: 'Home anniversary', group: 'Details', aliases: ['homeanniversary', 'purchaseanniversary', 'closeanniversary'] },
   { key: 'lead_type', label: 'Contact type', group: 'Details', aliases: ['contacttype', 'type', 'clienttype', 'category', 'leadtype', 'role'] },
   { key: 'tags', label: 'Tags / groups', group: 'Details', aliases: ['tags', 'tag', 'groups', 'group', 'contactgroups', 'categories', 'labels', 'lists'] },
   { key: 'notes', label: 'Notes', group: 'Details', aliases: ['notes', 'note', 'comments', 'comment', 'description', 'remarks'] },
+  { key: 'other_info', label: 'Other info (added to notes)', group: 'Details', aliases: ['other', 'otherinfo', 'additionalinfo', 'custom'] },
+  { key: 'referred_by', label: 'Referred by / lead source (added to notes)', group: 'Details', aliases: ['referredby', 'referral', 'referralsource', 'leadsource'] },
   { key: 'flexmls_id', label: 'Flexmls contact ID', group: 'Details', aliases: ['id', 'contactid', 'flexmlsid', 'contactkey', 'contactnumber', 'recordid'] },
-  { key: 'source_created_at', label: 'Date added in Flexmls', group: 'Details', aliases: ['created', 'datecreated', 'createddate', 'dateadded', 'added', 'createdon', 'createdtimestamp'] },
+  { key: 'source_created_at', label: 'Flexmls date added / updated', group: 'Details', aliases: ['created', 'datecreated', 'createddate', 'dateadded', 'added', 'createdon', 'createdtimestamp', 'timestamp'] },
   { key: 'closing_date', label: 'Closing date', group: 'Closed sale', aliases: ['closingdate', 'closedate', 'closeddate', 'dateclosed', 'settlementdate', 'purchasedate'] },
   { key: 'sale_price', label: 'Sale price', group: 'Closed sale', aliases: ['saleprice', 'closeprice', 'closedprice', 'soldprice', 'purchaseprice', 'price'] },
   { key: 'mls_number', label: 'MLS #', group: 'Closed sale', aliases: ['mls', 'mlsnumber', 'mlsno', 'listingid', 'listingnumber', 'mlsid'] },
@@ -172,7 +185,7 @@ const validYmd = (y: number, m: number, d: number) => {
 };
 const fullYear = (y: number) => (y >= 100 ? y : y + (y > (new Date().getFullYear() % 100) + 1 ? 1900 : 2000));
 
-/** Parses 2019-06-14, 6/14/2019, 6/14/19, 6-14-2019, "June 14, 2019", "14 Jun 2019" and yearless 6/14 → YYYY-MM-DD. */
+/** Parses 2019-06-14, 6/14/2019, 6/14/19, 6-14-2019, "June 14, 2019", "14 Jun 2019", "Sat Apr 24 13:52:49 2021" and yearless 6/14 → YYYY-MM-DD. */
 export function parseDate(v: string): string | null {
   const t = v.trim();
   if (!t) return null;
@@ -183,6 +196,8 @@ export function parseDate(v: string): string | null {
   m = t.match(/^(\d{1,2})[/.-](\d{1,2})$/);
   if (m) return validYmd(NO_YEAR, +m[1], +m[2]);
   m = t.match(/^([a-z]{3})[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})/i);
+  if (m && MONTHS.includes(m[1].toLowerCase())) return validYmd(+m[3], MONTHS.indexOf(m[1].toLowerCase()) + 1, +m[2]);
+  m = t.match(/^(?:[a-z]{3},?\s+)?([a-z]{3})[a-z]*\.?\s+(\d{1,2})\s+\d{1,2}:\d{2}(?::\d{2})?\s+(?:[a-z]{3,4}\s+)?(\d{4})$/i);
   if (m && MONTHS.includes(m[1].toLowerCase())) return validYmd(+m[3], MONTHS.indexOf(m[1].toLowerCase()) + 1, +m[2]);
   m = t.match(/^(\d{1,2})\s+([a-z]{3})[a-z]*\.?,?\s+(\d{4})/i);
   if (m && MONTHS.includes(m[2].toLowerCase())) return validYmd(+m[3], MONTHS.indexOf(m[2].toLowerCase()) + 1, +m[1]);
@@ -224,6 +239,9 @@ function splitName(full: string) {
 export type NewClient = Omit<Client, 'id' | 'created_at' | 'updated_at' | 'import_id' | 'follow_up_at' | 'last_contacted_at'>;
 export type NewTransaction = Omit<ClientTransaction, 'id' | 'client_id' | 'created_at'>;
 
+/** Flexmls groups / tags that mean the contact already bought or sold with you. */
+export const PAST_CLIENT_TAG = /\b(bought|closed|sold|past clients?|former clients?)\b/i;
+
 export interface ImportOptions {
   status: ClientStatus;
   tag: string;
@@ -251,7 +269,7 @@ export function rowToRecord(raw: Record<string, string>, row: number, mapping: F
   let secondary = get('secondary_email') ? cleanEmail(get('secondary_email')) : null;
   if (secondary === email) secondary = null;
 
-  const phones = [get('mobile_phone'), get('home_phone'), get('work_phone')]
+  const phones = [get('primary_phone'), get('mobile_phone'), get('home_phone'), get('work_phone')]
     .map(cleanPhone)
     .filter((p): p is string => !!p)
     .filter((p, i, all) => all.findIndex((q) => (phoneKey(q) || q) === (phoneKey(p) || p)) === i);
@@ -283,6 +301,8 @@ export function rowToRecord(raw: Record<string, string>, row: number, mapping: F
   const typeRaw = get('lead_type');
   const tags = [...splitList(get('tags')), ...(typeRaw ? [typeRaw] : []), ...(opts.tag.trim() ? [opts.tag.trim()] : [])];
 
+  // Flexmls form leads often carry only a submission timestamp in "other"; that isn't worth a note.
+  const otherInfo = /^\d{4}-\d{2}-\d{2}T[\d:.]+(Z|[+-]\d{2}:?\d{2})?$/.test(get('other_info')) ? '' : get('other_info');
   const importRaw = Object.fromEntries(Object.entries(raw).filter(([, v]) => v !== ''));
 
   const client: NewClient = {
@@ -298,14 +318,15 @@ export function rowToRecord(raw: Record<string, string>, row: number, mapping: F
     state: get('state') ? cleanState(get('state')) : null,
     zip_code: get('zip_code') ? get('zip_code').slice(0, 10) : null,
     company,
-    spouse_name: get('spouse_name') || null,
+    spouse_name: [get('spouse_name'), get('spouse_last_name')].filter(Boolean).join(' ') || null,
     birthday,
     home_anniversary: anniversary,
     source: opts.source,
-    status: opts.status,
+    status: PAST_CLIENT_TAG.test(tags.join(' ')) ? 'past_client' : opts.status,
     lead_type: contactType(typeRaw),
     tags: [...new Set(tags)],
-    notes: get('notes') || null,
+    notes: [get('notes'), otherInfo && `Other: ${otherInfo}`, get('referred_by') && `Referred by: ${get('referred_by')}`]
+      .filter(Boolean).join('\n') || null,
     do_not_contact: false,
     flexmls_id: get('flexmls_id') || null,
     source_created_at: created ? `${created}T12:00:00Z` : null,
