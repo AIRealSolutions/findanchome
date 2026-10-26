@@ -38,6 +38,8 @@ export interface Client {
   source_created_at: string | null;
   import_id: string | null;
   import_raw: Record<string, string> | null;
+  consultation_id: string | null;
+  referred_by_id: string | null;
 }
 
 export interface ClientTransaction {
@@ -164,8 +166,8 @@ export function clientsToCsv(clients: Client[]) {
   return [cols.map(([h]) => h).join(','), ...clients.map((c) => cols.map(([, f]) => esc(f(c))).join(','))].join('\n');
 }
 
-export function downloadCsv(csv: string, fileName: string) {
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+export function downloadCsv(csv: string, fileName: string, type = 'text/csv;charset=utf-8') {
+  const blob = new Blob([csv], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

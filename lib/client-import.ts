@@ -75,7 +75,7 @@ export function parseCsv(text: string): ParsedCsv {
 export type FieldKey =
   | 'flexmls_id' | 'full_name' | 'first_name' | 'last_name' | 'email' | 'secondary_email'
   | 'primary_phone' | 'mobile_phone' | 'home_phone' | 'work_phone' | 'address_line1' | 'address_line2' | 'city' | 'state' | 'zip_code'
-  | 'company' | 'spouse_name' | 'spouse_last_name' | 'birthday' | 'home_anniversary' | 'lead_type' | 'tags' | 'notes' | 'other_info' | 'referred_by' | 'source_created_at'
+  | 'company' | 'spouse_name' | 'spouse_last_name' | 'birthday' | 'home_anniversary' | 'wedding_anniversary' | 'lead_type' | 'tags' | 'notes' | 'other_info' | 'referred_by' | 'source_created_at'
   | 'closing_date' | 'sale_price' | 'mls_number' | 'transaction_address';
 
 export const IMPORT_FIELDS: { key: FieldKey; label: string; group: 'Contact' | 'Address' | 'Details' | 'Closed sale'; aliases: string[] }[] = [
@@ -97,6 +97,7 @@ export const IMPORT_FIELDS: { key: FieldKey; label: string; group: 'Contact' | '
   { key: 'spouse_name', label: 'Spouse / partner', group: 'Details', aliases: ['spouse', 'spousename', 'partner', 'spousepartner', 'significantother', 'cobuyer', 'spousefirstname'] },
   { key: 'spouse_last_name', label: 'Spouse last name', group: 'Details', aliases: ['spouselastname', 'partnerlastname'] },
   { key: 'birthday', label: 'Birthday', group: 'Details', aliases: ['birthday', 'birthdate', 'dateofbirth', 'dob', 'bday'] },
+  { key: 'wedding_anniversary', label: 'Wedding anniversary', group: 'Details', aliases: ['anniversary', 'weddinganniversary', 'weddingdate', 'marriagedate'] },
   { key: 'home_anniversary', label: 'Home anniversary', group: 'Details', aliases: ['homeanniversary', 'purchaseanniversary', 'closeanniversary'] },
   { key: 'lead_type', label: 'Contact type', group: 'Details', aliases: ['contacttype', 'type', 'clienttype', 'category', 'leadtype', 'role'] },
   { key: 'tags', label: 'Tags / groups', group: 'Details', aliases: ['tags', 'tag', 'groups', 'group', 'contactgroups', 'categories', 'labels', 'lists'] },
@@ -236,7 +237,7 @@ function splitName(full: string) {
 
 // ───────────────────────── Rows → records ─────────────────────────
 
-export type NewClient = Omit<Client, 'id' | 'created_at' | 'updated_at' | 'import_id' | 'follow_up_at' | 'last_contacted_at'>;
+export type NewClient = Omit<Client, 'id' | 'created_at' | 'updated_at' | 'import_id' | 'follow_up_at' | 'last_contacted_at' | 'consultation_id' | 'referred_by_id'>;
 export type NewTransaction = Omit<ClientTransaction, 'id' | 'client_id' | 'created_at'>;
 
 /** Flexmls groups / tags that mean the contact already bought or sold with you. */
@@ -252,6 +253,8 @@ export interface ImportRecord {
   row: number; // 1-based data row, matching the spreadsheet line minus the header
   client: NewClient | null;
   txn: NewTransaction | null;
+  /** Dates for fanc_client_dates (see lib/calendar.ts). */
+  dates: { kind: 'wedding_anniversary'; date: string; repeats: 'yearly'; remind_days: number }[];
   warnings: string[];
 }
 
@@ -284,7 +287,7 @@ export function rowToRecord(raw: Record<string, string>, row: number, mapping: F
     else if (email) first = email.split('@')[0];
   }
   if (!first && !last && !email && phones.length === 0) {
-    return { row, client: null, txn: null, warnings: ['No name, email or phone'] };
+    return { row, client: null, txn: null, dates: [], warnings: ['No name, email or phone'] };
   }
   if (!first) {
     first = last;
@@ -300,6 +303,7 @@ export function rowToRecord(raw: Record<string, string>, row: number, mapping: F
   const birthday = dateField('birthday', 'Birthday');
   const closingDate = dateField('closing_date', 'Closing date');
   const anniversary = dateField('home_anniversary', 'Home anniversary') ?? closingDate;
+  const wedding = dateField('wedding_anniversary', 'Wedding anniversary');
   const created = dateField('source_created_at', 'Date added');
 
   const typeRaw = get('lead_type');
@@ -356,7 +360,8 @@ export function rowToRecord(raw: Record<string, string>, row: number, mapping: F
         }
       : null;
 
-  return { row, client, txn, warnings };
+  const dates = wedding ? [{ kind: 'wedding_anniversary' as const, date: wedding, repeats: 'yearly' as const, remind_days: 3 }] : [];
+  return { row, client, txn, dates, warnings };
 }
 
 // ───────────────────────── Matching against existing clients ─────────────────────────
@@ -457,7 +462,7 @@ export function planImport(records: ImportRecord[], existing: Client[], mode: Me
     const base = mergedById.get(hit.value.id) ?? hit.value;
     const { merged, changes } = mergeClient(base, r.client, mode);
     mergedById.set(hit.value.id, merged);
-    return { ...r, action: changes.length || r.txn ? 'update' : 'unchanged', id: hit.value.id, matchedBy: hit.by, merged, changes };
+    return { ...r, action: changes.length || r.txn || r.dates.length ? 'update' : 'unchanged', id: hit.value.id, matchedBy: hit.by, merged, changes };
   });
 }
 

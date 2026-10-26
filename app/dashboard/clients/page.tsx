@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, Download, RefreshCw, Phone, MessageCircle, Mail, Upload, Plus, Cake, Home } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import ClientBulkBar from '@/components/ClientBulkBar';
 import { createClient } from '@/lib/supabase/client';
 import { dialable, relativeTime } from '@/lib/leads';
 import {
@@ -24,7 +25,7 @@ type View = ClientStatus | 'all' | 'dates' | 'dnc';
 
 export default function ClientsPage() {
   const router = useRouter();
-  const { isAdmin, isBroker, loading: authLoading } = useAuth();
+  const { user, profile, isAdmin, isBroker, loading: authLoading } = useAuth();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,10 +33,16 @@ export default function ClientsPage() {
   const [search, setSearch] = useState('');
   const [tag, setTag] = useState('');
   const [creating, setCreating] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const apply = useCallback((r: Awaited<ReturnType<typeof fetchAllClients>>) => {
     setError(r.error);
-    if (!r.error) setClients(r.clients);
+    if (!r.error) {
+      setClients(r.clients);
+      // Drop selections for clients that no longer exist (e.g. after a bulk delete).
+      const ids = new Set(r.clients.map((c) => c.id));
+      setSelectedIds((sel) => new Set([...sel].filter((id) => ids.has(id))));
+    }
     setLoading(false);
   }, []);
 
@@ -177,7 +184,34 @@ export default function ClientsPage() {
 
       {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>}
 
-      <p className="text-sm text-gray-500 mb-2">{filtered.length.toLocaleString()} {filtered.length === 1 ? 'contact' : 'contacts'}</p>
+      {selectedIds.size > 0 && user && (
+        <ClientBulkBar
+          selected={clients.filter((c) => selectedIds.has(c.id))}
+          allTags={allTags}
+          author={{ id: user.id, name: [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || user.email || 'Broker' }}
+          onDone={(err) => { setError(err); load(); }}
+          onClear={() => setSelectedIds(new Set())}
+        />
+      )}
+
+      <div className="flex items-center gap-3 mb-2 text-sm text-gray-500">
+        {filtered.length > 0 && (
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="rounded"
+              checked={filtered.every((c) => selectedIds.has(c.id))}
+              onChange={(e) => {
+                const next = new Set(selectedIds);
+                filtered.forEach((c) => (e.target.checked ? next.add(c.id) : next.delete(c.id)));
+                setSelectedIds(next);
+              }}
+            />
+            Select all shown
+          </label>
+        )}
+        <span>{filtered.length.toLocaleString()} {filtered.length === 1 ? 'contact' : 'contacts'}</span>
+      </div>
 
       {/* List */}
       <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
@@ -206,32 +240,47 @@ export default function ClientsPage() {
                 tabIndex={0}
                 onClick={() => router.push(`/dashboard/clients/${c.id}`)}
                 onKeyDown={(e) => e.key === 'Enter' && router.push(`/dashboard/clients/${c.id}`)}
-                className="p-4 hover:bg-gray-50 cursor-pointer flex flex-col lg:flex-row lg:items-center gap-3"
+                className={`p-4 hover:bg-gray-50 cursor-pointer flex flex-col lg:flex-row lg:items-center gap-3 ${selectedIds.has(c.id) ? 'bg-blue-50/60' : ''}`}
               >
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <Link href={`/dashboard/clients/${c.id}`} onClick={(e) => e.stopPropagation()} className="font-semibold text-gray-900 hover:text-blue-600">
-                      {clientName(c)}
-                    </Link>
-                    {c.spouse_name && <span className="text-sm text-gray-500">& {c.spouse_name}</span>}
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${st.className}`}>{st.label}</span>
-                    {c.do_not_contact && <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-800">Do not contact</span>}
-                    {dates.map((d) => (
-                      <span key={d.kind} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-pink-100 text-pink-800">
-                        {d.kind === 'birthday' ? <Cake size={12} /> : <Home size={12} />}
-                        {d.kind === 'birthday' ? 'Birthday' : 'Home anniversary'} {d.daysAway === 0 ? 'today' : `in ${d.daysAway}d`}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="text-sm text-gray-600 truncate">
-                    {[clientTypeLabel(c.lead_type), c.address_line1, place].filter(Boolean).join(' · ') || c.email || c.phone}
-                  </div>
-                  {(c.tags ?? []).length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {(c.tags ?? []).slice(0, 5).map((t) => <span key={t} className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">{t}</span>)}
-                      {(c.tags ?? []).length > 5 && <span className="text-xs text-gray-500">+{(c.tags ?? []).length - 5}</span>}
+                <div className="flex-1 min-w-0 flex gap-3">
+                  <input
+                    type="checkbox"
+                    aria-label={`Select ${clientName(c)}`}
+                    className="rounded mt-1 shrink-0"
+                    checked={selectedIds.has(c.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => {
+                      const next = new Set(selectedIds);
+                      if (e.target.checked) next.add(c.id);
+                      else next.delete(c.id);
+                      setSelectedIds(next);
+                    }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <Link href={`/dashboard/clients/${c.id}`} onClick={(e) => e.stopPropagation()} className="font-semibold text-gray-900 hover:text-blue-600">
+                        {clientName(c)}
+                      </Link>
+                      {c.spouse_name && <span className="text-sm text-gray-500">& {c.spouse_name}</span>}
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${st.className}`}>{st.label}</span>
+                      {c.do_not_contact && <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-800">Do not contact</span>}
+                      {dates.map((d) => (
+                        <span key={d.kind} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-pink-100 text-pink-800">
+                          {d.kind === 'birthday' ? <Cake size={12} /> : <Home size={12} />}
+                          {d.kind === 'birthday' ? 'Birthday' : 'Home anniversary'} {d.daysAway === 0 ? 'today' : `in ${d.daysAway}d`}
+                        </span>
+                      ))}
                     </div>
-                  )}
+                    <div className="text-sm text-gray-600 truncate">
+                      {[clientTypeLabel(c.lead_type), c.address_line1, place].filter(Boolean).join(' · ') || c.email || c.phone}
+                    </div>
+                    {(c.tags ?? []).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {(c.tags ?? []).slice(0, 5).map((t) => <span key={t} className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">{t}</span>)}
+                        {(c.tags ?? []).length > 5 && <span className="text-xs text-gray-500">+{(c.tags ?? []).length - 5}</span>}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 lg:justify-end shrink-0">
                   <div className="text-xs text-gray-500 lg:text-right lg:w-36">

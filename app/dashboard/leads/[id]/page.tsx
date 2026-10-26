@@ -2,14 +2,15 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { ArrowLeft, Phone, MessageCircle, Mail, ExternalLink, CalendarClock } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeft, Phone, MessageCircle, Mail, ExternalLink, CalendarClock, UserPlus, UserCheck } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { communities, communityPath } from '@/lib/communities';
 import { neighborhoods } from '@/lib/neighborhoods';
 import { lifestyles } from '@/lib/lifestyles';
 import { absoluteUrl } from '@/lib/site';
+import { convertLead } from '@/lib/lead-conversion';
 import {
   ACTIVITY_ICONS,
   ACTIVITY_KINDS,
@@ -72,9 +73,11 @@ async function fetchLead(id: string) {
     supabase.from('fanc_consultation_requests').select('*').eq('id', id).maybeSingle(),
     supabase.from('fanc_consultation_activity').select('*').eq('request_id', id).order('created_at', { ascending: false }),
   ]);
+  const { data: c } = await supabase.from('fanc_clients').select('id').eq('consultation_id', id).maybeSingle();
   return {
     lead: (l as Lead | null) ?? null,
     activity: (a ?? []) as LeadActivity[],
+    clientId: (c?.id as string | undefined) ?? null,
     error: (e1 || e2)?.message ?? '',
   };
 }
@@ -88,8 +91,10 @@ function addDays(days: number, hour = 9) {
 
 export default function LeadDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const { user, profile, loading: authLoading } = useAuth();
   const [lead, setLead] = useState<Lead | null>(null);
+  const [clientId, setClientId] = useState<string | null>(null);
   const [activity, setActivity] = useState<LeadActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -106,6 +111,7 @@ export default function LeadDetailPage() {
     setLead(r.lead);
     setFollowUp(toLocalInput(r.lead?.follow_up_at ?? null));
     setActivity(r.activity);
+    setClientId(r.clientId);
     setLoading(false);
   }, []);
 
@@ -143,6 +149,16 @@ export default function LeadDetailPage() {
     await load();
     setSaving(false);
     return true;
+  };
+
+  const toClient = async () => {
+    if (!lead || !user) return;
+    setSaving(true);
+    setError('');
+    const r = await convertLead(lead, { id: user.id, name: authorName });
+    setSaving(false);
+    if (r.error) return setError(r.error);
+    router.push(`/dashboard/clients/${r.id}`);
   };
 
   const changeStatus = (status: LeadStatus) => {
@@ -229,6 +245,17 @@ export default function LeadDetailPage() {
               <a href={`mailto:${lead.email}?subject=${encodeURIComponent('Your FindaNChome.com consultation request')}`} className="inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">
                 <Mail size={16} /> {lead.email}
               </a>
+            </div>
+            <div className="mt-2">
+              {clientId ? (
+                <Link href={`/dashboard/clients/${clientId}`} className="inline-flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-900">
+                  <UserCheck size={16} /> In the client database: view client record
+                </Link>
+              ) : (
+                <button onClick={toClient} disabled={saving} className="inline-flex items-center gap-2 px-3 py-2 border border-green-300 text-green-800 rounded-lg text-sm font-medium hover:bg-green-50 disabled:opacity-50">
+                  <UserPlus size={16} /> Add to client database
+                </button>
+              )}
             </div>
             {lead.preferred_contact && (
               <p className="text-sm text-gray-600 mt-2">

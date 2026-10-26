@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Phone, MessageCircle, Mail, CalendarClock, Pencil, Trash2, Cake, Home, Plus } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import ClientDates from '@/components/ClientDates';
+import ClientReferrals from '@/components/ClientReferrals';
 import { createClient } from '@/lib/supabase/client';
 import { ACTIVITY_KINDS, dialable, formatDateTime, relativeTime, toLocalInput } from '@/lib/leads';
 import { NO_YEAR, cleanEmail, cleanPhone, cleanState, splitList } from '@/lib/client-import';
@@ -263,6 +265,7 @@ export default function ClientDetailPage() {
   }
 
   const dates = upcomingDates(client, 30);
+  const lastClosing = transactions.map((t) => t.closing_date).filter(Boolean).sort().pop() ?? null;
   const d = (k: string) => draft[k] ?? '';
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setDraft({ ...draft, [k]: e.target.value });
   const address = [client.address_line1, client.address_line2].filter(Boolean).join(', ');
@@ -393,6 +396,9 @@ export default function ClientDetailPage() {
                 <Row label="Source">
                   {client.source}
                   {client.source_created_at && <span className="text-gray-500"> · added {formatDate(client.source_created_at)}</span>}
+                  {client.consultation_id && (
+                    <Link href={`/dashboard/leads/${client.consultation_id}`} className="block text-blue-600 hover:underline">View their consultation request</Link>
+                  )}
                 </Row>
               </dl>
               {client.notes && (
@@ -400,6 +406,10 @@ export default function ClientDetailPage() {
               )}
             </Section>
           )}
+
+          <ClientReferrals client={client} author={{ id: user?.id ?? '', name: authorName }} onChanged={load} />
+
+          <ClientDates clientId={client.id} suggestedWarrantyEnd={lastClosing && `${+lastClosing.slice(0, 4) + 1}${lastClosing.slice(4, 10)}`} />
 
           <Section title="Closed transactions" action={
             !txn && <button onClick={() => setTxn({ ...emptyTxn, property_address: client.address_line1 ?? '', city: client.city ?? '', zip_code: client.zip_code ?? '' })}
