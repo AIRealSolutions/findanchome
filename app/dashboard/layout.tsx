@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { OPEN_LISTING_STAGES } from '@/lib/listings';
+import { ViewAsProvider, useViewAs, type ViewRole } from '@/lib/view-as';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -15,17 +16,26 @@ import {
   CalendarDaysIcon,
   BriefcaseIcon,
   HomeModernIcon,
+  MegaphoneIcon,
+  PresentationChartLineIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ViewAsProvider>
+      <DashboardShell>{children}</DashboardShell>
+    </ViewAsProvider>
+  );
+}
+
+const VIEW_LABELS: Record<ViewRole, string> = { admin: 'Admin', broker: 'Broker', client: 'Client' };
+
+function DashboardShell({ children }: { children: React.ReactNode }) {
   const { user, profile, loading, signOut, isAdmin, isBroker } = useAuth();
+  const { viewAs, canSwitch, setViewAs } = useViewAs();
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -86,19 +96,20 @@ export default function DashboardLayout({
   }
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['admin', 'broker', 'client'] },
+    { name: 'Control Center', href: '/dashboard', icon: PresentationChartLineIcon, roles: ['admin'] },
+    { name: 'My dashboard', href: '/dashboard', icon: HomeIcon, roles: ['broker'] },
+    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['client'] },
     { name: 'Leads', href: '/dashboard/leads', icon: InboxStackIcon, roles: ['admin', 'broker'], badge: newLeads },
     { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
     { name: 'Listings', href: '/dashboard/listings', icon: HomeModernIcon, roles: ['admin', 'broker'], badge: listingTodo },
     { name: 'Refer a seller', href: '/dashboard/listings/new', icon: HomeModernIcon, roles: ['client'] },
     { name: 'Deals', href: '/dashboard/deals', icon: BriefcaseIcon, roles: ['admin', 'broker'] },
     { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarDaysIcon, roles: ['admin', 'broker'] },
+    { name: 'Marketing', href: '/dashboard/marketing', icon: MegaphoneIcon, roles: ['admin', 'broker'] },
     { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon, roles: ['admin', 'broker'] },
   ];
 
-  const filteredNavigation = navigation.filter(item =>
-    item.roles.includes(profile.role)
-  );
+  const filteredNavigation = navigation.filter((item) => item.roles.includes(viewAs));
 
   const handleSignOut = async () => {
     await signOut();
@@ -133,15 +144,30 @@ export default function DashboardLayout({
           <div>
             <h1 className="text-lg font-bold text-gray-900">FindaNChome</h1>
             <p className="text-xs text-gray-500">
-              {profile.role === 'admin' && 'Admin Portal'}
-              {profile.role === 'broker' && 'Broker Portal'}
-              {profile.role === 'client' && 'Client Portal'}
+              {viewAs === 'admin' && 'Lightkeeper Control Center'}
+              {viewAs === 'broker' && 'Broker Portal'}
+              {viewAs === 'client' && 'Client Portal'}
             </p>
           </div>
         </div>
 
+        {/* Admins can look at the broker and client dashboards. */}
+        {canSwitch && (
+          <div className="px-4 pt-4">
+            <p className="text-xs font-medium text-gray-500 mb-1">View as</p>
+            <div className="grid grid-cols-3 gap-1 bg-gray-100 rounded-lg p-1">
+              {(['admin', 'broker', 'client'] as ViewRole[]).map((r) => (
+                <button key={r} onClick={() => { setViewAs(r); router.push('/dashboard'); }}
+                  className={`py-1 rounded-md text-xs ${viewAs === r ? 'bg-white shadow font-medium text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}>
+                  {VIEW_LABELS[r]}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1">
+        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-15rem)]">
           {filteredNavigation.map((item) => {
             const isActive = item.href === '/dashboard' ? pathname === item.href : pathname === item.href || pathname?.startsWith(item.href + '/');
             return (
@@ -191,6 +217,12 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div className="lg:pl-64">
+        {canSwitch && viewAs !== 'admin' && (
+          <div className="bg-amber-100 border-b border-amber-200 text-amber-900 text-sm px-4 sm:px-8 py-2 flex flex-wrap items-center gap-2">
+            <span>You’re previewing the <strong>{VIEW_LABELS[viewAs].toLowerCase()}</strong> dashboard. You still have admin access to the data.</span>
+            <button onClick={() => { setViewAs('admin'); router.push('/dashboard'); }} className="underline font-medium">Back to the Control Center</button>
+          </div>
+        )}
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
           {children}
         </div>

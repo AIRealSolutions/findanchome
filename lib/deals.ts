@@ -39,6 +39,14 @@ export interface Deal {
   fell_through_reason: string | null;
   closed_at: string | null;
   closed_transaction_id: string | null;
+  broker_id: string | null;
+  /** Actual commission received; overrides price × commission_pct. */
+  gross_commission: number | null;
+  /** Share of the commission paid out to a referring agent. */
+  referral_fee_pct: number | null;
+  /** The broker's plan split and transaction fee, snapshotted when the deal closes. */
+  agent_split_pct: number | null;
+  transaction_fee: number | null;
 }
 
 export interface DealTask {
@@ -230,8 +238,14 @@ export async function closeDeal(d: Deal, closingDate: string, author: Author) {
   }).select('id').single();
   if (e1) return e1.message;
 
+  // Snapshot the broker's split and fee so later plan changes don't rewrite this deal's numbers. Without a
+  // readable plan they stay empty and reports use the plan in effect then.
+  const { data: plan } = d.broker_id
+    ? await supabase.from('fanc_broker_plans').select('split_pct, transaction_fee').eq('broker_id', d.broker_id).maybeSingle()
+    : { data: null };
   const { error: e2 } = await supabase.from('fanc_deals').update({
     stage: 'closed', closing_date: closingDate, closed_at: new Date().toISOString(), closed_transaction_id: txn.id,
+    ...(plan ? { agent_split_pct: d.agent_split_pct ?? plan.split_pct, transaction_fee: d.transaction_fee ?? plan.transaction_fee } : {}),
   }).eq('id', d.id);
   if (e2) return e2.message;
 

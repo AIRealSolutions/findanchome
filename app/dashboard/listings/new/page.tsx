@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import { useViewAs } from '@/lib/view-as';
 import { createClient } from '@/lib/supabase/client';
 import { clientName, type Client } from '@/lib/clients';
 import type { Lead } from '@/lib/leads';
@@ -50,7 +51,9 @@ function NewListingOpportunity() {
   const params = useSearchParams();
   const { user, profile, isAdmin, isBroker, loading: authLoading } = useAuth();
   const [data, setData] = useState<Awaited<ReturnType<typeof prefill>> | null>(null);
-  const isStaff = isAdmin || isBroker;
+  const { viewAs } = useViewAs();
+  // An admin previewing the client dashboard sees the referral form.
+  const isStaff = (isAdmin || isBroker) && viewAs !== 'client';
   const clientId = params.get('client');
   const leadId = params.get('lead');
 

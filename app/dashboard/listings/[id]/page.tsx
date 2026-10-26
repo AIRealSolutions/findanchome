@@ -79,7 +79,7 @@ export default function ListingOpportunityPage() {
     setStaff(r.staff);
     setFollowUp(toLocalInput(r.opp?.follow_up_at ?? null));
     setAppointment(toLocalInput(r.opp?.appointment_at ?? null));
-    setAssignTo(r.opp?.assigned_to ?? user?.id ?? '');
+    setAssignTo(r.opp?.assigned_to ?? r.opp?.requested_broker_id ?? user?.id ?? '');
     setListPrice(String(r.opp?.estimated_value ?? r.opp?.price_expectation ?? ''));
     setLoading(false);
   }, [user]);
