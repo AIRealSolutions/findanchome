@@ -105,7 +105,7 @@ export const TRANSACTION_SIDES: { value: TransactionSide; label: string }[] = [
 export const clientStatusMeta = (s: ClientStatus) => CLIENT_STATUSES.find((x) => x.value === s) ?? CLIENT_STATUSES[2];
 export const clientTypeLabel = (t: string | null) => CLIENT_TYPES.find((x) => x.value === t)?.label ?? t ?? '';
 
-export const clientName = (c: Pick<Client, 'first_name' | 'last_name'>) =>
+export const clientName = (c: Pick<Client, 'first_name'> & { last_name?: string | null }) =>
   [c.first_name, c.last_name].filter(Boolean).join(' ') || '(no name)';
 
 export const formatMoney = (n: number | null) =>

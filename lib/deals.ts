@@ -87,6 +87,12 @@ export const dateFieldLabel = (f: DealDateField) => DEAL_DATES.find((x) => x.fie
 export const dealTitle = (d: Pick<Deal, 'property_address' | 'city'>, c?: Pick<Client, 'first_name' | 'last_name'> | null) =>
   d.property_address ? [d.property_address, d.city].filter(Boolean).join(', ') : c ? `${clientName(c)} (no property yet)` : 'Untitled deal';
 
+/** Merge fields about a deal for message templates. */
+export const dealContext = (d: Pick<Deal, 'property_address' | 'city' | 'closing_date'>) => ({
+  property: d.property_address ? dealTitle(d) : null,
+  closing_date: d.closing_date ? formatDate(d.closing_date, { month: 'long', day: 'numeric' }) : null,
+});
+
 export const dealPrice = (d: Pick<Deal, 'contract_price' | 'list_price'>) => d.contract_price ?? d.list_price;
 
 /** Gross commission for this side of the deal, when a price and percentage are known. */

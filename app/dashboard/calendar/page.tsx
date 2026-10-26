@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Download, RefreshCw, Phone, MessageCircle, Mail, Check, Undo2, List, CalendarDays } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, RefreshCw, Phone, MessageCircle, Mail, Check, Undo2, List, CalendarDays, PenLine } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import MessageComposer from '@/components/MessageComposer';
 import { dialable } from '@/lib/leads';
 import { downloadCsv, formatDate } from '@/lib/clients';
 import {
@@ -44,7 +45,7 @@ function whenText(on: string, today: string) {
   return n > 0 ? `${day} · in ${n} days` : `${day} · ${-n} days ago`;
 }
 
-function EventRow({ e, today, busy, onToggle }: { e: CalEvent; today: string; busy: boolean; onToggle: (e: CalEvent) => void }) {
+function EventRow({ e, today, busy, onToggle, onCompose }: { e: CalEvent; today: string; busy: boolean; onToggle: (e: CalEvent) => void; onCompose: (e: CalEvent) => void }) {
   const c = e.client;
   const body = e.sms ? encodeURIComponent(e.sms) : '';
   return (
@@ -68,6 +69,9 @@ function EventRow({ e, today, busy, onToggle }: { e: CalEvent; today: string; bu
         {c?.email && (
           <a href={`mailto:${c.email}?subject=${encodeURIComponent(e.emailSubject ?? '')}${body ? `&body=${body}` : ''}`} title="Email with the suggested message"
             className="p-2 rounded-lg border border-gray-200 hover:bg-blue-50"><Mail size={16} /></a>
+        )}
+        {c && !c.do_not_contact && (
+          <button onClick={() => onCompose(e)} title="Pick a different message" className="p-2 rounded-lg border border-gray-200 hover:bg-blue-50"><PenLine size={16} /></button>
         )}
         {e.completable && (
           <button onClick={() => onToggle(e)} disabled={busy}
@@ -94,7 +98,8 @@ export default function CalendarPage() {
   const [error, setError] = useState('');
 
   const senderName = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ');
-  const sender = senderName ? `${senderName}, Lightkeeper Realty` : 'Lightkeeper Realty';
+  const me = useMemo(() => ({ name: senderName, phone: profile?.phone, email: user?.email }), [senderName, profile?.phone, user?.email]);
+  const [composing, setComposing] = useState<CalEvent | null>(null);
 
   // One fetch covers the agenda window, the visible month and a year of export.
   const range = useMemo(() => {
@@ -127,7 +132,7 @@ export default function CalendarPage() {
     };
   }, [authLoading, range.from, range.to]);
 
-  const allEvents = useMemo(() => (data ? buildEvents(data, range.from, range.to, sender, true) : []), [data, range.from, range.to, sender]);
+  const allEvents = useMemo(() => (data ? buildEvents(data, range.from, range.to, me, true) : []), [data, range.from, range.to, me]);
   const events = useMemo(() => {
     const kinds = FILTERS.find((f) => f.value === filter)!.kinds;
     return allEvents.filter((e) => (!kinds.length || kinds.includes(e.kind)) && (showDone || !e.done));
@@ -247,7 +252,7 @@ export default function CalendarPage() {
               </h2>
               {s.hint && <p className="text-xs text-gray-500 mb-2">{s.hint}</p>}
               <ul className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
-                {s.items.map((e) => <EventRow key={`${e.key}|${e.occursOn}`} e={e} today={today} busy={busy} onToggle={toggle} />)}
+                {s.items.map((e) => <EventRow key={`${e.key}|${e.occursOn}`} e={e} today={today} busy={busy} onToggle={toggle} onCompose={setComposing} />)}
               </ul>
             </section>
           ))}
@@ -301,11 +306,22 @@ export default function CalendarPage() {
               <p className="p-6 text-center text-gray-500 bg-white border border-gray-200 rounded-xl text-sm">Nothing on this day.</p>
             ) : (
               <ul className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
-                {selectedEvents.map((e) => <EventRow key={e.key} e={e} today={today} busy={busy} onToggle={toggle} />)}
+                {selectedEvents.map((e) => <EventRow key={e.key} e={e} today={today} busy={busy} onToggle={toggle} onCompose={setComposing} />)}
               </ul>
             )}
           </section>
         </div>
+      )}
+
+      {composing?.client && user && (
+        <MessageComposer
+          client={composing.client}
+          category={composing.category}
+          extra={composing.mergeCtx}
+          me={me}
+          author={{ id: user.id, name: senderName || user.email || 'Broker' }}
+          onClose={() => setComposing(null)}
+        />
       )}
     </div>
   );

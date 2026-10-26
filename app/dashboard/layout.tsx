@@ -13,6 +13,7 @@ import {
   UserGroupIcon,
   CalendarDaysIcon,
   BriefcaseIcon,
+  ChatBubbleLeftRightIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -75,6 +76,7 @@ export default function DashboardLayout({
     { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
     { name: 'Deals', href: '/dashboard/deals', icon: BriefcaseIcon, roles: ['admin', 'broker'] },
     { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarDaysIcon, roles: ['admin', 'broker'] },
+    { name: 'Templates', href: '/dashboard/templates', icon: ChatBubbleLeftRightIcon, roles: ['admin', 'broker'] },
     { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon, roles: ['admin', 'broker'] },
   ];
 

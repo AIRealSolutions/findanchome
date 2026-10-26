@@ -6,7 +6,11 @@ import { createClient } from './supabase/client';
 import { NO_YEAR } from './client-import';
 import { clientName, fetchAllClients, formatDate, type Client } from './clients';
 import { isOpen, type Lead } from './leads';
-import { DEAL_DATES, OPEN_STAGES, dealTitle, taskDue, type Deal, type DealTask } from './deals';
+import { DEAL_DATES, OPEN_STAGES, dealContext, dealTitle, taskDue, type Deal, type DealTask } from './deals';
+import {
+  clientContext, defaultTemplate, fetchTemplates, meContext, renderTemplate,
+  type Me, type MergeContext, type MessageTemplate, type TemplateCategory,
+} from './templates';
 
 export type DateKind =
   | 'wedding_anniversary' | 'insurance_renewal' | 'flood_insurance_renewal' | 'home_warranty_expiration'
@@ -63,6 +67,9 @@ export interface CalEvent {
   done: boolean;
   sms?: string;
   emailSubject?: string;
+  /** Template category and merge fields, so another template can be picked for this occasion. */
+  category?: TemplateCategory;
+  mergeCtx?: MergeContext;
 }
 
 // ───────────────────────── Date helpers (all-day, local time) ─────────────────────────
@@ -110,16 +117,19 @@ export interface CalendarData {
   /** Open deals and their checklists (optional so callers without deals still work). */
   deals?: Deal[];
   tasks?: DealTask[];
+  /** Saved message templates; the starters are used when absent. */
+  templates?: MessageTemplate[];
 }
 
 export async function fetchCalendarData(from: string, to: string): Promise<CalendarData & { error: string }> {
   const supabase = createClient();
-  const [c, d, l, k, deals] = await Promise.all([
+  const [c, d, l, k, deals, tpl] = await Promise.all([
     fetchAllClients(),
     supabase.from('fanc_client_dates').select('*').limit(10000),
     supabase.from('fanc_consultation_requests').select('id, name, status, follow_up_at').not('follow_up_at', 'is', null).limit(1000),
     supabase.from('fanc_calendar_completions').select('event_key, occurs_on').gte('occurs_on', from).lte('occurs_on', to).limit(10000),
     supabase.from('fanc_deals').select('*').in('stage', OPEN_STAGES).limit(1000),
+    fetchTemplates(),
   ]);
   const tasks: DealTask[] = [];
   let tasksError = '';
@@ -136,6 +146,7 @@ export async function fetchCalendarData(from: string, to: string): Promise<Calen
     done: new Set((k.data ?? []).map((x) => `${x.event_key}|${x.occurs_on}`)),
     deals: (deals.data ?? []) as Deal[],
     tasks,
+    templates: tpl.templates,
     error: c.error || (d.error || l.error || k.error || deals.error)?.message || tasksError,
   };
 }
@@ -144,15 +155,20 @@ export async function fetchCalendarData(from: string, to: string): Promise<Calen
  * Every event between from and to. Follow-ups are dated by their due day; with `overdueFollowUps`, ones due
  * before `from` are included too, since they stay open until cleared.
  */
-export function buildEvents(data: CalendarData, from: string, to: string, sender: string, overdueFollowUps = false): CalEvent[] {
+export function buildEvents(data: CalendarData, from: string, to: string, me: Me, overdueFollowUps = false): CalEvent[] {
   const events: CalEvent[] = [];
-  const sign = sender ? ` – ${sender}` : '';
+  const templates = data.templates ?? [];
+  /** The suggested message for an occasion, from the category's default template. */
+  const message = (category: TemplateCategory, c: Client, extra: MergeContext = {}) => {
+    const mergeCtx = { ...clientContext(c), ...meContext(me), ...extra };
+    const t = defaultTemplate(templates, category);
+    return { category, mergeCtx, sms: t && renderTemplate(t.body, mergeCtx), emailSubject: t?.subject ? renderTemplate(t.subject, mergeCtx) : undefined };
+  };
   const push = (e: Omit<CalEvent, 'done'>) => events.push({ ...e, done: data.done.has(`${e.key}|${e.occursOn}`) });
   const byId = new Map(data.clients.map((c) => [c.id, c]));
 
   for (const c of data.clients) {
     if (c.do_not_contact) continue;
-    const first = c.first_name;
     const href = `/dashboard/clients/${c.id}`;
     if (c.birthday) {
       const year = +c.birthday.slice(0, 4);
@@ -162,7 +178,7 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
           key: `birthday:${c.id}`, occursOn: on, kind: 'birthday', icon: '🎂', client: c, href, completable: true,
           title: `${clientName(c)}'s birthday`, detail: age > 0 && age < 120 ? `Turns ${age}` : undefined,
           remindFrom: addDaysYmd(on, -2),
-          sms: `Happy birthday, ${first}! 🎉 Wishing you a wonderful year ahead.${sign}`, emailSubject: `Happy birthday, ${first}!`,
+          ...message('birthday', c, { date: formatDate(on, { month: 'long', day: 'numeric' }) }),
         });
       }
     }
@@ -175,15 +191,14 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
           key: `home_anniversary:${c.id}`, occursOn: on, kind: 'home_anniversary', icon: '🏡', client: c, href, completable: true,
           title: `${clientName(c)}: ${plural(n, 'year')} in their home`, detail: c.address_line1 ?? undefined,
           remindFrom: addDaysYmd(on, -7),
-          sms: `Happy ${n}-year home anniversary, ${first}! Hard to believe it's been ${plural(n, 'year')} since you got the keys. If you're ever curious what your home is worth today, I'm happy to run the numbers.${sign}`,
-          emailSubject: `Happy ${n}-year home anniversary!`,
+          ...message('home_anniversary', c, { years: String(n), years_text: plural(n, 'year'), date: formatDate(on, { month: 'long', day: 'numeric' }) }),
         });
       }
     }
     if (c.follow_up_at) {
       const on = toYmd(new Date(c.follow_up_at));
       if ((on >= from || overdueFollowUps) && on <= to) {
-        push({ key: `client_follow_up:${c.id}`, occursOn: on, kind: 'client_follow_up', icon: '📞', client: c, href, completable: false, title: `Follow up with ${clientName(c)}`, remindFrom: on });
+        push({ key: `client_follow_up:${c.id}`, occursOn: on, kind: 'client_follow_up', icon: '📞', client: c, href, completable: false, title: `Follow up with ${clientName(c)}`, remindFrom: on, ...message('general', c) });
       }
     }
   }
@@ -194,21 +209,11 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
     const meta = dateKindMeta(d.kind);
     for (const on of occurrences(d.date, d.repeats, from, to)) {
       const when = formatDate(on, { month: 'long', day: 'numeric' });
-      const first = c.first_name;
-      const sms: Partial<Record<DateKind, string>> = {
-        insurance_renewal: `Hi ${first}, your homeowners insurance${d.provider ? ` with ${d.provider}` : ''} renews around ${when}. Rates have been moving on the coast, so it may be worth getting a couple of quotes first. Happy to connect you with local agents.${sign}`,
-        flood_insurance_renewal: `Hi ${first}, a reminder that your flood insurance${d.provider ? ` with ${d.provider}` : ''} renews around ${when}. Make sure it doesn't lapse, especially heading into storm season.${sign}`,
-        wedding_anniversary: `Happy anniversary to you both, ${first}! Hope you have a great day.${sign}`,
-        home_warranty_expiration: `Hi ${first}, your home warranty${d.provider ? ` with ${d.provider}` : ''} ends ${when}. Let me know if you'd like to renew or compare plans.${sign}`,
-        mortgage_review: `Hi ${first}, checking in on your mortgage. It may be worth a quick look at whether refinancing makes sense right now. Happy to connect you with a lender.${sign}`,
-        hoa_dues: `Hi ${first}, a friendly reminder that your HOA dues are coming up ${when}.${sign}`,
-        lease_end: `Hi ${first}, your lease is up ${when}. If you're thinking about buying instead of renewing, I'd love to help.${sign}`,
-      };
       push({
         key: `date:${d.id}`, occursOn: on, kind: d.kind, icon: meta.icon, client: c, href: `/dashboard/clients/${c.id}`, completable: true,
         title: `${clientName(c)}: ${dateLabel(d)}`, detail: [d.provider, d.notes].filter(Boolean).join(' · ') || undefined,
         remindFrom: addDaysYmd(on, -d.remind_days),
-        sms: sms[d.kind], emailSubject: dateLabel(d),
+        ...message(d.kind === 'custom' ? 'general' : d.kind, c, { date: when, provider: d.provider }),
       });
     }
   }
@@ -243,6 +248,7 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
       push({
         key: `deal_date:${deal.id}:${f.field}`, occursOn: on, kind: 'deal_date', icon: f.icon, client: c, href: `/dashboard/deals/${deal.id}`,
         completable: false, title: `${name}: ${f.label}`, detail: c ? clientName(c) : undefined, remindFrom: addDaysYmd(on, f.field === 'closing_date' ? -7 : -3),
+        ...(c ? message('deal', c, dealContext(deal)) : {}),
       });
     }
   }
@@ -254,6 +260,7 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
     events.push({
       key: `deal_task:${t.id}`, occursOn: on, kind: 'deal_task', icon: '☑️', client: c, href: `/dashboard/deals/${deal.id}`,
       completable: true, done: !!t.done_at, title: t.title, detail: dealTitle(deal, c), remindFrom: on,
+      ...(c ? message('deal', c, dealContext(deal)) : {}),
     });
   }
 

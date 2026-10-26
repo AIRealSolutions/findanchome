@@ -17,7 +17,7 @@ export default function TodayCard() {
     const to = addDaysYmd(today, 7);
     fetchCalendarData(from, to).then((data) => {
       if (cancelled) return;
-      const events = buildEvents(data, from, to, '', true).filter((e) => !e.done);
+      const events = buildEvents(data, from, to, { name: '' }, true).filter((e) => !e.done);
       setItems(events.filter((e) => e.occursOn <= today));
       setUpcoming(events.filter((e) => e.occursOn > today).length);
     });

@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Phone, MessageCircle, Mail, CalendarClock, Pencil, Trash2, Cake, Home, Plus } from 'lucide-react';
+import { ArrowLeft, Phone, MessageCircle, Mail, CalendarClock, Pencil, Trash2, Cake, Home, Plus, PenLine } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import ClientDates from '@/components/ClientDates';
 import ClientReferrals from '@/components/ClientReferrals';
 import ClientDeals from '@/components/ClientDeals';
+import MessageComposer from '@/components/MessageComposer';
 import { createClient } from '@/lib/supabase/client';
 import { ACTIVITY_KINDS, dialable, formatDateTime, relativeTime, toLocalInput } from '@/lib/leads';
 import { NO_YEAR, cleanEmail, cleanPhone, cleanState, splitList } from '@/lib/client-import';
@@ -115,6 +116,7 @@ export default function ClientDetailPage() {
   const [followUp, setFollowUp] = useState('');
   const [txn, setTxn] = useState<typeof emptyTxn | null>(null);
   const [showRaw, setShowRaw] = useState(false);
+  const [composing, setComposing] = useState(false);
 
   const authorName = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || user?.email || 'Broker';
 
@@ -315,6 +317,9 @@ export default function ClientDetailPage() {
                     </a>
                   </>
                 )}
+                <button onClick={() => setComposing(true)} className="inline-flex items-center gap-2 px-3 py-2 border border-blue-300 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-50">
+                  <PenLine size={16} /> Message from template
+                </button>
                 {client.email && (
                   <a href={`mailto:${client.email}`} className="inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">
                     <Mail size={16} /> {client.email}
@@ -548,6 +553,16 @@ export default function ClientDetailPage() {
           </Section>
         </div>
       </div>
+
+      {composing && user && (
+        <MessageComposer
+          client={client}
+          me={{ name: [profile?.first_name, profile?.last_name].filter(Boolean).join(' '), phone: profile?.phone, email: user.email }}
+          author={{ id: user.id, name: authorName }}
+          onClose={() => setComposing(false)}
+          onSent={load}
+        />
+      )}
     </div>
   );
 }

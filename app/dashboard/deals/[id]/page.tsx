@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Phone, MessageCircle, Mail, Plus, Trash2, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowLeft, Phone, MessageCircle, Mail, Plus, Trash2, CheckCircle2, XCircle, PenLine } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import MessageComposer from '@/components/MessageComposer';
 import { createClient } from '@/lib/supabase/client';
 import { dialable } from '@/lib/leads';
 import { daysBetween, toYmd } from '@/lib/calendar';
@@ -17,6 +18,7 @@ import {
   changeStage,
   closeDeal,
   dealCommission,
+  dealContext,
   dealTitle,
   isOpenDeal,
   markFellThrough,
@@ -62,7 +64,7 @@ const toDraft = (d: Deal): Draft => ({
 async function fetchDeal(id: string) {
   const supabase = createClient();
   const [d, t] = await Promise.all([
-    supabase.from('fanc_deals').select('*, client:fanc_clients(id, first_name, last_name, phone, email)').eq('id', id).maybeSingle(),
+    supabase.from('fanc_deals').select('*, client:fanc_clients(id, first_name, last_name, spouse_name, address_line1, city, phone, email, do_not_contact)').eq('id', id).maybeSingle(),
     supabase.from('fanc_deal_tasks').select('*').eq('deal_id', id).order('sort'),
   ]);
   return { deal: (d.data as DealWithClient | null) ?? null, tasks: (t.data ?? []) as DealTask[], error: (d.error || t.error)?.message ?? '' };
@@ -80,6 +82,7 @@ export default function DealDetailPage() {
   const [error, setError] = useState('');
   const [newTask, setNewTask] = useState({ title: '', due: '' });
   const [closingOn, setClosingOn] = useState('');
+  const [composing, setComposing] = useState(false);
 
   const author = { id: user?.id ?? '', name: [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || user?.email || 'Broker' };
 
@@ -180,6 +183,9 @@ export default function DealDetailPage() {
                   </>
                 )}
                 {c.email && <a href={`mailto:${c.email}`} className="inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50"><Mail size={16} /> Email</a>}
+                <button onClick={() => setComposing(true)} className="inline-flex items-center gap-2 px-3 py-2 border border-blue-300 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-50">
+                  <PenLine size={16} /> Message from template
+                </button>
               </div>
             )}
           </div>
@@ -376,6 +382,17 @@ export default function DealDetailPage() {
           </div>
         </div>
       </div>
+
+      {composing && c && user && (
+        <MessageComposer
+          client={c}
+          category="deal"
+          extra={dealContext(deal)}
+          me={{ name: [profile?.first_name, profile?.last_name].filter(Boolean).join(' '), phone: profile?.phone, email: user.email }}
+          author={author}
+          onClose={() => setComposing(false)}
+        />
+      )}
     </div>
   );
 }
