@@ -7,6 +7,7 @@ import { NO_YEAR } from './client-import';
 import { clientName, fetchAllClients, formatDate, type Client } from './clients';
 import { isOpen, type Lead } from './leads';
 import { DEAL_DATES, OPEN_STAGES, dealTitle, taskDue, type Deal, type DealTask } from './deals';
+import { OPEN_LISTING_STAGES, opportunityTitle, type ListingOpportunity } from './listings';
 
 export type DateKind =
   | 'wedding_anniversary' | 'insurance_renewal' | 'flood_insurance_renewal' | 'home_warranty_expiration'
@@ -47,7 +48,9 @@ export const SEASONAL_TOUCHES = [
   { slug: 'holiday-check-in', month: 12, day: 1, remind: 7, icon: '🎁', title: 'Holiday check-in', detail: 'Send past clients a holiday card or note.' },
 ];
 
-export type EventKind = 'birthday' | 'home_anniversary' | DateKind | 'season' | 'client_follow_up' | 'lead_follow_up' | 'deal_date' | 'deal_task';
+export type EventKind =
+  | 'birthday' | 'home_anniversary' | DateKind | 'season' | 'client_follow_up' | 'lead_follow_up' | 'deal_date' | 'deal_task'
+  | 'listing_follow_up' | 'listing_appointment';
 
 export interface CalEvent {
   key: string; // stable per source; with occursOn identifies a completion
@@ -110,16 +113,20 @@ export interface CalendarData {
   /** Open deals and their checklists (optional so callers without deals still work). */
   deals?: Deal[];
   tasks?: DealTask[];
+  /** Open listing opportunities with a follow-up or appointment. */
+  listings?: Pick<ListingOpportunity, 'id' | 'owner_name' | 'property_address' | 'city' | 'follow_up_at' | 'appointment_at' | 'client_id'>[];
 }
 
 export async function fetchCalendarData(from: string, to: string): Promise<CalendarData & { error: string }> {
   const supabase = createClient();
-  const [c, d, l, k, deals] = await Promise.all([
+  const [c, d, l, k, deals, listings] = await Promise.all([
     fetchAllClients(),
     supabase.from('fanc_client_dates').select('*').limit(10000),
     supabase.from('fanc_consultation_requests').select('id, name, status, follow_up_at').not('follow_up_at', 'is', null).limit(1000),
     supabase.from('fanc_calendar_completions').select('event_key, occurs_on').gte('occurs_on', from).lte('occurs_on', to).limit(10000),
     supabase.from('fanc_deals').select('*').in('stage', OPEN_STAGES).limit(1000),
+    supabase.from('fanc_listing_opportunities').select('id, owner_name, property_address, city, follow_up_at, appointment_at, client_id')
+      .eq('review_status', 'approved').in('stage', OPEN_LISTING_STAGES).or('follow_up_at.not.is.null,appointment_at.not.is.null').limit(2000),
   ]);
   const tasks: DealTask[] = [];
   let tasksError = '';
@@ -136,7 +143,8 @@ export async function fetchCalendarData(from: string, to: string): Promise<Calen
     done: new Set((k.data ?? []).map((x) => `${x.event_key}|${x.occurs_on}`)),
     deals: (deals.data ?? []) as Deal[],
     tasks,
-    error: c.error || (d.error || l.error || k.error || deals.error)?.message || tasksError,
+    listings: (listings.data ?? []) as CalendarData['listings'],
+    error: c.error || (d.error || l.error || k.error || deals.error || listings.error)?.message || tasksError,
   };
 }
 
@@ -255,6 +263,25 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
       key: `deal_task:${t.id}`, occursOn: on, kind: 'deal_task', icon: '☑️', client: c, href: `/dashboard/deals/${deal.id}`,
       completable: true, done: !!t.done_at, title: t.title, detail: dealTitle(deal, c), remindFrom: on,
     });
+  }
+
+  for (const o of data.listings ?? []) {
+    const c = o.client_id ? byId.get(o.client_id) : undefined;
+    const href = `/dashboard/listings/${o.id}`;
+    const where = o.property_address ? opportunityTitle(o) : undefined;
+    if (o.appointment_at) {
+      const on = toYmd(new Date(o.appointment_at));
+      if (on >= from && on <= to) {
+        const at = new Date(o.appointment_at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+        push({ key: `listing_appointment:${o.id}`, occursOn: on, kind: 'listing_appointment', icon: '🏡', client: c, href, completable: false, title: `Listing appointment with ${o.owner_name} at ${at}`, detail: where, remindFrom: addDaysYmd(on, -1) });
+      }
+    }
+    if (o.follow_up_at) {
+      const on = toYmd(new Date(o.follow_up_at));
+      if ((on >= from || overdueFollowUps) && on <= to) {
+        push({ key: `listing_follow_up:${o.id}`, occursOn: on, kind: 'listing_follow_up', icon: '🪧', client: c, href, completable: false, title: `Follow up on listing: ${o.owner_name}`, detail: where, remindFrom: on });
+      }
+    }
   }
 
   return events.sort((a, b) => a.occursOn.localeCompare(b.occursOn) || a.title.localeCompare(b.title));

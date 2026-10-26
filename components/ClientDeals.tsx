@@ -43,7 +43,10 @@ export default function ClientDeals({ client, author }: {
     <section className="bg-white border border-gray-200 rounded-xl p-5">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Deals</h2>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
+          <Link href={`/dashboard/listings/new?client=${client.id}`} className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800">
+            <Plus size={14} /> Listing opportunity
+          </Link>
           {DEAL_SIDES.filter((s) => s.value !== 'both').map((s) => (
             <button key={s.value} disabled={busy} onClick={() => start(s.value)} className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50">
               <Plus size={14} /> {s.value === 'buyer' ? 'Buyer deal' : 'Listing'}

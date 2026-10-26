@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import LeadsSummaryCard from '@/components/LeadsSummaryCard';
 import TodayCard from '@/components/TodayCard';
+import ListingsSummaryCard from '@/components/ListingsSummaryCard';
 import {
   BuildingOfficeIcon,
   UserGroupIcon,
@@ -157,6 +158,13 @@ export default function DashboardPage() {
 
       {(isAdmin || isBroker) && <LeadsSummaryCard />}
       {(isAdmin || isBroker) && <TodayCard />}
+      {(isAdmin || isBroker) && <ListingsSummaryCard />}
+      {profile?.role === 'client' && (
+        <Link href="/dashboard/listings/new" className="mb-8 block bg-white border border-gray-200 rounded-xl p-6 shadow hover:shadow-md">
+          <p className="text-lg font-semibold text-gray-900">Know someone thinking about selling?</p>
+          <p className="text-sm text-gray-600">Refer them to us. Our team reviews every referral and reaches out personally. →</p>
+        </Link>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

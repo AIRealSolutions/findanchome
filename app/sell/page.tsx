@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Home, DollarSign, TrendingUp, Users, CheckCircle2, Calendar } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
 export default function SellPage() {
   const [formData, setFormData] = useState({
@@ -50,23 +49,23 @@ export default function SellPage() {
     setIsSubmitting(true)
 
     try {
-      const supabase = createClient()
-      
-      const { error } = await supabase
-        .from('seller_requests')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            property_address: formData.address,
-            request_type: formData.requestType,
-            message: formData.message
-          }
-        ])
+      // Lands in the dashboard as a listing opportunity waiting for admin review.
+      const res = await fetch('/api/listing-opportunity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ownerName: formData.name,
+          ownerEmail: formData.email,
+          ownerPhone: formData.phone,
+          propertyAddress: formData.address,
+          sourceDetail: formData.requestType === 'cma' ? 'Sell page: free home value (CMA) request' : 'Sell page: listing appointment request',
+          message: formData.message,
+          sourcePage: '/sell'
+        })
+      })
 
-      if (error) {
-        console.error('Error submitting request:', error)
+      if (!res.ok) {
+        console.error('Error submitting request:', res.status)
         alert('There was an error submitting your request. Please try again or call us directly at (910) 363-6147.')
       } else {
         setIsSubmitted(true)

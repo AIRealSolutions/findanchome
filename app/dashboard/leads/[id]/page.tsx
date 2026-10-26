@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Phone, MessageCircle, Mail, ExternalLink, CalendarClock, UserPlus, UserCheck } from 'lucide-react';
+import { ArrowLeft, Phone, MessageCircle, Mail, ExternalLink, CalendarClock, UserPlus, UserCheck, House } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { communities, communityPath } from '@/lib/communities';
@@ -246,7 +246,12 @@ export default function LeadDetailPage() {
                 <Mail size={16} /> {lead.email}
               </a>
             </div>
-            <div className="mt-2">
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              {lead.intent.includes('sell') && (
+                <Link href={`/dashboard/listings/new?lead=${lead.id}`} className="inline-flex items-center gap-2 px-3 py-2 border border-indigo-300 text-indigo-800 rounded-lg text-sm font-medium hover:bg-indigo-50">
+                  <House size={16} /> Onboard as a listing opportunity
+                </Link>
+              )}
               {clientId ? (
                 <Link href={`/dashboard/clients/${clientId}`} className="inline-flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-900">
                   <UserCheck size={16} /> In the client database: view client record

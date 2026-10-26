@@ -20,14 +20,15 @@ import {
 } from '@/lib/calendar';
 
 type ViewMode = 'agenda' | 'month';
-type Filter = '' | 'personal' | 'home' | 'deals' | 'follow_up' | 'season';
+type Filter = '' | 'personal' | 'home' | 'deals' | 'listings' | 'follow_up' | 'season';
 
 const FILTERS: { value: Filter; label: string; kinds: CalEvent['kind'][] }[] = [
   { value: '', label: 'Everything', kinds: [] },
   { value: 'personal', label: 'Birthdays & anniversaries', kinds: ['birthday', 'home_anniversary', 'wedding_anniversary'] },
   { value: 'home', label: 'Insurance, warranty & home', kinds: ['insurance_renewal', 'flood_insurance_renewal', 'home_warranty_expiration', 'hoa_dues', 'mortgage_review', 'lease_end', 'custom'] },
   { value: 'deals', label: 'Deals & checklists', kinds: ['deal_date', 'deal_task'] },
-  { value: 'follow_up', label: 'Follow-ups', kinds: ['client_follow_up', 'lead_follow_up'] },
+  { value: 'listings', label: 'Listing opportunities', kinds: ['listing_appointment', 'listing_follow_up'] },
+  { value: 'follow_up', label: 'Follow-ups', kinds: ['client_follow_up', 'lead_follow_up', 'listing_follow_up'] },
   { value: 'season', label: 'Seasonal touches', kinds: ['season'] },
 ];
 
