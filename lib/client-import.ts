@@ -262,6 +262,10 @@ export function rowToRecord(raw: Record<string, string>, row: number, mapping: F
   let first = get('first_name');
   let last = get('last_name');
   if (!first && !last && get('full_name')) ({ first, last } = splitName(get('full_name')));
+  // Drop quoted nicknames: Cliff “Gordon” Hargrove → Cliff Hargrove.
+  const noNickname = (n: string) => n.replace(/\s*["“”\u0093\u0094][^"“”\u0093\u0094]*["“”\u0093\u0094]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  first = noNickname(first);
+  last = noNickname(last);
 
   const emailRaw = get('email');
   const email = emailRaw ? cleanEmail(emailRaw) : null;
