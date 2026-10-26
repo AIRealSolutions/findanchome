@@ -7,6 +7,7 @@ import { ArrowLeft, Phone, MessageCircle, Mail, CalendarClock, Pencil, Trash2, C
 import { useAuth } from '@/lib/auth-context';
 import ClientDates from '@/components/ClientDates';
 import ClientReferrals from '@/components/ClientReferrals';
+import ClientDeals from '@/components/ClientDeals';
 import { createClient } from '@/lib/supabase/client';
 import { ACTIVITY_KINDS, dialable, formatDateTime, relativeTime, toLocalInput } from '@/lib/leads';
 import { NO_YEAR, cleanEmail, cleanPhone, cleanState, splitList } from '@/lib/client-import';
@@ -406,6 +407,8 @@ export default function ClientDetailPage() {
               )}
             </Section>
           )}
+
+          <ClientDeals client={client} author={{ id: user?.id ?? '', name: authorName }} />
 
           <ClientReferrals client={client} author={{ id: user?.id ?? '', name: authorName }} onChanged={load} />
 
