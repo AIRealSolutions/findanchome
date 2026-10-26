@@ -10,6 +10,7 @@ import {
   HomeIcon,
   BuildingOfficeIcon,
   InboxStackIcon,
+  UserGroupIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -69,6 +70,7 @@ export default function DashboardLayout({
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['admin', 'broker', 'client'] },
     { name: 'Leads', href: '/dashboard/leads', icon: InboxStackIcon, roles: ['admin', 'broker'], badge: newLeads },
+    { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
     { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon, roles: ['admin', 'broker'] },
   ];
 
