@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Phone, MessageCircle, Mail, Plus, Trash2, CheckCircle2, XCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import DealMoney from '@/components/DealMoney';
 import { createClient } from '@/lib/supabase/client';
 import { dialable } from '@/lib/leads';
 import { daysBetween, toYmd } from '@/lib/calendar';
@@ -253,6 +254,8 @@ export default function DealDetailPage() {
               </Field>
             </div>
           </Section>
+
+          <DealMoney key={`${deal.id}:${deal.updated_at}`} deal={deal} onChanged={load} />
 
           <Section title="People & notes">
             <div className="grid sm:grid-cols-2 gap-3">

@@ -65,6 +65,7 @@ export interface ListingOpportunity {
   consultation_id: string | null;
   deal_id: string | null;
   source_page: string | null;
+  requested_broker_id: string | null;
 }
 
 export interface ListingActivity {

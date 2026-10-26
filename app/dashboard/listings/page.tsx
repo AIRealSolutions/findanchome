@@ -92,7 +92,7 @@ function OppRow({ o, staff, author, onChanged, showAssignee, note }: {
 
 /** Admin review of a submission: approve and assign, or reject. */
 function ReviewCard({ o, staff, author, onChanged }: { o: ListingOpportunity; staff: StaffMember[]; author: Author; onChanged: () => void }) {
-  const [assignTo, setAssignTo] = useState(author.id);
+  const [assignTo, setAssignTo] = useState(o.requested_broker_id ?? author.id);
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -110,6 +110,7 @@ function ReviewCard({ o, staff, author, onChanged }: { o: ListingOpportunity; st
           <Link href={`/dashboard/listings/${o.id}`} className="font-semibold text-gray-900 hover:text-blue-600">{o.owner_name}</Link>
           <p className="text-sm text-gray-600">{opportunityTitle(o)}</p>
           <p className="text-xs text-gray-500 mt-0.5">
+            {o.requested_broker_id && <span className="mr-1 px-1.5 py-0.5 rounded bg-green-100 text-green-800">Asked for {staffName(staff.find((s) => s.id === o.requested_broker_id))}</span>}
             {sourceMeta(o.source).icon} {sourceMeta(o.source).label}{o.source_detail && `: ${o.source_detail}`} · from {o.created_by_name || (o.created_by_role === 'public' ? 'the website' : 'a client')} · {relativeTime(o.created_at)}
           </p>
         </div>

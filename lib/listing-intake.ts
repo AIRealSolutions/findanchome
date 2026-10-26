@@ -34,6 +34,8 @@ export interface ListingIntake {
   sourceDetail: string;
   message: string;
   sourcePage?: string;
+  /** The broker whose link the owner came from (/sell?agent=…). */
+  requestedBrokerId?: string;
   /** Honeypot: real visitors never fill this in. */
   company?: string;
 }
@@ -46,6 +48,7 @@ export const EMPTY_INTAKE: ListingIntake = {
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const pick = (v: unknown, allowed: readonly string[]) => (typeof v === 'string' && allowed.includes(v) ? v : null);
@@ -94,6 +97,7 @@ export function intakeToRow(body: Partial<ListingIntake>): { row?: Partial<Listi
       source_detail: str(body.sourceDetail, 300) || null,
       message: str(body.message, 5000) || null,
       source_page: str(body.sourcePage, 300) || null,
+      requested_broker_id: typeof body.requestedBrokerId === 'string' && UUID_RE.test(body.requestedBrokerId) ? body.requestedBrokerId : null,
     },
   };
 }

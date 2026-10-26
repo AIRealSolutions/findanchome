@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { Home, DollarSign, TrendingUp, Users, CheckCircle2, Calendar } from 'lucide-react'
 
 export default function SellPage() {
@@ -16,6 +17,16 @@ export default function SellPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  // A broker's own link (/sell?agent=…) tags the request for them and shows who the owner will work with.
+  const [agent, setAgent] = useState<{ id: string; first_name: string | null; last_name: string | null; phone: string | null } | null>(null)
+
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('agent')
+    if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return
+    createClient().rpc('fanc_public_broker', { broker: id }).then(({ data }) => {
+      if (data?.[0]) setAgent(data[0])
+    })
+  }, [])
 
   const testimonials = [
     {
@@ -60,7 +71,8 @@ export default function SellPage() {
           propertyAddress: formData.address,
           sourceDetail: formData.requestType === 'cma' ? 'Sell page: free home value (CMA) request' : 'Sell page: listing appointment request',
           message: formData.message,
-          sourcePage: '/sell'
+          sourcePage: '/sell',
+          requestedBrokerId: agent?.id
         })
       })
 
@@ -312,6 +324,12 @@ export default function SellPage() {
               <h3 className="text-2xl font-bold mb-6 text-[#1e3a8a] text-center">
                 Request Information
               </h3>
+              {agent && (
+                <p className="-mt-3 mb-6 text-center text-gray-700">
+                  You&apos;ll be working with <strong>{[agent.first_name, agent.last_name].filter(Boolean).join(' ')}</strong>
+                  {agent.phone && <> · <a href={`tel:${agent.phone.replace(/[^\d+]/g, '')}`} className="text-[#1e3a8a] underline">{agent.phone}</a></>}
+                </p>
+              )}
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
