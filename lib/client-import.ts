@@ -237,7 +237,7 @@ function splitName(full: string) {
 
 // ───────────────────────── Rows → records ─────────────────────────
 
-export type NewClient = Omit<Client, 'id' | 'created_at' | 'updated_at' | 'import_id' | 'follow_up_at' | 'last_contacted_at'>;
+export type NewClient = Omit<Client, 'id' | 'created_at' | 'updated_at' | 'import_id' | 'follow_up_at' | 'last_contacted_at' | 'consultation_id' | 'referred_by_id'>;
 export type NewTransaction = Omit<ClientTransaction, 'id' | 'client_id' | 'created_at'>;
 
 /** Flexmls groups / tags that mean the contact already bought or sold with you. */

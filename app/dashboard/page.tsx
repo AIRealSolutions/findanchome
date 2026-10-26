@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import LeadsSummaryCard from '@/components/LeadsSummaryCard';
+import TodayCard from '@/components/TodayCard';
 import {
   BuildingOfficeIcon,
   UserGroupIcon,
@@ -155,6 +156,7 @@ export default function DashboardPage() {
       )}
 
       {(isAdmin || isBroker) && <LeadsSummaryCard />}
+      {(isAdmin || isBroker) && <TodayCard />}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

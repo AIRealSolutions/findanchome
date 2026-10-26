@@ -38,6 +38,8 @@ export interface Client {
   source_created_at: string | null;
   import_id: string | null;
   import_raw: Record<string, string> | null;
+  consultation_id: string | null;
+  referred_by_id: string | null;
 }
 
 export interface ClientTransaction {
