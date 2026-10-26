@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { OPEN_LISTING_STAGES } from '@/lib/listings';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -13,6 +14,7 @@ import {
   UserGroupIcon,
   CalendarDaysIcon,
   BriefcaseIcon,
+  HomeModernIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -28,6 +30,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [newLeads, setNewLeads] = useState(0);
+  const [listingTodo, setListingTodo] = useState(0);
   const isStaff = isAdmin || isBroker;
 
   useEffect(() => {
@@ -54,6 +57,19 @@ export default function DashboardLayout({
       .then(({ data }) => setNewLeads(data?.length ?? 0));
   }, [isStaff, pathname]);
 
+  // Listings badge: submissions waiting for review (admins) plus my follow-ups due today or overdue.
+  useEffect(() => {
+    if (!isStaff || !user) return;
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+    const supabase = createClient();
+    Promise.all([
+      isAdmin ? supabase.from('fanc_listing_opportunities').select('id').eq('review_status', 'pending_review').limit(500) : Promise.resolve({ data: [] }),
+      supabase.from('fanc_listing_opportunities').select('id').eq('review_status', 'approved').eq('assigned_to', user.id)
+        .in('stage', OPEN_LISTING_STAGES).lte('follow_up_at', endOfToday.toISOString()).limit(500),
+    ]).then(([pending, due]) => setListingTodo((pending.data?.length ?? 0) + (due.data?.length ?? 0)));
+  }, [isStaff, isAdmin, user, pathname]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -73,6 +89,8 @@ export default function DashboardLayout({
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['admin', 'broker', 'client'] },
     { name: 'Leads', href: '/dashboard/leads', icon: InboxStackIcon, roles: ['admin', 'broker'], badge: newLeads },
     { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
+    { name: 'Listings', href: '/dashboard/listings', icon: HomeModernIcon, roles: ['admin', 'broker'], badge: listingTodo },
+    { name: 'Refer a seller', href: '/dashboard/listings/new', icon: HomeModernIcon, roles: ['client'] },
     { name: 'Deals', href: '/dashboard/deals', icon: BriefcaseIcon, roles: ['admin', 'broker'] },
     { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarDaysIcon, roles: ['admin', 'broker'] },
     { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon, roles: ['admin', 'broker'] },
