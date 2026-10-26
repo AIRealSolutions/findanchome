@@ -6,6 +6,7 @@ import { createClient } from './supabase/client';
 import { NO_YEAR } from './client-import';
 import { clientName, fetchAllClients, formatDate, type Client } from './clients';
 import { isOpen, type Lead } from './leads';
+import { DEAL_DATES, OPEN_STAGES, dealTitle, taskDue, type Deal, type DealTask } from './deals';
 
 export type DateKind =
   | 'wedding_anniversary' | 'insurance_renewal' | 'flood_insurance_renewal' | 'home_warranty_expiration'
@@ -46,7 +47,7 @@ export const SEASONAL_TOUCHES = [
   { slug: 'holiday-check-in', month: 12, day: 1, remind: 7, icon: '🎁', title: 'Holiday check-in', detail: 'Send past clients a holiday card or note.' },
 ];
 
-export type EventKind = 'birthday' | 'home_anniversary' | DateKind | 'season' | 'client_follow_up' | 'lead_follow_up';
+export type EventKind = 'birthday' | 'home_anniversary' | DateKind | 'season' | 'client_follow_up' | 'lead_follow_up' | 'deal_date' | 'deal_task';
 
 export interface CalEvent {
   key: string; // stable per source; with occursOn identifies a completion
@@ -106,22 +107,36 @@ export interface CalendarData {
   dates: ClientDate[];
   leads: Pick<Lead, 'id' | 'name' | 'status' | 'follow_up_at'>[];
   done: Set<string>;
+  /** Open deals and their checklists (optional so callers without deals still work). */
+  deals?: Deal[];
+  tasks?: DealTask[];
 }
 
 export async function fetchCalendarData(from: string, to: string): Promise<CalendarData & { error: string }> {
   const supabase = createClient();
-  const [c, d, l, k] = await Promise.all([
+  const [c, d, l, k, deals] = await Promise.all([
     fetchAllClients(),
     supabase.from('fanc_client_dates').select('*').limit(10000),
     supabase.from('fanc_consultation_requests').select('id, name, status, follow_up_at').not('follow_up_at', 'is', null).limit(1000),
     supabase.from('fanc_calendar_completions').select('event_key, occurs_on').gte('occurs_on', from).lte('occurs_on', to).limit(10000),
+    supabase.from('fanc_deals').select('*').in('stage', OPEN_STAGES).limit(1000),
   ]);
+  const tasks: DealTask[] = [];
+  let tasksError = '';
+  const dealIds = (deals.data ?? []).map((x) => x.id as string);
+  for (let i = 0; i < dealIds.length; i += 100) {
+    const { data, error } = await supabase.from('fanc_deal_tasks').select('*').in('deal_id', dealIds.slice(i, i + 100)).limit(10000);
+    if (error) tasksError = error.message;
+    tasks.push(...((data ?? []) as DealTask[]));
+  }
   return {
     clients: c.clients,
     dates: (d.data ?? []) as ClientDate[],
     leads: (l.data ?? []) as CalendarData['leads'],
     done: new Set((k.data ?? []).map((x) => `${x.event_key}|${x.occurs_on}`)),
-    error: c.error || (d.error || l.error || k.error)?.message || '',
+    deals: (deals.data ?? []) as Deal[],
+    tasks,
+    error: c.error || (d.error || l.error || k.error || deals.error)?.message || tasksError,
   };
 }
 
@@ -218,12 +233,41 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
     }
   }
 
+  const dealsById = new Map((data.deals ?? []).map((d) => [d.id, d]));
+  for (const deal of data.deals ?? []) {
+    const c = byId.get(deal.client_id);
+    const name = dealTitle(deal, c);
+    for (const f of DEAL_DATES) {
+      const on = deal[f.field];
+      if (!on || on < from || on > to || f.field === 'effective_date') continue;
+      push({
+        key: `deal_date:${deal.id}:${f.field}`, occursOn: on, kind: 'deal_date', icon: f.icon, client: c, href: `/dashboard/deals/${deal.id}`,
+        completable: false, title: `${name}: ${f.label}`, detail: c ? clientName(c) : undefined, remindFrom: addDaysYmd(on, f.field === 'closing_date' ? -7 : -3),
+      });
+    }
+  }
+  for (const t of data.tasks ?? []) {
+    const deal = dealsById.get(t.deal_id);
+    const on = deal && taskDue(t, deal);
+    if (!deal || !on || on > to || (on < from && (!overdueFollowUps || t.done_at))) continue;
+    const c = byId.get(deal.client_id);
+    events.push({
+      key: `deal_task:${t.id}`, occursOn: on, kind: 'deal_task', icon: '☑️', client: c, href: `/dashboard/deals/${deal.id}`,
+      completable: true, done: !!t.done_at, title: t.title, detail: dealTitle(deal, c), remindFrom: on,
+    });
+  }
+
   return events.sort((a, b) => a.occursOn.localeCompare(b.occursOn) || a.title.localeCompare(b.title));
 }
 
 /** Mark an occurrence handled (or not); handled ones are also logged on the client's timeline. */
 export async function setDone(e: CalEvent, done: boolean, author: { id: string; name: string }, how = 'Reached out') {
   const supabase = createClient();
+  // Deal checklist items are ticked off on the task itself.
+  if (e.kind === 'deal_task') {
+    const { error } = await supabase.from('fanc_deal_tasks').update({ done_at: done ? new Date().toISOString() : null }).eq('id', e.key.slice('deal_task:'.length));
+    return error?.message ?? '';
+  }
   if (!done) {
     const { error } = await supabase.from('fanc_calendar_completions').delete().eq('event_key', e.key).eq('occurs_on', e.occursOn);
     return error?.message ?? '';
