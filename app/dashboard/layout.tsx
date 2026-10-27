@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { OPEN_LISTING_STAGES } from '@/lib/listings';
 import { ViewAsProvider, useViewAs, type ViewRole } from '@/lib/view-as';
+import { DEPARTMENTS, type DeptKey } from '@/components/admin/departments';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -18,6 +19,10 @@ import {
   HomeModernIcon,
   MegaphoneIcon,
   PresentationChartLineIcon,
+  ChartBarIcon,
+  CalculatorIcon,
+  IdentificationIcon,
+  Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -95,22 +100,38 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  const navigation = [
-    { name: 'Control Center', href: '/dashboard', icon: PresentationChartLineIcon, roles: ['admin'] },
-    { name: 'My dashboard', href: '/dashboard', icon: HomeIcon, roles: ['broker'] },
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['client'] },
-    { name: 'Leads', href: '/dashboard/leads', icon: InboxStackIcon, roles: ['admin', 'broker'], badge: newLeads },
-    { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
-    { name: 'Listings', href: '/dashboard/listings', icon: HomeModernIcon, roles: ['admin', 'broker'], badge: listingTodo },
-    { name: 'My deals', href: '/dashboard/my-deals', icon: BriefcaseIcon, roles: ['client'] },
-    { name: 'Refer a seller', href: '/dashboard/listings/new', icon: HomeModernIcon, roles: ['client'] },
-    { name: 'Deals', href: '/dashboard/deals', icon: BriefcaseIcon, roles: ['admin', 'broker'] },
-    { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarDaysIcon, roles: ['admin', 'broker'] },
-    { name: 'Marketing', href: '/dashboard/marketing', icon: MegaphoneIcon, roles: ['admin', 'broker'] },
-    { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon, roles: ['admin', 'broker'] },
-  ];
+  // Admins navigate by department; brokers by what they do every day; clients get a short list.
+  type NavItem = { name: string; href: string; icon: typeof HomeIcon; badge?: number };
+  const TOOL_ICONS: Record<string, typeof HomeIcon> = {
+    '/dashboard/listings': HomeModernIcon, '/dashboard/leads': InboxStackIcon, '/dashboard/clients': UserGroupIcon,
+    '/dashboard/deals': BriefcaseIcon, '/dashboard/calendar': CalendarDaysIcon, '/dashboard/marketing': MegaphoneIcon,
+    '/dashboard/properties': BuildingOfficeIcon,
+  };
+  const DEPT_ICONS: Record<DeptKey, typeof HomeIcon> = {
+    executive: PresentationChartLineIcon, sales: ChartBarIcon, marketing: MegaphoneIcon, accounting: CalculatorIcon,
+    hr: IdentificationIcon, operations: Cog6ToothIcon,
+  };
+  const BADGES: Record<string, number> = { '/dashboard/leads': newLeads, '/dashboard/listings': listingTodo };
+  const tool = (t: { name: string; href: string }): NavItem => ({ ...t, icon: TOOL_ICONS[t.href] ?? HomeIcon, badge: BADGES[t.href] });
+  const toolsOf = (k: DeptKey) => DEPARTMENTS.find((d) => d.key === k)!.tools.map(tool);
 
-  const filteredNavigation = navigation.filter((item) => item.roles.includes(viewAs));
+  const groups: { heading?: string; items: NavItem[] }[] =
+    viewAs === 'admin'
+      ? DEPARTMENTS.map((d) => ({
+          heading: d.label,
+          items: [{ name: d.key === 'executive' ? 'Control Center' : `${d.label} overview`, href: d.href, icon: DEPT_ICONS[d.key] }, ...d.tools.map(tool)],
+        }))
+      : viewAs === 'broker'
+        ? [
+            { items: [{ name: 'My dashboard', href: '/dashboard', icon: HomeIcon }] },
+            { heading: 'Sales', items: toolsOf('sales') },
+            { heading: 'Marketing', items: toolsOf('marketing') },
+          ]
+        : [{ items: [
+            { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+            { name: 'My deals', href: '/dashboard/my-deals', icon: BriefcaseIcon },
+            { name: 'Refer a seller', href: '/dashboard/listings/new', icon: HomeModernIcon },
+          ] }];
 
   const handleSignOut = async () => {
     await signOut();
@@ -168,27 +189,32 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-15rem)]">
-          {filteredNavigation.map((item) => {
-            const isActive = item.href === '/dashboard' ? pathname === item.href : pathname === item.href || pathname?.startsWith(item.href + '/');
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="flex-1">{item.name}</span>
-                {'badge' in item && item.badge ? (
-                  <span className="min-w-6 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs font-semibold text-center">{item.badge}</span>
-                ) : null}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-4 py-3 overflow-y-auto max-h-[calc(100vh-15rem)]">
+          {groups.map((g, gi) => (
+            <div key={g.heading ?? gi} className={gi ? 'mt-3' : ''}>
+              {g.heading && <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">{g.heading}</p>}
+              <div className="space-y-0.5">
+                {g.items.map((item) => {
+                  const isActive = item.href === '/dashboard' ? pathname === item.href : pathname === item.href || pathname?.startsWith(item.href + '/');
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                        isActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      <span className="flex-1">{item.name}</span>
+                      {item.badge ? (
+                        <span className="min-w-6 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs font-semibold text-center">{item.badge}</span>
+                      ) : null}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* User Profile & Sign Out */}

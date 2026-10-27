@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useViewAs } from '@/lib/view-as';
-import ControlCenter from '@/components/admin/ControlCenter';
+import AdminDepartment from '@/components/admin/AdminDepartment';
 import BrokerHome from '@/components/BrokerHome';
 import ClientHome from '@/components/ClientHome';
 
@@ -24,7 +24,7 @@ export default function DashboardPage() {
   if (viewAs === 'admin') {
     return (
       <Suspense fallback={<p className="text-gray-500">Loading…</p>}>
-        <ControlCenter />
+        <AdminDepartment dept="executive" />
       </Suspense>
     );
   }

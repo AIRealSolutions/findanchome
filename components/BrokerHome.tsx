@@ -6,7 +6,10 @@ import { Briefcase, Check, Copy, HousePlus, Megaphone, UserPlus } from 'lucide-r
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { formatMoney } from '@/lib/clients';
-import { capProgress, closedDealMoney, fetchFinance, periodRange, planLookup, salesStats, type FinanceData } from '@/lib/finance';
+import { capProgress, closedDealMoney, fetchFinance, periodRange, planLookup, profitAndLoss, salesStats, type FinanceData } from '@/lib/finance';
+import { Progress } from './admin/ui';
+import { GOAL_METRICS } from './admin/sections/Executive';
+import type { Goal } from './admin/useAdminData';
 import { captureLinks, startOfWeek, WEEKLY_POST_GOAL } from '@/lib/marketing';
 import LeadsSummaryCard from './LeadsSummaryCard';
 import ListingsSummaryCard from './ListingsSummaryCard';
@@ -19,12 +22,15 @@ export default function BrokerHome() {
   const { user, profile } = useAuth();
   const [data, setData] = useState<FinanceData | null>(null);
   const [postsThisWeek, setPostsThisWeek] = useState<number | null>(null);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
     fetchFinance().then((f) => !cancelled && setData(f));
+    createClient().from('fanc_goals').select('*').eq('year', new Date().getFullYear())
+      .then(({ data: g }) => !cancelled && setGoals(((g ?? []) as Goal[]).map((x) => ({ ...x, target: Number(x.target) }))));
     createClient().from('fanc_marketing_posts').select('id').eq('broker_id', user.id).eq('status', 'posted')
       .gte('posted_at', startOfWeek().toISOString()).limit(100)
       .then(({ data: p }) => !cancelled && setPostsThisWeek(p?.length ?? 0));
@@ -44,7 +50,9 @@ export default function BrokerHome() {
     const companyFromMe = data.deals
       .filter((d) => d.stage === 'closed' && d.broker_id === user.id && d.closing_date && d.closing_date >= from)
       .reduce((n, d) => n + (dm.get(d.id)?.companyDollar ?? 0), 0);
-    return { stats, plan: myPlan, cap: capProgress(data, dm, myPlan), companyFromMe };
+    const pl = profitAndLoss(data, dm, from, to, user.id);
+    const actual: Record<string, number> = { units: stats.units, volume: stats.volume, gci: pl.gci, company_dollar: pl.companyDollar };
+    return { stats, plan: myPlan, cap: capProgress(data, dm, myPlan), companyFromMe, actual };
   }, [data, user]);
 
   const link = user ? captureLinks(user.id)[0] : null;
@@ -84,6 +92,22 @@ export default function BrokerHome() {
           </div>
         ))}
       </div>
+
+      {mine && goals.some((g) => g.broker_id === user?.id && g.metric in mine.actual) && (
+        <section className="mb-8 bg-white border border-gray-200 rounded-xl p-5">
+          <h2 className="font-semibold text-gray-900 mb-3">My {new Date().getFullYear()} goals</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {GOAL_METRICS.filter((m) => goals.some((g) => g.broker_id === user?.id && g.metric === m.value) && m.value in mine.actual).map((m) => (
+              <Progress key={m.value} label={m.label} value={mine.actual[m.value]} target={goals.find((g) => g.broker_id === user?.id && g.metric === m.value)!.target}
+                format={m.money ? money : (n) => n.toLocaleString()} />
+            ))}
+          </div>
+          {goals.some((g) => !g.broker_id) && (
+            <p className="mt-3 text-xs text-gray-500">Company goals: {GOAL_METRICS.filter((m) => goals.some((g) => !g.broker_id && g.metric === m.value))
+              .map((m) => `${m.label} ${m.money ? money(goals.find((g) => !g.broker_id && g.metric === m.value)!.target) : goals.find((g) => !g.broker_id && g.metric === m.value)!.target.toLocaleString()}`).join(' · ')}</p>
+          )}
+        </section>
+      )}
 
       <ListingsSummaryCard />
       <TodayCard />
