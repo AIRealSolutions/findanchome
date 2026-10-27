@@ -47,6 +47,9 @@ export interface Deal {
   /** The broker's plan split and transaction fee, snapshotted when the deal closes. */
   agent_split_pct: number | null;
   transaction_fee: number | null;
+  /** Accounting: when the commission check came in, and when the broker's share was paid out. */
+  commission_received_on: string | null;
+  agent_paid_on: string | null;
 }
 
 export interface DealTask {
