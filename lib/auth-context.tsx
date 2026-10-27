@@ -116,11 +116,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('fanc_user_profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const select = () => supabase.from('fanc_user_profiles').select('*').eq('id', userId).maybeSingle();
+      let { data, error } = await select();
+      // A client's first sign-in from a workspace invite: claiming the invite creates their profile.
+      if (!error && !data) {
+        await supabase.rpc('fanc_claim_invites');
+        ({ data, error } = await select());
+      }
 
       if (error) throw error;
       setProfile(data);
