@@ -277,6 +277,11 @@ export default function DealDetailPage() {
         </form>
 
         <div className="space-y-6">
+          <Link href={`/dashboard/deals/${deal.id}/workspace`} className="flex items-center justify-between gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:shadow-lg">
+            <span><span className="block font-semibold">Shared workspace</span><span className="text-sm opacity-90">Post daily updates, share to-dos and the calendar with your client.</span></span>
+            <span aria-hidden className="text-xl">→</span>
+          </Link>
+
           <Section title="Checklist">
             {!hasContractList && (
               <button disabled={saving} onClick={() => run(() => addChecklist(deal, 'contract', tasks.length))}

@@ -59,6 +59,10 @@ export interface DealTask {
   due_date: string | null;
   done_at: string | null;
   sort: number;
+  /** Shown to the clients in the deal workspace; `assignee` says whose to-do it is. */
+  shared: boolean;
+  assignee: 'broker' | 'client';
+  created_by: string | null;
 }
 
 export type DealWithClient = Deal & { client: Pick<Client, 'id' | 'first_name' | 'last_name' | 'phone' | 'email'> | null };
@@ -118,18 +122,19 @@ export function nextKeyDate(d: Deal, today = toYmd(new Date())) {
 
 // ───────────────────────── Checklists ─────────────────────────
 
-type Template = { title: string; anchor?: DealDateField; offset?: number };
+// `shared`: shown in the client workspace; `client`: the client's to-do rather than the broker's.
+type Template = { title: string; anchor?: DealDateField; offset?: number; shared?: boolean; client?: boolean };
 
 const ACTIVE_TASKS: Record<'buyer' | 'seller', Template[]> = {
   buyer: [
     { title: 'Signed buyer agency agreement on file' },
-    { title: 'Pre-approval letter (or proof of funds) received' },
+    { title: 'Pre-approval letter (or proof of funds) received', shared: true, client: true },
     { title: 'Set up a saved search / listing alerts in Flexmls' },
   ],
   seller: [
     { title: 'Signed listing agreement on file' },
-    { title: 'Residential Property and Owners’ Association Disclosure completed' },
-    { title: 'Photos scheduled' },
+    { title: 'Residential Property and Owners’ Association Disclosure completed', shared: true, client: true },
+    { title: 'Photos scheduled', shared: true },
     { title: 'Listing entered in Flexmls' },
   ],
 };
@@ -137,31 +142,31 @@ const ACTIVE_TASKS: Record<'buyer' | 'seller', Template[]> = {
 const CONTRACT_TASKS: Record<'buyer' | 'seller', Template[]> = {
   buyer: [
     { title: 'Send the signed contract to the lender, closing attorney and buyer', anchor: 'effective_date' },
-    { title: 'Confirm the due diligence fee was paid to the seller', anchor: 'effective_date' },
-    { title: 'Confirm earnest money was delivered to the escrow agent', anchor: 'emd_due_date' },
-    { title: 'Schedule the home inspection', anchor: 'effective_date', offset: 2 },
+    { title: 'Confirm the due diligence fee was paid to the seller', anchor: 'effective_date', shared: true, client: true },
+    { title: 'Confirm earnest money was delivered to the escrow agent', anchor: 'emd_due_date', shared: true, client: true },
+    { title: 'Schedule the home inspection', anchor: 'effective_date', offset: 2, shared: true },
     { title: 'Order the survey and wood-destroying insect report (if wanted)', anchor: 'effective_date', offset: 5 },
     { title: 'Confirm the appraisal is ordered', anchor: 'effective_date', offset: 7 },
-    { title: 'Review the inspection report with the buyer', anchor: 'inspection_date', offset: 1 },
+    { title: 'Review the inspection report with the buyer', anchor: 'inspection_date', offset: 1, shared: true },
     { title: 'Send the repair request and negotiate', anchor: 'due_diligence_date', offset: -5 },
-    { title: 'Buyer decision: proceed or terminate before due diligence ends', anchor: 'due_diligence_date', offset: -1 },
+    { title: 'Buyer decision: proceed or terminate before due diligence ends', anchor: 'due_diligence_date', offset: -1, shared: true, client: true },
     { title: 'Review the appraisal', anchor: 'appraisal_date', offset: 1 },
-    { title: 'Confirm homeowners (and flood) insurance is bound', anchor: 'closing_date', offset: -10 },
-    { title: 'Remind the buyer to set up utilities', anchor: 'closing_date', offset: -7 },
+    { title: 'Confirm homeowners (and flood) insurance is bound', anchor: 'closing_date', offset: -10, shared: true, client: true },
+    { title: 'Remind the buyer to set up utilities', anchor: 'closing_date', offset: -7, shared: true, client: true },
     { title: 'Confirm clear to close with the lender', anchor: 'closing_date', offset: -5 },
-    { title: 'Final walk-through', anchor: 'closing_date', offset: -1 },
-    { title: 'Closing day', anchor: 'closing_date' },
+    { title: 'Final walk-through', anchor: 'closing_date', offset: -1, shared: true },
+    { title: 'Closing day', anchor: 'closing_date', shared: true },
   ],
   seller: [
     { title: 'Send the signed contract to the closing attorney and seller', anchor: 'effective_date' },
     { title: 'Confirm the buyer paid the due diligence fee', anchor: 'effective_date' },
     { title: 'Confirm the buyer’s earnest money was delivered', anchor: 'emd_due_date' },
     { title: 'Arrange access for inspections and the appraisal', anchor: 'effective_date', offset: 2 },
-    { title: 'Respond to the repair request', anchor: 'due_diligence_date', offset: -3 },
+    { title: 'Respond to the repair request', anchor: 'due_diligence_date', offset: -3, shared: true },
     { title: 'Confirm the buyer is proceeding after due diligence', anchor: 'due_diligence_date', offset: 1 },
-    { title: 'Send seller information and payoff details to the closing attorney', anchor: 'closing_date', offset: -14 },
-    { title: 'Remind the seller about utilities, keys and garage remotes', anchor: 'closing_date', offset: -3 },
-    { title: 'Closing day', anchor: 'closing_date' },
+    { title: 'Send seller information and payoff details to the closing attorney', anchor: 'closing_date', offset: -14, shared: true, client: true },
+    { title: 'Remind the seller about utilities, keys and garage remotes', anchor: 'closing_date', offset: -3, shared: true, client: true },
+    { title: 'Closing day', anchor: 'closing_date', shared: true },
   ],
 };
 
@@ -180,6 +185,7 @@ function templates(kind: 'active' | 'contract', side: DealSide, isHud: boolean):
 export async function addChecklist(d: Deal, kind: 'active' | 'contract', startSort = 0) {
   const rows = templates(kind, d.side, d.is_hud).map((t, i) => ({
     deal_id: d.id, title: t.title, anchor: t.anchor ?? null, offset_days: t.offset ?? 0, sort: startSort + i,
+    shared: !!t.shared, assignee: t.client ? 'client' : 'broker',
   }));
   const { error } = await createClient().from('fanc_deal_tasks').insert(rows);
   return error?.message ?? '';
@@ -188,6 +194,17 @@ export async function addChecklist(d: Deal, kind: 'active' | 'contract', startSo
 // ───────────────────────── Writes ─────────────────────────
 
 type Author = { id: string; name: string };
+
+/** A milestone in the shared workspace feed, written for the client to read. */
+export const postMilestone = (dealId: string, body: string) =>
+  createClient().from('fanc_deal_posts').insert({ deal_id: dealId, body, kind: 'milestone', author_role: 'system', author_name: 'Milestone' });
+
+const STAGE_MILESTONES: Partial<Record<DealStage, string>> = {
+  under_contract: '🎉 Under contract! The due diligence period has started.',
+  post_dd: '✅ Due diligence is complete. Next up: financing, appraisal and closing prep.',
+  clear_to_close: '🔑 Clear to close! Closing is just around the corner.',
+  active: 'Back to active.',
+};
 
 const logOnClient = (clientId: string, body: string, author: Author) =>
   createClient().from('fanc_client_activity').insert({ client_id: clientId, kind: 'note', body, author_id: author.id, author_name: author.name });
@@ -218,6 +235,7 @@ export async function changeStage(d: Deal, stage: DealStage, tasks: DealTask[], 
     if (err) return err;
   }
   await logOnClient(d.client_id, `${dealTitle(d)}: ${stageMeta(d.stage).short} → ${stageMeta(stage).short}`, author);
+  if (STAGE_MILESTONES[stage]) await postMilestone(d.id, STAGE_MILESTONES[stage]!);
   return '';
 }
 
@@ -254,6 +272,7 @@ export async function closeDeal(d: Deal, closingDate: string, author: Author) {
   if (d.side !== 'seller' && !c?.home_anniversary) updates.home_anniversary = closingDate;
   await supabase.from('fanc_clients').update(updates).eq('id', d.client_id);
   await logOnClient(d.client_id, `Closed: ${dealTitle(d)} on ${formatDate(closingDate)}`, author);
+  await postMilestone(d.id, `🏡 Closed on ${formatDate(closingDate)}. Congratulations!`);
   return '';
 }
 

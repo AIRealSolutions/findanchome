@@ -102,6 +102,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     { name: 'Leads', href: '/dashboard/leads', icon: InboxStackIcon, roles: ['admin', 'broker'], badge: newLeads },
     { name: 'Clients', href: '/dashboard/clients', icon: UserGroupIcon, roles: ['admin', 'broker'] },
     { name: 'Listings', href: '/dashboard/listings', icon: HomeModernIcon, roles: ['admin', 'broker'], badge: listingTodo },
+    { name: 'My deals', href: '/dashboard/my-deals', icon: BriefcaseIcon, roles: ['client'] },
     { name: 'Refer a seller', href: '/dashboard/listings/new', icon: HomeModernIcon, roles: ['client'] },
     { name: 'Deals', href: '/dashboard/deals', icon: BriefcaseIcon, roles: ['admin', 'broker'] },
     { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarDaysIcon, roles: ['admin', 'broker'] },
