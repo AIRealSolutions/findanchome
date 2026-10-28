@@ -30,7 +30,8 @@ export interface Goal { id: string; year: number; broker_id: string | null; metr
 export interface AdminData {
   finance: FinanceData;
   leads: { created_at: string; status: string; source_page: string | null; intent: string[] }[];
-  opps: Pick<ListingOpportunity, 'id' | 'created_at' | 'updated_at' | 'stage' | 'review_status' | 'assigned_to' | 'source' | 'requested_broker_id' | 'last_contacted_at'>[];
+  opps: Pick<ListingOpportunity, 'id' | 'created_at' | 'updated_at' | 'stage' | 'review_status' | 'assigned_to' | 'source' | 'requested_broker_id' | 'last_contacted_at'
+    | 'created_by' | 'created_by_role' | 'created_by_name' | 'owner_name' | 'property_address' | 'city' | 'priority' | 'follow_up_at'>[];
   touches: { created_at: string; author_id: string | null }[];
   profiles: { id: string; role: string; first_name: string | null; last_name: string | null; is_active: boolean; phone: string | null; broker_license: string | null }[];
   records: BrokerRecord[];
@@ -50,7 +51,7 @@ async function load(): Promise<AdminData> {
   const openIds = finance.deals.filter((d) => OPEN_STAGES.includes(d.stage)).map((d) => d.id);
   const [leads, opps, touches, profiles, records, goals, posts, members, clients, dealPosts, ...taskPages] = await Promise.all([
     supabase.from('fanc_consultation_requests').select('created_at, status, source_page, intent').gte('created_at', since).limit(5000),
-    supabase.from('fanc_listing_opportunities').select('id, created_at, updated_at, stage, review_status, assigned_to, source, requested_broker_id, last_contacted_at').limit(5000),
+    supabase.from('fanc_listing_opportunities').select('id, created_at, updated_at, stage, review_status, assigned_to, source, requested_broker_id, last_contacted_at, created_by, created_by_role, created_by_name, owner_name, property_address, city, priority, follow_up_at').limit(5000),
     supabase.from('fanc_listing_activity').select('created_at, author_id').in('kind', TOUCH_KINDS).gte('created_at', since).limit(10000),
     supabase.from('fanc_user_profiles').select('id, role, first_name, last_name, is_active, phone, broker_license').order('role').limit(1000),
     supabase.from('fanc_broker_records').select('*'),

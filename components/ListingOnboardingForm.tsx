@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { COUNTY_NAMES } from '@/lib/lifestyles';
 import { formatMoney } from '@/lib/clients';
@@ -58,6 +59,8 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
   author: { id: string; name: string };
 }) {
   const router = useRouter();
+  // Brokers keep what they bring in; only the broker-in-charge / an admin can hand an opportunity to someone else.
+  const { isAdmin } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<ListingIntake>({ ...EMPTY_INTAKE, ...(mode === 'referral' ? { source: 'referral' } : {}), ...initial });
   const STEPS = mode === 'staff' ? STAFF_STEPS : REFERRAL_STEPS;
@@ -126,7 +129,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
       ...row,
       created_by_name: author.name,
       priority: triage.priority,
-      assigned_to: triage.assignedTo || author.id,
+      assigned_to: (isAdmin && triage.assignedTo) || author.id,
       stage: appointment ? 'appointment' : 'new',
       appointment_at: appointment,
       follow_up_at: followUp,
@@ -145,7 +148,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
       if (upErr) console.error('Photo upload failed:', upErr);
     }
     await seedSituationTasks(data, []);
-    const assignee = staff.find((s) => s.id === triage.assignedTo);
+    const assignee = isAdmin ? staff.find((s) => s.id === triage.assignedTo) : undefined;
     await logListingActivity(data.id, [{
       kind: 'note',
       body: `Onboarded from ${sourceMeta(row.source!).label.toLowerCase()}${assignee && assignee.id !== author.id ? `; assigned to ${staffName(assignee)}` : ''}`,
@@ -335,10 +338,16 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
                 <Field label="Priority">
                   <Select value={triage.priority} onChange={(v) => setTriage({ ...triage, priority: (v || 'warm') as LeadPriority })} options={PRIORITIES} />
                 </Field>
-                <Field label="Assigned to">
-                  <Select value={triage.assignedTo} onChange={(v) => setTriage({ ...triage, assignedTo: v })}
-                    options={staff.length ? staff.map((s) => ({ value: s.id, label: `${staffName(s)}${s.id === author.id ? ' (me)' : ''}` })) : [{ value: author.id, label: `${author.name} (me)` }]} placeholder="Me" />
-                </Field>
+                {isAdmin ? (
+                  <Field label="Assigned to" hint="Give it to a broker, or keep it">
+                    <Select value={triage.assignedTo} onChange={(v) => setTriage({ ...triage, assignedTo: v })}
+                      options={staff.length ? staff.map((s) => ({ value: s.id, label: `${staffName(s)}${s.id === author.id ? ' (me)' : ''}` })) : [{ value: author.id, label: `${author.name} (me)` }]} placeholder="Me" />
+                  </Field>
+                ) : (
+                  <Field label="Assigned to" hint="You brought it in, so it stays on your dashboard">
+                    <p className={`${input} bg-gray-50`}>{author.name} (me)</p>
+                  </Field>
+                )}
                 <Field label="First follow-up">
                   <Select value={triage.followUp} onChange={(v) => setTriage({ ...triage, followUp: (v || 'none') as Triage['followUp'] })}
                     options={[{ value: 'today', label: 'Today' }, { value: 'tomorrow', label: 'Tomorrow morning' }, { value: 'week', label: 'In a week' }]} placeholder="No follow-up" />

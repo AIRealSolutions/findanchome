@@ -349,6 +349,25 @@ export async function changeListingStage(o: ListingOpportunity, stage: ListingSt
   return '';
 }
 
+/**
+ * A broker's own opportunity (one they onboarded or snapped) stays with them while they're an active broker
+ * (`staff` is the active staff directory). Everything else, entered by the broker-in-charge / an admin or coming
+ * in through the company, is the company's for an admin to assign.
+ */
+export const isBrokerOwned = (o: Pick<ListingOpportunity, 'created_by' | 'created_by_role'>, staff: Pick<StaffMember, 'id'>[]) =>
+  o.created_by_role === 'broker' && !!o.created_by && staff.some((s) => s.id === o.created_by);
+
+/** Admin gives a company opportunity to a broker (or moves it), with a first follow-up if it has none. */
+export async function assignOpportunity(
+  o: Pick<ListingOpportunity, 'id' | 'follow_up_at'>, assignTo: string | null, author: Author, assigneeName = '',
+) {
+  const { error } = await createClient().from('fanc_listing_opportunities')
+    .update({ assigned_to: assignTo, follow_up_at: o.follow_up_at ?? (assignTo ? inDays(0) : null) }).eq('id', o.id);
+  if (error) return error.message;
+  await logListingActivity(o.id, [{ kind: 'status', body: assignTo ? `Assigned to ${assigneeName || 'a broker'}` : 'Unassigned' }], author);
+  return '';
+}
+
 /** Admin decision on a submission: approve and assign (with a first follow-up today), or reject. */
 export async function reviewOpportunity(
   o: ListingOpportunity, decision: 'approved' | 'rejected', assignTo: string | null, note: string, author: Author, assigneeName = '',
