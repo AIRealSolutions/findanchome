@@ -12,8 +12,8 @@ import { LocationOwner, OpportunityPhotos, SituationPanel } from '@/components/O
 import { PRIORITIES, dialable, formatDateTime, relativeTime, toLocalInput, type LeadPriority } from '@/lib/leads';
 import {
   LISTING_ACTIVITY_ICONS, LISTING_ACTIVITY_KINDS, LISTING_STAGES, OCCUPANCY, OPEN_LISTING_STAGES, REASONS, SELLER_TIMELINES,
-  changeListingStage, convertToListing, dueState, equity, fetchStaff, inDays, listingStageMeta, logListingActivity, opportunityTitle,
-  propertySummary, recordTouch, reviewOpportunity, sourceMeta, staffName,
+  assignOpportunity, changeListingStage, convertToListing, dueState, equity, fetchStaff, inDays, listingStageMeta, logListingActivity, opportunityTitle,
+  isBrokerOwned, propertySummary, recordTouch, reviewOpportunity, sourceMeta, staffName,
   type ListingActivity, type ListingActivityKind, type ListingOpportunity, type ListingStage, type StaffMember,
 } from '@/lib/listings';
 
@@ -253,12 +253,23 @@ export default function ListingOpportunityPage() {
               </label>
               <label className="text-sm col-span-2">
                 <span className="block text-gray-500 mb-1">Assigned to</span>
-                <select value={opp.assigned_to ?? ''} disabled={saving}
-                  onChange={(e) => update({ assigned_to: e.target.value || null }, `Assigned to ${staffName(staff.find((s) => s.id === e.target.value))}`)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
-                  <option value="">Unassigned</option>
-                  {staff.map((s) => <option key={s.id} value={s.id}>{staffName(s)}{s.id === user?.id ? ' (me)' : ''}</option>)}
-                </select>
+                {isAdmin && !isBrokerOwned(opp, staff) ? (
+                  <select value={opp.assigned_to ?? ''} disabled={saving}
+                    onChange={(e) => run(() => assignOpportunity(opp, e.target.value || null, author, staffName(staff.find((s) => s.id === e.target.value))))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
+                    <option value="">Unassigned</option>
+                    {staff.map((s) => <option key={s.id} value={s.id}>{staffName(s)}{s.id === user?.id ? ' (me)' : ''}</option>)}
+                  </select>
+                ) : (
+                  <p className="px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900">
+                    {opp.assigned_to ? staffName(staff.find((s) => s.id === opp.assigned_to)) : 'Unassigned'}{opp.assigned_to === user?.id ? ' (me)' : ''}
+                  </p>
+                )}
+                <span className="block text-xs text-gray-500 mt-1">
+                  {isBrokerOwned(opp, staff)
+                    ? `Brought in by ${opp.created_by === user?.id ? 'you' : opp.created_by_name || 'this broker'}, so it stays on their dashboard.`
+                    : isAdmin ? 'Company opportunity: give it to any broker.' : 'Company opportunity: the broker-in-charge assigns it.'}
+                </span>
               </label>
             </div>
           )}

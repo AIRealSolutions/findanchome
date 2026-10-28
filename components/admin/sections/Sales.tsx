@@ -1,7 +1,11 @@
 'use client';
 
+import { useState } from 'react';
+import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 import { capProgress, pct, profitAndLoss, salesStats } from '@/lib/finance';
-import { LISTING_SOURCES, staffName } from '@/lib/listings';
+import { LISTING_SOURCES, assignOpportunity, isBrokerOwned, isOpenOpportunity, opportunityTitle, sourceMeta, staffName } from '@/lib/listings';
+import { relativeTime } from '@/lib/leads';
 import { Card, Tile, money } from '../ui';
 import type { AdminContext } from '../useAdminData';
 
@@ -111,6 +115,104 @@ export function Pipeline({ ctx }: { ctx: AdminContext }) {
           {oppsIn.length === 0 && <p className="text-sm text-gray-500">No listing opportunities in this period.</p>}
         </Card>
       </div>
+    </div>
+  );
+}
+
+type Opp = AdminContext['opps'][number];
+
+function AssignRow({ o, ctx, author }: { o: Opp; ctx: AdminContext; author: { id: string; name: string } }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const assign = async (to: string) => {
+    setBusy(true);
+    setError('');
+    const err = await assignOpportunity(o, to || null, author, ctx.nameOf(to || null));
+    if (err) {
+      setBusy(false);
+      return setError(err);
+    }
+    await ctx.reload();
+    setBusy(false);
+  };
+  return (
+    <li className="py-3 flex flex-col sm:flex-row sm:items-center gap-2">
+      <div className="flex-1 min-w-0">
+        <Link href={`/dashboard/listings/${o.id}`} className="font-medium text-gray-900 hover:text-blue-600">{o.owner_name}</Link>
+        <div className="text-sm text-gray-600 truncate">{sourceMeta(o.source).icon} {o.property_address ? opportunityTitle(o) : sourceMeta(o.source).label}</div>
+        <div className="text-xs text-gray-500">
+          From {o.created_by_name || (o.created_by_role === 'public' ? 'the website' : o.created_by_role === 'client' ? 'a client' : 'the company')} · {relativeTime(o.created_at)}
+          {o.priority === 'hot' && <span className="ml-1 text-red-700 font-medium">· Hot</span>}
+        </div>
+        {error && <div className="text-xs text-red-600">{error}</div>}
+      </div>
+      <select value={o.assigned_to ?? ''} disabled={busy} onChange={(e) => assign(e.target.value)} aria-label={`Assign ${o.owner_name}`}
+        className={`sm:w-60 px-3 py-2 border rounded-lg bg-white text-sm ${o.assigned_to ? 'border-gray-300' : 'border-amber-400'}`}>
+        <option value="">Unassigned</option>
+        {ctx.finance.staff.map((s) => <option key={s.id} value={s.id}>{staffName(s)}{s.id === author.id ? ' (me)' : ''}</option>)}
+      </select>
+    </li>
+  );
+}
+
+/**
+ * The broker-in-charge hands out company opportunities: ones entered by an admin or that came in through the
+ * website and client referrals. A broker's own onboarded or snapped opportunities stay with them and aren't listed.
+ */
+export function AssignOpportunities({ ctx }: { ctx: AdminContext }) {
+  const { user, profile } = useAuth();
+  const author = { id: user?.id ?? '', name: [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || user?.email || 'Admin' };
+  const admins = new Set(ctx.finance.staff.filter((s) => s.role === 'admin').map((s) => s.id));
+  const open = ctx.opps.filter(isOpenOpportunity);
+  const owned = (o: Opp) => isBrokerOwned(o, ctx.finance.staff);
+  const company = open.filter((o) => !owned(o) && (!ctx.broker || o.assigned_to === ctx.broker))
+    // Unassigned first, then ones still sitting with an admin, then everything already with a broker; newest first within each.
+    .sort((a, b) => {
+      const rank = (o: Opp) => (!o.assigned_to ? 0 : admins.has(o.assigned_to) ? 1 : 2);
+      return rank(a) - rank(b) || b.created_at.localeCompare(a.created_at);
+    });
+  const unassigned = company.filter((o) => !o.assigned_to).length;
+  const withAdmin = company.filter((o) => o.assigned_to && admins.has(o.assigned_to)).length;
+  const pending = ctx.opps.filter((o) => o.review_status === 'pending_review').length;
+  const brokerOwned = open.filter(owned);
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Tile label="Unassigned" value={String(unassigned)} tone={unassigned ? 'bad' : undefined} />
+        <Tile label="Held by the broker-in-charge / admin" value={String(withAdmin)} />
+        <Tile label="Waiting for review" value={String(pending)} sub="Website requests and client referrals" />
+        <Tile label="Brokers' own opportunities" value={String(brokerOwned.length)} sub="Onboarded or snapped by the broker" />
+      </div>
+      {pending > 0 && (
+        <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3">
+          {pending} new submission{pending === 1 ? ' is' : 's are'} waiting for review. <Link href="/dashboard/listings?view=review" className="font-medium underline">Approve and assign them in the review queue →</Link>
+        </p>
+      )}
+      <Card title={`Company opportunities${ctx.broker ? ` · ${ctx.nameOf(ctx.broker)}` : ''} (${company.length})`}>
+        {company.length === 0 ? (
+          <p className="text-sm text-gray-500">No open company opportunities{ctx.broker ? ' for this broker' : ''}.</p>
+        ) : (
+          <ul className="divide-y divide-gray-100">{company.map((o) => <AssignRow key={o.id} o={o} ctx={ctx} author={author} />)}</ul>
+        )}
+        <p className="mt-3 text-xs text-gray-500">
+          These were entered by you or another admin, came in through the company, or belonged to a broker who has left. Pick a broker to give them the opportunity; it moves to their dashboard with a follow-up for today.
+          Opportunities a broker onboarded or snapped themselves stay with that broker and can&apos;t be reassigned.
+        </p>
+      </Card>
+      {brokerOwned.length > 0 && !ctx.broker && (
+        <Card title="Brokers' own opportunities">
+          <table className="w-full text-sm">
+            <thead><tr className="text-left text-gray-500"><th className="py-1">Broker</th><th className="text-right">Open opportunities they brought in</th></tr></thead>
+            <tbody className="divide-y divide-gray-100">
+              {ctx.finance.staff.map((s) => {
+                const n = brokerOwned.filter((o) => o.assigned_to === s.id).length;
+                return n ? <tr key={s.id}><td className="py-1.5">{staffName(s)}</td><td className="text-right">{n}</td></tr> : null;
+              })}
+            </tbody>
+          </table>
+        </Card>
+      )}
     </div>
   );
 }

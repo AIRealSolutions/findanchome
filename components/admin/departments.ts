@@ -24,7 +24,11 @@ export const DEPARTMENTS: Department[] = [
   {
     key: 'sales', label: 'Sales', icon: '🤝', href: '/dashboard/dept/sales',
     summary: 'Production by broker and the pipeline from first lead to closing.',
-    tabs: [{ value: 'production', label: 'Production by broker' }, { value: 'pipeline', label: 'Pipeline & conversion' }],
+    tabs: [
+      { value: 'production', label: 'Production by broker' },
+      { value: 'pipeline', label: 'Pipeline & conversion' },
+      { value: 'assign', label: 'Assign opportunities' },
+    ],
     tools: [
       { name: 'Listings', href: '/dashboard/listings' },
       { name: 'Snap a house', href: '/dashboard/listings/capture' },

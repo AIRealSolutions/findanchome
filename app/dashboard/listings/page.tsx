@@ -418,7 +418,8 @@ function ListingsPage() {
       )}
 
       <p className="mt-6 text-xs text-gray-500">
-        Opportunities a broker or admin enters go straight into the pipeline; website requests and client referrals go to the admin to review first.
+        Opportunities a broker onboards or snaps go straight into their own pipeline and stay with them. Website requests and client referrals go to
+        the admin to review first; those, and anything the broker-in-charge enters, are assigned by the broker-in-charge.
       </p>
     </div>
   );

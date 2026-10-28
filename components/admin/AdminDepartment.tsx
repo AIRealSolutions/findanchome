@@ -10,7 +10,7 @@ import { staffName } from '@/lib/listings';
 import { DEPARTMENTS, deptMeta, type DeptKey } from './departments';
 import { useAdminData, type AdminContext } from './useAdminData';
 import { ExecutiveOverview, GoalsEditor } from './sections/Executive';
-import { Pipeline, Production } from './sections/Sales';
+import { AssignOpportunities, Pipeline, Production } from './sections/Sales';
 import { BrokerMarketing, LeadSources } from './sections/Marketing';
 import { Commissions, Form1099, Ledger, ProfitAndLoss } from './sections/Accounting';
 import { Licensing, Team } from './sections/Hr';
@@ -110,6 +110,7 @@ export default function AdminDepartment({ dept }: { dept: DeptKey }) {
       {view === 'executive:goals' && <GoalsEditor ctx={ctx} />}
       {view === 'sales:production' && <Production ctx={ctx} />}
       {view === 'sales:pipeline' && <Pipeline ctx={ctx} />}
+      {view === 'sales:assign' && <AssignOpportunities ctx={ctx} />}
       {view === 'marketing:sources' && <LeadSources ctx={ctx} />}
       {view === 'marketing:activity' && <BrokerMarketing ctx={ctx} />}
       {view === 'accounting:pl' && <ProfitAndLoss ctx={ctx} period={period} />}
