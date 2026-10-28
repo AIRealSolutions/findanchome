@@ -13,10 +13,10 @@ import {
   DEFAULT_DAILY_GOAL, OPEN_LISTING_STAGES, TOUCH_KINDS,
   dailyRoutine, dueState, readDailyGoal, saveDailyGoal, fetchStaff, isOpenOpportunity, listingStageMeta, opportunityTitle, recordTouch, reviewOpportunity,
   sourceMeta, staffName,
-  type ListingOpportunity, type StaffMember,
+  type ListingOpportunity, type ListingStage, type StaffMember,
 } from '@/lib/listings';
 
-type View = 'today' | 'pipeline' | 'review' | 'closed';
+type View = 'today' | 'all' | 'pipeline' | 'review' | 'closed';
 type Author = { id: string; name: string };
 
 async function fetchAll(userId: string) {
@@ -156,6 +156,50 @@ function Step({ n, title, hint, count, children }: { n: number; title: string; h
   );
 }
 
+/** Every open opportunity in one list, next step first, so nothing waiting on a later follow-up is out of reach. */
+function AllOpportunities({ opps, stage, onStage, rowProps }: {
+  opps: ListingOpportunity[]; stage: ListingStage | null; onStage: (s: ListingStage | null) => void;
+  rowProps: Omit<React.ComponentProps<typeof OppRow>, 'o' | 'note'>;
+}) {
+  const open = opps.filter(isOpenOpportunity);
+  const nextStep = (o: ListingOpportunity) => [o.appointment_at, o.follow_up_at].filter(Boolean).sort()[0] ?? null;
+  const list = open.filter((o) => !stage || o.stage === stage)
+    // Soonest appointment or follow-up first; no next step after those; newest first among the rest.
+    .sort((a, b) => {
+      const na = nextStep(a), nb = nextStep(b);
+      if (na && nb) return na.localeCompare(nb);
+      if (na || nb) return na ? -1 : 1;
+      return b.created_at.localeCompare(a.created_at);
+    });
+  return (
+    <section className="bg-white border border-gray-200 rounded-xl p-5">
+      <div className="flex flex-wrap gap-1.5 mb-2">
+        {[null, ...OPEN_LISTING_STAGES].map((s) => {
+          const n = s ? open.filter((o) => o.stage === s).length : open.length;
+          return (
+            <button key={s ?? 'all'} onClick={() => onStage(s)}
+              className={`px-2.5 py-1 rounded-full text-xs border ${stage === s ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-300 text-gray-700 hover:border-blue-400'}`}>
+              {s ? listingStageMeta(s).short : 'All stages'} ({n})
+            </button>
+          );
+        })}
+      </div>
+      {list.length === 0 ? (
+        <p className="py-6 text-center text-sm text-gray-500">No open opportunities{stage ? ` in ${listingStageMeta(stage).short.toLowerCase()}` : ''}.</p>
+      ) : (
+        <ul className="divide-y divide-gray-100">
+          {list.map((o) => (
+            <OppRow key={o.id} o={o} {...rowProps}
+              note={o.appointment_at && new Date(o.appointment_at) >= new Date()
+                ? <div className="text-xs text-purple-700 font-medium">📅 Appointment {formatDateTime(o.appointment_at)}</div>
+                : undefined} />
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 function ListingsPage() {
   const router = useRouter();
   const params = useSearchParams();
@@ -168,6 +212,8 @@ function ListingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const view = (params.get('view') as View) || 'today';
+  // The All view can be narrowed to one stage (e.g. from the "Appointments set" tile).
+  const stageFilter = OPEN_LISTING_STAGES.find((s) => s === params.get('stage')) ?? null;
 
   const author = { id: user?.id ?? '', name: [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || user?.email || 'Broker' };
 
@@ -217,7 +263,8 @@ function ListingsPage() {
   }, [notStaff, router]);
   if (notStaff) return null;
 
-  const setView = (v: View) => router.replace(v === 'today' ? '/dashboard/listings' : `/dashboard/listings?view=${v}`);
+  const setView = (v: View, stage?: ListingStage) =>
+    router.replace(v === 'today' ? '/dashboard/listings' : `/dashboard/listings?view=${v}${stage ? `&stage=${stage}` : ''}`);
   const saveGoal = (n: number) => {
     setGoal(n);
     saveDailyGoal(n);
@@ -225,6 +272,7 @@ function ListingsPage() {
   const rowProps = { staff, author, onChanged: load, showAssignee: !mineOnly };
   const tabs: { value: View; label: string; count?: number }[] = [
     { value: 'today', label: 'Today' },
+    { value: 'all', label: 'All', count: stats.open },
     { value: 'pipeline', label: 'Pipeline' },
     ...(isAdmin ? [{ value: 'review' as View, label: 'Review queue', count: routine.review.length }] : []),
     { value: 'closed', label: 'Won & lost' },
@@ -251,16 +299,16 @@ function ListingsPage() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        {[
-          { label: 'Open opportunities', value: stats.open.toString() },
-          { label: 'Appointments set', value: stats.appointments.toString() },
-          { label: 'Potential listing volume', value: formatMoney(stats.potential) || '$0' },
-          { label: `Listings won in ${new Date().getFullYear()}`, value: stats.wonYear.toString() },
-        ].map((s) => (
-          <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-4">
+        {([
+          { label: 'Open opportunities', value: stats.open.toString(), go: () => setView('all') },
+          { label: 'Appointments set', value: stats.appointments.toString(), go: () => setView('all', 'appointment') },
+          { label: 'Potential listing volume', value: formatMoney(stats.potential) || '$0', go: () => setView('all') },
+          { label: `Listings won in ${new Date().getFullYear()}`, value: stats.wonYear.toString(), go: () => setView('closed') },
+        ]).map((s) => (
+          <button key={s.label} onClick={s.go} className="text-left bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-400 hover:shadow-sm transition">
             <div className="text-2xl font-bold text-gray-900">{s.value}</div>
-            <div className="text-sm text-gray-600">{s.label}</div>
-          </div>
+            <div className="text-sm text-gray-600">{s.label} <span className="text-blue-600">→</span></div>
+          </button>
         ))}
       </div>
 
@@ -270,7 +318,7 @@ function ListingsPage() {
             <button key={t.value} onClick={() => setView(t.value)}
               className={`px-3 py-1.5 rounded-md text-sm whitespace-nowrap ${view === t.value ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-600 hover:text-gray-900'}`}>
               {t.label}
-              {t.count ? <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-xs">{t.count}</span> : null}
+              {t.count ? <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-xs ${t.value === 'review' ? 'bg-amber-500 text-white' : 'bg-gray-200 text-gray-700'}`}>{t.count}</span> : null}
             </button>
           ))}
         </div>
@@ -358,6 +406,8 @@ function ListingsPage() {
         ) : (
           <ul className="space-y-3">{routine.review.map((o) => <ReviewCard key={o.id} o={o} staff={staff} author={author} onChanged={load} />)}</ul>
         )
+      ) : view === 'all' ? (
+        <AllOpportunities opps={visible} stage={stageFilter} onStage={(st) => setView('all', st ?? undefined)} rowProps={rowProps} />
       ) : view === 'pipeline' ? (
         <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
           {OPEN_LISTING_STAGES.map((stage) => {
