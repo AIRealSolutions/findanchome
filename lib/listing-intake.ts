@@ -61,13 +61,14 @@ function num(v: unknown, min: number, max: number) {
  * Validate and convert form input to a fanc_listing_opportunities row. Returns an error message for the
  * first problem a person needs to fix.
  */
-export function intakeToRow(body: Partial<ListingIntake>): { row?: Partial<ListingOpportunity>; error?: string } {
+export function intakeToRow(body: Partial<ListingIntake>, opts: { requireContact?: boolean } = {}): { row?: Partial<ListingOpportunity>; error?: string } {
   const ownerName = str(body.ownerName, 200);
   const ownerEmail = str(body.ownerEmail, 320);
   const ownerPhone = str(body.ownerPhone, 50);
   if (!ownerName) return { error: 'Please enter the owner’s name.' };
   if (ownerEmail && !EMAIL_RE.test(ownerEmail)) return { error: 'Please enter a valid email address.' };
-  if (!ownerEmail && !ownerPhone) return { error: 'Please enter a phone number or email so we can reach the owner.' };
+  // Website and client submissions need a way to reach the owner; a broker may only know the owner of record.
+  if (opts.requireContact !== false && !ownerEmail && !ownerPhone) return { error: 'Please enter a phone number or email so we can reach the owner.' };
 
   return {
     row: {

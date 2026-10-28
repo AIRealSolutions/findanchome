@@ -23,6 +23,7 @@ import {
   CalculatorIcon,
   IdentificationIcon,
   Cog6ToothIcon,
+  CameraIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -105,7 +106,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const TOOL_ICONS: Record<string, typeof HomeIcon> = {
     '/dashboard/listings': HomeModernIcon, '/dashboard/leads': InboxStackIcon, '/dashboard/clients': UserGroupIcon,
     '/dashboard/deals': BriefcaseIcon, '/dashboard/calendar': CalendarDaysIcon, '/dashboard/marketing': MegaphoneIcon,
-    '/dashboard/properties': BuildingOfficeIcon,
+    '/dashboard/properties': BuildingOfficeIcon, '/dashboard/listings/capture': CameraIcon,
   };
   const DEPT_ICONS: Record<DeptKey, typeof HomeIcon> = {
     executive: PresentationChartLineIcon, sales: ChartBarIcon, marketing: MegaphoneIcon, accounting: CalculatorIcon,

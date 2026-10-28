@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Briefcase, Check, Copy, HousePlus, Megaphone, UserPlus } from 'lucide-react';
+import { Briefcase, Camera, Check, Copy, HousePlus, Megaphone, UserPlus } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { formatMoney } from '@/lib/clients';
@@ -139,6 +139,7 @@ export default function BrokerHome() {
           <h2 className="font-semibold text-gray-900 mb-3">Quick actions</h2>
           <div className="grid grid-cols-2 gap-2 text-sm">
             {[
+              { href: '/dashboard/listings/capture', label: 'Snap a house', icon: Camera },
               { href: '/dashboard/listings/new', label: 'Onboard a listing', icon: HousePlus },
               { href: '/dashboard/clients', label: 'Add or find a client', icon: UserPlus },
               { href: '/dashboard/deals', label: 'Start a deal', icon: Briefcase },
