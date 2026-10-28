@@ -27,6 +27,7 @@ export const DEPARTMENTS: Department[] = [
     tabs: [{ value: 'production', label: 'Production by broker' }, { value: 'pipeline', label: 'Pipeline & conversion' }],
     tools: [
       { name: 'Listings', href: '/dashboard/listings' },
+      { name: 'Snap a house', href: '/dashboard/listings/capture' },
       { name: 'Leads', href: '/dashboard/leads' },
       { name: 'Clients', href: '/dashboard/clients' },
       { name: 'Deals', href: '/dashboard/deals' },

@@ -7,7 +7,7 @@ import { NO_YEAR } from './client-import';
 import { clientName, fetchAllClients, formatDate, type Client } from './clients';
 import { isOpen, type Lead } from './leads';
 import { DEAL_DATES, OPEN_STAGES, dealTitle, taskDue, type Deal, type DealTask } from './deals';
-import { OPEN_LISTING_STAGES, opportunityTitle, type ListingOpportunity } from './listings';
+import { OPEN_LISTING_STAGES, opportunityTitle, type ListingOpportunity, type ListingTask } from './listings';
 
 export type DateKind =
   | 'wedding_anniversary' | 'insurance_renewal' | 'flood_insurance_renewal' | 'home_warranty_expiration'
@@ -50,7 +50,7 @@ export const SEASONAL_TOUCHES = [
 
 export type EventKind =
   | 'birthday' | 'home_anniversary' | DateKind | 'season' | 'client_follow_up' | 'lead_follow_up' | 'deal_date' | 'deal_task'
-  | 'listing_follow_up' | 'listing_appointment';
+  | 'listing_follow_up' | 'listing_appointment' | 'listing_deadline' | 'listing_task';
 
 export interface CalEvent {
   key: string; // stable per source; with occursOn identifies a completion
@@ -114,19 +114,24 @@ export interface CalendarData {
   deals?: Deal[];
   tasks?: DealTask[];
   /** Open listing opportunities with a follow-up or appointment. */
-  listings?: Pick<ListingOpportunity, 'id' | 'owner_name' | 'property_address' | 'city' | 'follow_up_at' | 'appointment_at' | 'client_id'>[];
+  listings?: Pick<ListingOpportunity, 'id' | 'owner_name' | 'property_address' | 'city' | 'follow_up_at' | 'appointment_at' | 'client_id' | 'situation' | 'hearing_date' | 'sale_date'>[];
+  /** Open steps of foreclosure / probate / inherited checklists. */
+  listingTasks?: (Pick<ListingTask, 'id' | 'opportunity_id' | 'title' | 'due_date' | 'done_at'> & { opportunity?: { owner_name: string } | null })[];
 }
 
 export async function fetchCalendarData(from: string, to: string): Promise<CalendarData & { error: string }> {
   const supabase = createClient();
-  const [c, d, l, k, deals, listings] = await Promise.all([
+  const [c, d, l, k, deals, listings, listingTasks] = await Promise.all([
     fetchAllClients(),
     supabase.from('fanc_client_dates').select('*').limit(10000),
     supabase.from('fanc_consultation_requests').select('id, name, status, follow_up_at').not('follow_up_at', 'is', null).limit(1000),
     supabase.from('fanc_calendar_completions').select('event_key, occurs_on').gte('occurs_on', from).lte('occurs_on', to).limit(10000),
     supabase.from('fanc_deals').select('*').in('stage', OPEN_STAGES).limit(1000),
-    supabase.from('fanc_listing_opportunities').select('id, owner_name, property_address, city, follow_up_at, appointment_at, client_id')
-      .eq('review_status', 'approved').in('stage', OPEN_LISTING_STAGES).or('follow_up_at.not.is.null,appointment_at.not.is.null').limit(2000),
+    supabase.from('fanc_listing_opportunities').select('id, owner_name, property_address, city, follow_up_at, appointment_at, client_id, situation, hearing_date, sale_date')
+      .eq('review_status', 'approved').in('stage', OPEN_LISTING_STAGES).or('follow_up_at.not.is.null,appointment_at.not.is.null,hearing_date.not.is.null,sale_date.not.is.null').limit(2000),
+    // Only steps on opportunities still being worked (not listed or lost).
+    supabase.from('fanc_listing_tasks').select('id, opportunity_id, title, due_date, done_at, opportunity:fanc_listing_opportunities!inner(owner_name, stage, review_status)')
+      .is('done_at', null).not('due_date', 'is', null).in('opportunity.stage', OPEN_LISTING_STAGES).eq('opportunity.review_status', 'approved').limit(5000),
   ]);
   const tasks: DealTask[] = [];
   let tasksError = '';
@@ -144,7 +149,8 @@ export async function fetchCalendarData(from: string, to: string): Promise<Calen
     deals: (deals.data ?? []) as Deal[],
     tasks,
     listings: (listings.data ?? []) as CalendarData['listings'],
-    error: c.error || (d.error || l.error || k.error || deals.error || listings.error)?.message || tasksError,
+    listingTasks: (listingTasks.data ?? []) as unknown as CalendarData['listingTasks'],
+    error: c.error || (d.error || l.error || k.error || deals.error || listings.error || listingTasks.error)?.message || tasksError,
   };
 }
 
@@ -282,6 +288,24 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
         push({ key: `listing_follow_up:${o.id}`, occursOn: on, kind: 'listing_follow_up', icon: '🪧', client: c, href, completable: false, title: `Follow up on listing: ${o.owner_name}`, detail: where, remindFrom: on });
       }
     }
+    // Foreclosure hearings and sales are hard deadlines.
+    if (o.situation === 'pre_foreclosure' || o.situation === 'foreclosure_sale') {
+      for (const [label, on] of [['Foreclosure hearing', o.hearing_date], ['Foreclosure sale', o.sale_date]] as const) {
+        if (!on || on < from || on > to) continue;
+        push({ key: `listing_deadline:${o.id}:${label}`, occursOn: on, kind: 'listing_deadline', icon: '⏰', client: c, href, completable: false, title: `${label}: ${o.owner_name}`, detail: where, remindFrom: addDaysYmd(on, -14) });
+      }
+    }
+  }
+
+  const oppsById = new Map((data.listings ?? []).map((o) => [o.id, o]));
+  for (const t of data.listingTasks ?? []) {
+    const on = t.due_date!;
+    if (on > to || (on < from && !overdueFollowUps)) continue;
+    const o = oppsById.get(t.opportunity_id);
+    events.push({
+      key: `listing_task:${t.id}`, occursOn: on, kind: 'listing_task', icon: '☑️', href: `/dashboard/listings/${t.opportunity_id}`,
+      completable: true, done: !!t.done_at, title: t.title, detail: `Listing opportunity: ${o?.owner_name ?? t.opportunity?.owner_name ?? ''}`, remindFrom: on,
+    });
   }
 
   return events.sort((a, b) => a.occursOn.localeCompare(b.occursOn) || a.title.localeCompare(b.title));
@@ -291,6 +315,10 @@ export function buildEvents(data: CalendarData, from: string, to: string, sender
 export async function setDone(e: CalEvent, done: boolean, author: { id: string; name: string }, how = 'Reached out') {
   const supabase = createClient();
   // Deal checklist items are ticked off on the task itself.
+  if (e.kind === 'listing_task') {
+    const { error } = await supabase.from('fanc_listing_tasks').update({ done_at: done ? new Date().toISOString() : null }).eq('id', e.key.slice('listing_task:'.length));
+    return error?.message ?? '';
+  }
   if (e.kind === 'deal_task') {
     const { error } = await supabase.from('fanc_deal_tasks').update({ done_at: done ? new Date().toISOString() : null }).eq('id', e.key.slice('deal_task:'.length));
     return error?.message ?? '';

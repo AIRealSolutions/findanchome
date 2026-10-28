@@ -13,7 +13,8 @@ export type ReviewStatus = 'pending_review' | 'approved' | 'rejected';
 export type ListingStage = 'new' | 'contacted' | 'appointment' | 'presented' | 'nurture' | 'listed' | 'lost';
 export type ListingSource =
   | 'website' | 'sphere' | 'referral' | 'fsbo' | 'expired' | 'probate' | 'pre_foreclosure' | 'absentee' | 'hud'
-  | 'door_knock' | 'open_house' | 'other';
+  | 'door_knock' | 'drive_by' | 'open_house' | 'other';
+export type Situation = 'standard' | 'pre_foreclosure' | 'foreclosure_sale' | 'probate' | 'inherited';
 export type ListingActivityKind = 'note' | 'call' | 'text' | 'email' | 'meeting' | 'door_knock' | 'mail' | 'status' | 'review';
 
 export interface ListingOpportunity {
@@ -66,6 +67,51 @@ export interface ListingOpportunity {
   deal_id: string | null;
   source_page: string | null;
   requested_broker_id: string | null;
+  // Field capture and owner research
+  latitude: number | null;
+  longitude: number | null;
+  location_source: 'photo' | 'device' | 'map' | 'address' | null;
+  parcel_id: string | null;
+  parcel_data: Record<string, unknown> | null;
+  absentee_owner: boolean | null;
+  research_notes: string | null;
+  // Distressed and estate sales
+  situation: Situation;
+  case_number: string | null;
+  case_county: string | null;
+  hearing_date: string | null;
+  sale_date: string | null;
+  lender_name: string | null;
+  decedent_name: string | null;
+  date_of_death: string | null;
+  representative_name: string | null;
+  representative_contact: string | null;
+  attorney_name: string | null;
+  attorney_contact: string | null;
+  heirs: string | null;
+}
+
+export interface ListingPhoto {
+  id: string;
+  opportunity_id: string;
+  created_at: string;
+  path: string;
+  caption: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  taken_at: string | null;
+  sort: number;
+}
+
+export interface ListingTask {
+  id: string;
+  opportunity_id: string;
+  situation: string | null;
+  title: string;
+  detail: string | null;
+  due_date: string | null;
+  done_at: string | null;
+  sort: number;
 }
 
 export interface ListingActivity {
@@ -125,6 +171,7 @@ export const LISTING_SOURCES: { value: ListingSource; label: string; icon: strin
   { value: 'absentee', label: 'Absentee owner / tired landlord', icon: '🏚️' },
   { value: 'hud', label: 'HUD / investor-owned', icon: '🏛️' },
   { value: 'door_knock', label: 'Door knocking / farm area', icon: '🚪' },
+  { value: 'drive_by', label: 'Spotted in the field (driving for dollars)', icon: '📸' },
   { value: 'open_house', label: 'Open house', icon: '🏠' },
   { value: 'other', label: 'Other', icon: '📌' },
 ];

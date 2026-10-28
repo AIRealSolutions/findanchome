@@ -3,10 +3,11 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Check, MessageCircle, Phone, Plus, RefreshCw, ShieldCheck, X } from 'lucide-react';
+import { Camera, Check, MessageCircle, Phone, Plus, RefreshCw, ShieldCheck, X } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
-import { formatMoney } from '@/lib/clients';
+import { formatDate, formatMoney } from '@/lib/clients';
+import { nextDeadline, situationMeta } from '@/lib/situations';
 import { dialable, formatDateTime, priorityMeta, relativeTime } from '@/lib/leads';
 import {
   DEFAULT_DAILY_GOAL, OPEN_LISTING_STAGES, TOUCH_KINDS,
@@ -194,6 +195,10 @@ function ListingsPage() {
 
   const visible = useMemo(() => (mineOnly ? opps.filter((o) => o.assigned_to === user?.id || o.review_status === 'pending_review') : opps), [opps, mineOnly, user]);
   const routine = useMemo(() => dailyRoutine(visible), [visible]);
+  // Foreclosure hearings and sales in the next 30 days, soonest first.
+  const deadlines = useMemo(() => visible.filter(isOpenOpportunity)
+    .map((o) => ({ o, d: nextDeadline(o) })).filter((x) => x.d && x.d.days <= 30)
+    .sort((a, b) => a.d!.days - b.d!.days), [visible]);
   const stats = useMemo(() => {
     const open = visible.filter(isOpenOpportunity);
     const year = new Date().getFullYear().toString();
@@ -236,6 +241,9 @@ function ListingsPage() {
           <button onClick={load} className="inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> Refresh
           </button>
+          <Link href="/dashboard/listings/capture" className="inline-flex items-center gap-2 px-3 py-2 border border-blue-300 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-50">
+            <Camera size={16} /> Snap a house
+          </Link>
           <Link href="/dashboard/listings/new" className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
             <Plus size={16} /> Onboard opportunity
           </Link>
@@ -300,6 +308,23 @@ function ListingsPage() {
             <Step n={1} title="Review new submissions" hint="Website requests and client referrals wait here until you approve and assign them." count={routine.review.length}>
               <ul className="mt-3 space-y-3">{routine.review.map((o) => <ReviewCard key={o.id} o={o} staff={staff} author={author} onChanged={load} />)}</ul>
             </Step>
+          )}
+          {deadlines.length > 0 && (
+            <section className="bg-red-50 border border-red-200 rounded-xl p-5">
+              <h2 className="font-semibold text-red-900">⏰ Foreclosure deadlines in the next 30 days ({deadlines.length})</h2>
+              <p className="text-sm text-red-800">A hearing or sale date is a hard stop. Work these first.</p>
+              <ul className="mt-3 divide-y divide-red-100">
+                {deadlines.map(({ o, d }) => (
+                  <li key={o.id} className="py-2 flex flex-wrap items-center gap-2 text-sm">
+                    <Link href={`/dashboard/listings/${o.id}`} className="font-medium text-gray-900 hover:text-blue-600">{o.owner_name}</Link>
+                    <span className="text-gray-600">{opportunityTitle(o)} · {situationMeta(o.situation).short}</span>
+                    <span className={`ml-auto font-medium ${d!.days <= 7 ? 'text-red-700' : 'text-amber-800'}`}>
+                      {d!.label} {d!.days === 0 ? 'today' : `in ${d!.days} day${d!.days === 1 ? '' : 's'}`} ({formatDate(d!.on, { month: 'short', day: 'numeric' })})
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
           )}
           <Step n={isAdmin ? 2 : 1} title="Prepare for listing appointments" hint="Today and tomorrow: pull comps, print the CMA and bring the listing packet." count={routine.appointments.length}>
             <ul className="divide-y divide-gray-100">

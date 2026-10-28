@@ -12,10 +12,15 @@ import { EMPTY_INTAKE, intakeToRow, type ListingIntake } from '@/lib/listing-int
 import {
   CONDITIONS, LISTING_SOURCES, OCCUPANCY, PROPERTY_TYPES, REASONS, RELATIONSHIPS, SELLER_TIMELINES,
   fetchStaff, inDays, logListingActivity, opportunityTitle, sourceMeta, staffName,
-  type ListingOpportunity, type StaffMember,
+  type ListingOpportunity, type Situation, type StaffMember,
 } from '@/lib/listings';
+import { locationColumns, ownerDisplayName, uploadPhotos, type PendingPhoto } from '@/lib/field';
+import { SITUATIONS, seedSituationTasks, situationMeta } from '@/lib/situations';
+import { LocationResearch, PhotoPicker, type Located } from './FieldCapture';
 
-const STEPS = ['Owner', 'Property', 'Motivation', 'Review'] as const;
+type StepKey = 'Owner' | 'Property' | 'Photos & location' | 'Motivation' | 'Review';
+const STAFF_STEPS: StepKey[] = ['Owner', 'Property', 'Photos & location', 'Motivation', 'Review'];
+const REFERRAL_STEPS: StepKey[] = ['Owner', 'Property', 'Motivation', 'Review'];
 
 const input = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent';
 
@@ -55,6 +60,11 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<ListingIntake>({ ...EMPTY_INTAKE, ...(mode === 'referral' ? { source: 'referral' } : {}), ...initial });
+  const STEPS = mode === 'staff' ? STAFF_STEPS : REFERRAL_STEPS;
+  // Staff only: photos, the map pin and owner of record, and the distressed / estate situation.
+  const [photos, setPhotos] = useState<PendingPhoto[]>([]);
+  const [loc, setLoc] = useState<Located>({ point: null, source: null, parcel: null, address: null });
+  const [sit, setSit] = useState<Partial<ListingOpportunity>>({ situation: 'standard' });
   const [triage, setTriage] = useState<Triage>({ priority: 'warm', assignedTo: author.id, followUp: 'today', appointment: '', notes: '' });
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [dupes, setDupes] = useState<Pick<ListingOpportunity, 'id' | 'owner_name' | 'property_address' | 'city' | 'stage'>[]>([]);
@@ -84,8 +94,8 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
 
   const next = () => {
     setError('');
-    if (step === 0) {
-      const { error: e } = intakeToRow(form);
+    if (STEPS[step] === 'Owner') {
+      const { error: e } = intakeToRow(form, { requireContact: mode === 'referral' });
       if (e && /owner|phone|email/i.test(e)) return setError(e);
     }
     if (mode === 'staff' && step === STEPS.length - 2) checkDupes();
@@ -93,7 +103,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
   };
 
   const submit = async () => {
-    const { row, error: invalid } = intakeToRow(form);
+    const { row, error: invalid } = intakeToRow(form, { requireContact: mode === 'referral' });
     if (!row) return setError(invalid ?? 'Please check the form');
     setBusy(true);
     setError('');
@@ -123,11 +133,18 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
       notes: triage.notes.trim() || null,
       client_id: links?.clientId ?? null,
       consultation_id: links?.consultationId ?? null,
-    }).select('id').single();
+      ...(loc.point ? locationColumns(loc) : {}),
+      ...sit,
+    }).select('id, situation, sale_date, hearing_date').single();
     if (err) {
       setBusy(false);
       return setError(err.message);
     }
+    if (photos.length) {
+      const upErr = await uploadPhotos(data.id, photos);
+      if (upErr) console.error('Photo upload failed:', upErr);
+    }
+    await seedSituationTasks(data, []);
     const assignee = staff.find((s) => s.id === triage.assignedTo);
     await logListingActivity(data.id, [{
       kind: 'note',
@@ -148,7 +165,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
     );
   }
 
-  const summary = intakeToRow(form).row;
+  const summary = intakeToRow(form, { requireContact: mode === 'referral' }).row;
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl">
@@ -164,7 +181,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
       </ol>
 
       <div className="p-5">
-        {step === 0 && (
+        {STEPS[step] === 'Owner' && (
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Owner’s name *" wide><input autoFocus value={form.ownerName} onChange={(e) => set('ownerName', e.target.value)} className={input} /></Field>
             <Field label="Phone"><input type="tel" value={form.ownerPhone} onChange={(e) => set('ownerPhone', e.target.value)} className={input} /></Field>
@@ -177,7 +194,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
           </div>
         )}
 
-        {step === 1 && (
+        {STEPS[step] === 'Property' && (
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Property address" wide><input value={form.propertyAddress} onChange={(e) => set('propertyAddress', e.target.value)} placeholder="123 Shore Dr" className={input} /></Field>
             <Field label="City"><input value={form.city} onChange={(e) => set('city', e.target.value)} className={input} /></Field>
@@ -200,7 +217,34 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
           </div>
         )}
 
-        {step === 2 && (
+        {STEPS[step] === 'Photos & location' && (
+          <div className="space-y-5">
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Photos of the property</p>
+              <PhotoPicker photos={photos} onChange={setPhotos} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Where it is and who owns it</p>
+              <LocationResearch value={loc} photos={photos} onChange={(v) => {
+                setLoc(v);
+                // Fill blanks from the owner-of-record lookup; never overwrite what was typed.
+                setForm((f) => ({
+                  ...f,
+                  propertyAddress: f.propertyAddress || v.address?.address || '',
+                  city: f.city || v.address?.city || '',
+                  zipCode: f.zipCode || v.address?.zip?.slice(0, 10) || '',
+                  county: f.county || (v.address?.county ?? '').toLowerCase().replace(/ county$/, '').replace(/\s+/g, '-'),
+                  ownerName: f.ownerName || ownerDisplayName(v.parcel?.owner ?? null),
+                  lotAcres: f.lotAcres || (v.parcel?.acres ? String(v.parcel.acres) : ''),
+                  yearBuilt: f.yearBuilt || (v.parcel?.yearBuilt ? String(v.parcel.yearBuilt) : ''),
+                }));
+              }} />
+            </div>
+            <p className="text-xs text-gray-500">Optional. Photos and the owner lookup stay private to Lightkeeper brokers.</p>
+          </div>
+        )}
+
+        {STEPS[step] === 'Motivation' && (
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Why are they selling?"><Select value={form.reason} onChange={(v) => set('reason', v)} options={REASONS} /></Field>
             <Field label="When do they want to move?"><Select value={form.timeline} onChange={(v) => set('timeline', v)} options={SELLER_TIMELINES} /></Field>
@@ -224,7 +268,38 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
           </div>
         )}
 
-        {step === 3 && summary && (
+        {STEPS[step] === 'Motivation' && mode === 'staff' && (
+          <div className="mt-6 pt-5 border-t border-gray-100">
+            <p className="text-sm font-medium text-gray-700 mb-2">Situation</p>
+            <div className="flex flex-wrap gap-2">
+              {SITUATIONS.map((x) => (
+                <button key={x.value} type="button" onClick={() => setSit({ ...sit, situation: x.value as Situation })} aria-pressed={sit.situation === x.value}
+                  className={`px-3 py-1.5 rounded-full text-sm border ${sit.situation === x.value ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-700 hover:border-blue-400'}`}>
+                  {x.icon} {x.short}
+                </button>
+              ))}
+            </div>
+            {sit.situation && sit.situation !== 'standard' && (
+              <>
+                <p className="mt-2 text-xs text-gray-600">{situationMeta(sit.situation).hint} Its checklist is added when you save.</p>
+                <div className="mt-3 grid sm:grid-cols-2 gap-3">
+                  {situationMeta(sit.situation).fields.map((f) => (
+                    <Field key={f.field} label={f.label} wide={f.type === 'textarea'}>
+                      {f.type === 'textarea' ? (
+                        <textarea rows={2} value={(sit[f.field] as string) ?? ''} onChange={(e) => setSit({ ...sit, [f.field]: e.target.value || null })} className={input} />
+                      ) : (
+                        <input type={f.type ?? 'text'} value={(sit[f.field] as string) ?? ''} placeholder={f.placeholder}
+                          onChange={(e) => setSit({ ...sit, [f.field]: e.target.value || null })} className={input} />
+                      )}
+                    </Field>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {STEPS[step] === 'Review' && summary && (
           <div className="space-y-5">
             {dupes.length > 0 && (
               <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-900">
@@ -242,7 +317,12 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
                 ['Details', [summary.property_type, summary.bedrooms != null && `${summary.bedrooms} bd`, summary.bathrooms != null && `${summary.bathrooms} ba`, summary.sqft && `${summary.sqft} sq ft`, summary.condition].filter(Boolean).join(' · ')],
                 ['Motivation', [summary.reason, summary.timeline].filter(Boolean).join(' · ')],
                 ['Price hoped for', formatMoney(summary.price_expectation ?? null)],
-                ...(mode === 'staff' ? [['Source', [sourceMeta(summary.source!).label, summary.source_detail].filter(Boolean).join(': ')]] : []),
+                ...(mode === 'staff' ? [
+                  ['Source', [sourceMeta(summary.source!).label, summary.source_detail].filter(Boolean).join(': ')],
+                  ['Situation', sit.situation && sit.situation !== 'standard' ? `${situationMeta(sit.situation).icon} ${situationMeta(sit.situation).short}` : ''],
+                  ['Photos', photos.length ? `${photos.length} to upload` : ''],
+                  ['Owner of record', loc.parcel?.owner ? `${loc.parcel.owner}${loc.parcel.absentee ? ' (mailing address differs)' : ''}` : ''],
+                ] : []),
               ] as [string, string][]).map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[110px_1fr] gap-2 py-1">
                   <dt className="text-gray-500">{k}</dt><dd className="text-gray-900">{v || <span className="text-gray-400">—</span>}</dd>

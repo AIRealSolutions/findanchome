@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { COUNTY_NAMES, type CountySlug } from '@/lib/lifestyles';
 import { formatMoney } from '@/lib/clients';
+import { LocationOwner, OpportunityPhotos, SituationPanel } from '@/components/OpportunityField';
 import { PRIORITIES, dialable, formatDateTime, relativeTime, toLocalInput, type LeadPriority } from '@/lib/leads';
 import {
   LISTING_ACTIVITY_ICONS, LISTING_ACTIVITY_KINDS, LISTING_STAGES, OCCUPANCY, OPEN_LISTING_STAGES, REASONS, SELLER_TIMELINES,
@@ -316,6 +317,10 @@ export default function ListingOpportunityPage() {
               </>
             )}
           </Section>
+
+          <SituationPanel key={`sit:${opp.updated_at}`} opp={opp} editable={opp.review_status === 'approved' || isAdmin} author={author} onChanged={load} />
+          <OpportunityPhotos oppId={opp.id} editable={opp.review_status === 'approved' || isAdmin} author={author} />
+          <LocationOwner key={`loc:${opp.updated_at}`} opp={opp} editable={opp.review_status === 'approved' || isAdmin} author={author} onChanged={load} />
 
           {open && (
             <Section title="Listing appointment">
