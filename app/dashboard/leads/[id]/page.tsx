@@ -166,9 +166,9 @@ export default function LeadDetailPage() {
     const kept = clientId ? ' Their client record stays.' : '';
     if (!confirm(`Permanently delete the lead from ${lead.name} and its timeline?${kept}`)) return;
     setSaving(true);
-    const { error: err } = await createClient().from('fanc_consultation_requests').delete().eq('id', lead.id);
+    const { data, error: err } = await createClient().from('fanc_consultation_requests').delete().eq('id', lead.id).select('id');
     setSaving(false);
-    if (err) return setError(err.message);
+    if (err || !data?.length) return setError(err?.message ?? 'This lead could not be deleted.');
     router.push('/dashboard/leads');
   };
 
