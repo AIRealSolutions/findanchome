@@ -6,9 +6,10 @@ import { toYmd } from '@/lib/calendar';
 import { capProgress, defaultPlan, type BrokerPlan, type FinanceData, type closedDealMoney } from '@/lib/finance';
 import { Card, money } from '../ui';
 import type { AdminData } from '../useAdminData';
+import type { Branch } from '@/lib/branches';
 
-export function TeamView({ data, profiles, meId, onChanged, dm }: {
-  data: FinanceData; profiles: AdminData['profiles']; meId: string; onChanged: () => void; dm: ReturnType<typeof closedDealMoney>;
+export function TeamView({ data, profiles, branches, meId, onChanged, dm }: {
+  data: FinanceData; profiles: AdminData['profiles']; branches: Branch[]; meId: string; onChanged: () => void; dm: ReturnType<typeof closedDealMoney>;
 }) {
   const [error, setError] = useState('');
   const staff = profiles.filter((p) => p.role !== 'client');
@@ -20,6 +21,11 @@ export function TeamView({ data, profiles, meId, onChanged, dm }: {
     if (err) setError(err.message);
     onChanged();
   };
+  const setBranch = async (id: string, officeId: string) => {
+    const { error: err } = await createClient().from('fanc_user_profiles').update({ office_id: officeId || null }).eq('id', id);
+    if (err) setError(err.message);
+    onChanged();
+  };
 
   return (
     <div className="space-y-6">
@@ -27,7 +33,7 @@ export function TeamView({ data, profiles, meId, onChanged, dm }: {
       <Card title="Brokers & commission plans">
         <div className="space-y-4">
           {staff.map((p) => (
-            <PlanEditor key={p.id} person={p} plan={data.plans.find((x) => x.broker_id === p.id)} meId={meId} onChanged={onChanged} onRole={setRole}
+            <PlanEditor key={p.id} person={p} plan={data.plans.find((x) => x.broker_id === p.id)} meId={meId} onChanged={onChanged} onRole={setRole} branches={branches} onBranch={setBranch}
               cap={capProgress(data, dm, data.plans.find((x) => x.broker_id === p.id) ?? defaultPlan(p.id, p.role))} />
           ))}
         </div>
@@ -51,9 +57,9 @@ export function TeamView({ data, profiles, meId, onChanged, dm }: {
   );
 }
 
-function PlanEditor({ person, plan, meId, onChanged, onRole, cap }: {
+function PlanEditor({ person, plan, meId, onChanged, onRole, branches, onBranch, cap }: {
   person: AdminData['profiles'][number]; plan?: BrokerPlan; meId: string; onChanged: () => void;
-  onRole: (id: string, role: string) => void; cap: ReturnType<typeof capProgress>;
+  onRole: (id: string, role: string) => void; branches: Branch[]; onBranch: (id: string, officeId: string) => void; cap: ReturnType<typeof capProgress>;
 }) {
   const base = plan ?? defaultPlan(person.id, person.role);
   const [f, setF] = useState({
@@ -89,9 +95,17 @@ function PlanEditor({ person, plan, meId, onChanged, onRole, cap }: {
           {!plan && <span className="ml-2 text-xs text-amber-700">Using the default plan</span>}
           {cap && <span className="ml-2 text-xs text-gray-500">Cap: {money(cap.paid)} of {money(cap.cap)} paid this year</span>}
         </div>
-        <select value={person.role} onChange={(e) => onRole(person.id, e.target.value)} className="px-2 py-1 border border-gray-300 rounded-lg bg-white text-sm">
-          <option value="admin">Admin</option><option value="broker">Broker</option><option value="client">Client (remove access)</option>
-        </select>
+        <div className="flex flex-wrap gap-2">
+          {branches.length > 0 && (
+            <select value={person.office_id ?? ''} onChange={(e) => onBranch(person.id, e.target.value)} aria-label="Branch" className="px-2 py-1 border border-gray-300 rounded-lg bg-white text-sm">
+              <option value="">No branch</option>
+              {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
+          )}
+          <select value={person.role} onChange={(e) => onRole(person.id, e.target.value)} aria-label="Role" className="px-2 py-1 border border-gray-300 rounded-lg bg-white text-sm">
+            <option value="admin">Admin</option><option value="broker">Broker</option><option value="client">Client (remove access)</option>
+          </select>
+        </div>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {field('split_pct', 'Broker split %', '70')}

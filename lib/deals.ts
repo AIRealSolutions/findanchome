@@ -40,6 +40,8 @@ export interface Deal {
   closed_at: string | null;
   closed_transaction_id: string | null;
   broker_id: string | null;
+  /** Branch office; follows the broker unless set on the deal. */
+  office_id: string | null;
   /** Actual commission received; overrides price × commission_pct. */
   gross_commission: number | null;
   /** Share of the commission paid out to a referring agent. */

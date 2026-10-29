@@ -60,8 +60,8 @@ export const DEPARTMENTS: Department[] = [
   },
   {
     key: 'hr', label: 'HR & Licensing', icon: '🪪', href: '/dashboard/dept/hr',
-    summary: 'Your brokers: roles, commission plans, licenses, continuing education and paperwork.',
-    tabs: [{ value: 'team', label: 'Team & plans' }, { value: 'licensing', label: 'Licensing & compliance' }],
+    summary: 'Your brokers and branches: roles, commission plans, licenses, continuing education and paperwork.',
+    tabs: [{ value: 'team', label: 'Team & plans' }, { value: 'branches', label: 'Branches' }, { value: 'licensing', label: 'Licensing & compliance' }],
     tools: [],
   },
   {
