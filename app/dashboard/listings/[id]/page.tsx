@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, CalendarClock, Check, Mail, MessageCircle, Phone, Trophy, UserCheck, X } from 'lucide-react';
+import { ArrowLeft, CalendarClock, Check, Mail, MessageCircle, Phone, Trash2, Trophy, UserCheck, X } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
+import { PHOTO_BUCKET } from '@/lib/field';
 import { COUNTY_NAMES, type CountySlug } from '@/lib/lifestyles';
 import { formatMoney } from '@/lib/clients';
 import { LocationOwner, OpportunityPhotos, SituationPanel } from '@/components/OpportunityField';
@@ -160,6 +161,20 @@ export default function ListingOpportunityPage() {
     setSaving(false);
     if (r.error) return setError(r.error);
     router.push(`/dashboard/deals/${r.dealId}`);
+  };
+
+  /** Admins only: the opportunity, its timeline, tasks and photos (files included). A deal made from it stays. */
+  const deleteOpp = async () => {
+    if (!confirm(`Permanently delete ${opportunityTitle(opp)}, its timeline, tasks and photos?`)) return;
+    setSaving(true);
+    setError('');
+    const supabase = createClient();
+    const { data: photos } = await supabase.from('fanc_listing_photos').select('path').eq('opportunity_id', opp.id);
+    if (photos?.length) await supabase.storage.from(PHOTO_BUCKET).remove(photos.map((p) => p.path));
+    const { data, error: err } = await supabase.from('fanc_listing_opportunities').delete().eq('id', opp.id).select('id');
+    setSaving(false);
+    if (err || !data?.length) return setError(err?.message ?? 'This opportunity could not be deleted.');
+    router.push('/dashboard/listings');
   };
 
   const saveEdit = () => {
@@ -456,6 +471,11 @@ export default function ListingOpportunityPage() {
               Entered {formatDateTime(opp.created_at)} by {opp.created_by_name || (opp.created_by_role === 'public' ? 'a website visitor' : 'a client')}
             </p>
           </Section>
+          {isAdmin && (
+            <div className="text-right">
+              <button onClick={deleteOpp} disabled={saving} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 disabled:opacity-50"><Trash2 size={14} /> Delete opportunity</button>
+            </div>
+          )}
         </div>
       </div>
     </div>

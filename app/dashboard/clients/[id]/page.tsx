@@ -249,7 +249,10 @@ export default function ClientDetailPage() {
   };
 
   const deleteClient = async () => {
-    if (!client || !confirm(`Permanently delete ${clientName(client)}, their closings and their timeline?`)) return;
+    if (!client) return;
+    const { count } = await createClient().from('fanc_deals').select('id', { count: 'exact', head: true }).eq('client_id', client.id);
+    const deals = count ? `, their ${count === 1 ? 'deal' : `${count} deals`} (including any commission records)` : '';
+    if (!confirm(`Permanently delete ${clientName(client)}${deals}, their closings and their timeline?`)) return;
     const { error: err } = await createClient().from('fanc_clients').delete().eq('id', client.id);
     if (err) return setError(err.message);
     router.push('/dashboard/clients');
