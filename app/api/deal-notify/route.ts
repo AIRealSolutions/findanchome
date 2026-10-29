@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { BROKERAGE, absoluteUrl } from '@/lib/site';
+import { sendEmail as send } from '@/lib/email';
 
 // Emails for the shared deal workspace, sent through Resend when RESEND_API_KEY is set:
 //  - { postId }: a new post or reply. Broker posts go to the invited clients, client posts to the broker.
 //  - { inviteMemberId }: a broker invites a client to the workspace.
 // Everything is read with the caller's own session, so the database's access rules decide what they can send.
-
-const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
 export async function POST(request: Request) {
   const auth = request.headers.get('authorization');
@@ -71,20 +70,4 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ error: 'Nothing to send.' }, { status: 400 });
-}
-
-async function send(to: string[], subject: string, text: string, replyTo?: string) {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: process.env.CONSULTATION_FROM_EMAIL || 'FindaNChome.com <onboarding@resend.dev>',
-      to,
-      ...(replyTo ? { reply_to: replyTo } : {}),
-      subject,
-      text,
-      html: `<div style="font-family:sans-serif;line-height:1.5">${esc(text).replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1">$1</a>')}</div>`,
-    }),
-  });
-  if (!res.ok) console.error('Deal workspace email failed:', res.status);
 }
