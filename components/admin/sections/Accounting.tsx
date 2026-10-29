@@ -11,7 +11,7 @@ import { PERIODS, profitAndLoss } from '@/lib/finance';
 import { staffName } from '@/lib/listings';
 import { commissionIssues } from '../insights';
 import { Card, Tile, money } from '../ui';
-import type { AdminContext } from '../useAdminData';
+import { NO_BRANCH, type AdminContext } from '../useAdminData';
 import { LedgerView, ProfitAndLossView } from './accounting-views';
 
 const csvCell = (v: string | number) => (/[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
@@ -23,7 +23,7 @@ export function ProfitAndLoss({ ctx, period }: { ctx: AdminContext; period: stri
 }
 
 export function Ledger({ ctx }: { ctx: AdminContext }) {
-  return <LedgerView data={ctx.finance} from={ctx.from} to={ctx.to} broker={ctx.broker} onChanged={ctx.reload} nameOf={ctx.nameOf} />;
+  return <LedgerView data={ctx.finance} from={ctx.from} to={ctx.to} broker={ctx.broker} branches={ctx.branches} branch={ctx.branch && ctx.branch !== NO_BRANCH ? ctx.branch : undefined} onChanged={ctx.reload} nameOf={ctx.nameOf} />;
 }
 
 /** Closed deals: commission check received from closing, and the broker's share paid out. */

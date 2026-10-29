@@ -24,6 +24,8 @@ export interface ListingOpportunity {
   created_by: string | null;
   created_by_name: string | null;
   created_by_role: 'public' | 'client' | 'broker' | 'admin';
+  /** Branch office; follows the assigned broker. */
+  office_id: string | null;
   review_status: ReviewStatus;
   reviewed_by: string | null;
   reviewed_at: string | null;

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { toYmd } from '@/lib/calendar';
 import { formatDate } from '@/lib/clients';
 import { staffName } from '@/lib/listings';
+import { branchName, type Branch } from '@/lib/branches';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, pct, type FinanceData, type profitAndLoss } from '@/lib/finance';
 import { Card, money } from '../ui';
 
@@ -45,10 +46,10 @@ export function ProfitAndLossView({ pl, label }: { pl: NonNullable<ReturnType<ty
   );
 }
 
-export function LedgerView({ data, from, to, broker, onChanged, nameOf }: {
-  data: FinanceData; from: string; to: string; broker?: string; onChanged: () => void; nameOf: (id: string | null) => string;
+export function LedgerView({ data, from, to, broker, branches, branch, onChanged, nameOf }: {
+  data: FinanceData; from: string; to: string; broker?: string; branches: Branch[]; branch?: string; onChanged: () => void; nameOf: (id: string | null) => string;
 }) {
-  const [form, setForm] = useState({ entry_date: toYmd(new Date()), kind: 'expense' as 'income' | 'expense', category: EXPENSE_CATEGORIES[0], amount: '', description: '', broker_id: '' });
+  const [form, setForm] = useState({ entry_date: toYmd(new Date()), kind: 'expense' as 'income' | 'expense', category: EXPENSE_CATEGORIES[0], amount: '', description: '', broker_id: '', office_id: branch ?? '' });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const rows = data.ledger.filter((e) => e.entry_date >= from && e.entry_date <= to && (!broker || e.broker_id === broker));
@@ -61,6 +62,8 @@ export function LedgerView({ data, from, to, broker, onChanged, nameOf }: {
     setBusy(true);
     const { error: err } = await createClient().from('fanc_ledger').insert({
       entry_date: form.entry_date, kind: form.kind, category: form.category, amount, description: form.description.trim() || null, broker_id: form.broker_id || null,
+      // Left blank, the entry follows the broker's branch (or stays company-wide).
+      ...(form.office_id ? { office_id: form.office_id } : {}),
     });
     setBusy(false);
     if (err) return setError(err.message);
@@ -89,6 +92,12 @@ export function LedgerView({ data, from, to, broker, onChanged, nameOf }: {
             <option value="">Company</option>
             {data.staff.map((s) => <option key={s.id} value={s.id}>{staffName(s)}</option>)}
           </select>
+          {branches.length > 0 && (
+            <select value={form.office_id} onChange={(e) => setForm({ ...form, office_id: e.target.value })} aria-label="Branch" className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
+              <option value="">Branch: broker’s / company</option>
+              {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
+          )}
           <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description (vendor, what it was for)" className="px-3 py-2 border border-gray-300 rounded-lg sm:col-span-2 lg:col-span-5" />
           <button disabled={busy} className="px-3 py-2 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50">Add</button>
         </form>
@@ -103,7 +112,8 @@ export function LedgerView({ data, from, to, broker, onChanged, nameOf }: {
                   <tr key={e.id}>
                     <td className="py-2 pr-3 whitespace-nowrap text-gray-600">{formatDate(e.entry_date)}</td>
                     <td className="pr-3">{e.category}<div className="text-xs text-gray-500">{e.description}</div></td>
-                    <td className="pr-3 text-gray-600">{e.broker_id ? nameOf(e.broker_id) : 'Company'}</td>
+                    <td className="pr-3 text-gray-600">{e.broker_id ? nameOf(e.broker_id) : 'Company'}
+                      {branches.length > 0 && <div className="text-xs text-gray-500">{branchName(branches, e.office_id)}</div>}</td>
                     <td className={`pr-3 text-right font-medium ${e.kind === 'expense' ? 'text-gray-900' : 'text-green-800'}`}>{e.kind === 'expense' ? `(${money(Number(e.amount))})` : money(Number(e.amount))}</td>
                     <td className="text-right"><button onClick={() => remove(e.id)} aria-label="Delete entry" className="p-1 text-gray-400 hover:text-red-600"><Trash2 size={16} /></button></td>
                   </tr>

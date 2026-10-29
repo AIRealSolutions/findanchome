@@ -27,6 +27,8 @@ export interface LedgerEntry {
   amount: number;
   description: string | null;
   broker_id: string | null;
+  /** Branch the entry is booked to; null = company-wide. */
+  office_id: string | null;
   deal_id: string | null;
 }
 

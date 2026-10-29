@@ -7,9 +7,63 @@ import { capProgress, pct, profitAndLoss, salesStats } from '@/lib/finance';
 import { LISTING_SOURCES, assignOpportunity, isBrokerOwned, isOpenOpportunity, opportunityTitle, sourceMeta, staffName } from '@/lib/listings';
 import { relativeTime } from '@/lib/leads';
 import { Card, Tile, money } from '../ui';
-import type { AdminContext } from '../useAdminData';
+import { NO_BRANCH, scopeToBranch, type AdminContext } from '../useAdminData';
+
+/** Each branch side by side: production, pipeline, leads and the branch's own P&L. */
+function BranchComparison({ ctx }: { ctx: AdminContext }) {
+  const { dm, plan, from, to } = ctx;
+  const unbranched = ctx.finance.deals.some((d) => !d.office_id) || ctx.opps.some((o) => !o.office_id)
+    || ctx.leads.some((l) => !l.office_id) || ctx.finance.ledger.some((e) => !e.office_id);
+  const rows = [...ctx.branches.map((b) => ({ id: b.id, name: b.name })), ...(unbranched ? [{ id: NO_BRANCH, name: 'No branch' }] : [])];
+  return (
+    <Card title={`Branches · ${ctx.periodLabel}`}>
+      <div className="overflow-x-auto -mx-5 px-5">
+        <table className="w-full text-sm min-w-[860px]">
+          <thead>
+            <tr className="text-left text-gray-500 border-b border-gray-200">
+              <th className="py-2 pr-3">Branch</th><th className="pr-3 text-right">Brokers</th><th className="pr-3 text-right">Closed</th><th className="pr-3 text-right">Volume</th>
+              <th className="pr-3 text-right">GCI</th><th className="pr-3 text-right">Company $</th><th className="pr-3 text-right">Pending</th>
+              <th className="pr-3 text-right">Open opps</th><th className="pr-3 text-right">New leads</th><th className="text-right">Net profit</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {rows.map((r) => {
+              const b = scopeToBranch(ctx, r.id);
+              const st = salesStats(b.finance, dm, plan, from, to);
+              const p = profitAndLoss(b.finance, dm, from, to);
+              return (
+                <tr key={r.id}>
+                  <td className="py-2 pr-3"><button onClick={() => ctx.setBranch(r.id)} className="font-medium text-gray-900 hover:text-blue-600">{r.name}</button></td>
+                  <td className="pr-3 text-right">{b.finance.staff.length}</td>
+                  <td className="pr-3 text-right">{st.units}</td>
+                  <td className="pr-3 text-right">{money(st.volume)}</td>
+                  <td className="pr-3 text-right">{money(p.gci)}</td>
+                  <td className="pr-3 text-right">{money(p.companyDollar)}</td>
+                  <td className="pr-3 text-right">{st.pendingUnits}</td>
+                  <td className="pr-3 text-right">{b.opps.filter((o) => o.review_status === 'approved' && !['listed', 'lost'].includes(o.stage)).length}</td>
+                  <td className="pr-3 text-right">{b.leads.filter((l) => ctx.inPeriod(l.created_at)).length + b.opps.filter((o) => ctx.inPeriod(o.created_at)).length}</td>
+                  <td className={`text-right font-medium ${p.netProfit < 0 ? 'text-red-700' : 'text-gray-900'}`}>{money(p.netProfit)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-3 text-xs text-gray-500">Click a branch to see every department’s numbers for it. Net profit is the branch’s company dollar and desk fees less the expenses booked to it; company-wide expenses sit under “No branch”.</p>
+    </Card>
+  );
+}
 
 export function Production({ ctx }: { ctx: AdminContext }) {
+  return (
+    <div className="space-y-6">
+      {!ctx.branch && ctx.branches.length > 0 && <BranchComparison ctx={ctx} />}
+      <BrokerProduction ctx={ctx} />
+    </div>
+  );
+}
+
+function BrokerProduction({ ctx }: { ctx: AdminContext }) {
   const { finance: data, dm, plan, from, to } = ctx;
   return (
     <Card title={`Production by broker · ${ctx.periodLabel}`}>
