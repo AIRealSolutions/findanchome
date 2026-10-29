@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Phone, MessageCircle, Mail, CalendarClock, Pencil, Trash2, Cake, Home, Plus } from 'lucide-react';
+import { ArrowLeft, Phone, MessageCircle, Mail, CalendarClock, Pencil, Trash2, Cake, Home, Plus, MessagesSquare } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import ClientDates from '@/components/ClientDates';
 import ClientReferrals from '@/components/ClientReferrals';
@@ -322,6 +322,11 @@ export default function ClientDetailPage() {
                   <a href={`mailto:${client.email}`} className="inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">
                     <Mail size={16} /> {client.email}
                   </a>
+                )}
+                {client.email && (
+                  <Link href={`/dashboard/messages?client=${client.id}`} className="inline-flex items-center gap-2 px-3 py-2 border border-blue-300 text-blue-800 rounded-lg text-sm font-medium hover:bg-blue-50">
+                    <MessagesSquare size={16} /> Message
+                  </Link>
                 )}
               </div>
             )}

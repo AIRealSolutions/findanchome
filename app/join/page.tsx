@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { BROKERAGE } from '@/lib/site';
 
 /**
- * Client sign-in for the shared deal workspace. Only emails a broker invited get a sign-in link; the page
+ * Client sign-in for the shared deal workspace and Messages. Only emails a broker invited get a sign-in link; the page
  * answers the same way either way so it doesn't reveal who is a client.
  */
 export default function JoinPage() {
@@ -22,6 +22,10 @@ export default function JoinPage() {
 function Join() {
   const params = useSearchParams();
   const [email, setEmail] = useState(params.get('email') ?? '');
+  // Where the sign-in link lands: a dashboard page from the invite, else the client's deals.
+  const nextParam = params.get('next') ?? '';
+  const next = /^\/dashboard\/[\w\-/]*$/.test(nextParam) ? nextParam : '/dashboard/my-deals';
+  const forMessages = next.startsWith('/dashboard/messages');
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'blocked'>('idle');
 
   const submit = async (ev: React.FormEvent) => {
@@ -34,7 +38,7 @@ function Join() {
     if (invited) {
       const { error } = await supabase.auth.signInWithOtp({
         email: addr,
-        options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/dashboard/my-deals` },
+        options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}${next}` },
       });
       if (error && /signup|not allowed/i.test(error.message)) return setState('blocked');
     }
@@ -47,7 +51,7 @@ function Join() {
         <div className="flex items-center gap-3 mb-6">
           <Image src="/lightkeeper-logo.jpg" alt="Lightkeeper Realty" width={48} height={48} className="rounded-full" />
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Your deal workspace</h1>
+            <h1 className="text-xl font-bold text-gray-900">{forMessages ? 'Your messages' : 'Your deal workspace'}</h1>
             <p className="text-sm text-gray-600">{BROKERAGE.name}</p>
           </div>
         </div>
@@ -55,7 +59,7 @@ function Join() {
           <div>
             <p className="text-gray-900 font-medium">Check your email.</p>
             <p className="mt-2 text-sm text-gray-600">
-              If your broker has invited {email.trim()}, we just sent a sign-in link. Open it on this device to see your deal. The link expires in an hour.
+              If your broker has invited {email.trim()}, we just sent a sign-in link. Open it on this device to see your {forMessages ? 'messages' : 'deal'}. The link expires in an hour.
             </p>
             <button onClick={() => setState('idle')} className="mt-4 text-sm text-blue-600 hover:underline">Use a different email</button>
           </div>
@@ -65,7 +69,7 @@ function Join() {
           </p>
         ) : (
           <form onSubmit={submit}>
-            <p className="text-sm text-gray-600 mb-4">Follow your purchase or sale: daily updates, shared to-dos and key dates. Enter the email your broker invited and we’ll send you a sign-in link. No password needed.</p>
+            <p className="text-sm text-gray-600 mb-4">{forMessages ? 'Read and reply to your private conversation with us, including shared documents and photos.' : 'Follow your purchase or sale: daily updates, shared to-dos and key dates.'} Enter the email your broker invited and we’ll send you a sign-in link. No password needed.</p>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
             <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />

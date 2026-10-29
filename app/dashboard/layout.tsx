@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { OPEN_LISTING_STAGES } from '@/lib/listings';
+import { unreadCount } from '@/lib/messages';
 import { ViewAsProvider, useViewAs, type ViewRole } from '@/lib/view-as';
 import { DEPARTMENTS, type DeptKey } from '@/components/admin/departments';
 import Link from 'next/link';
@@ -24,6 +25,7 @@ import {
   IdentificationIcon,
   Cog6ToothIcon,
   CameraIcon,
+  ChatBubbleLeftRightIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -47,6 +49,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [newLeads, setNewLeads] = useState(0);
   const [listingTodo, setListingTodo] = useState(0);
+  const [unread, setUnread] = useState(0);
   const isStaff = isAdmin || isBroker;
 
   useEffect(() => {
@@ -86,6 +89,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     ]).then(([pending, due]) => setListingTodo((pending.data?.length ?? 0) + (due.data?.length ?? 0)));
   }, [isStaff, isAdmin, user, pathname]);
 
+  // Conversations with unread messages; refreshed on navigation.
+  useEffect(() => {
+    if (!user) return;
+    unreadCount(user.id).then(setUnread);
+  }, [user, pathname]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -116,21 +125,23 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const tool = (t: { name: string; href: string }): NavItem => ({ ...t, icon: TOOL_ICONS[t.href] ?? HomeIcon, badge: BADGES[t.href] });
   const toolsOf = (k: DeptKey) => DEPARTMENTS.find((d) => d.key === k)!.tools.map(tool);
 
+  const messages: NavItem = { name: 'Messages', href: '/dashboard/messages', icon: ChatBubbleLeftRightIcon, badge: unread };
   const groups: { heading?: string; items: NavItem[] }[] =
     viewAs === 'admin'
-      ? DEPARTMENTS.map((d) => ({
+      ? [{ items: [messages] }, ...DEPARTMENTS.map((d) => ({
           heading: d.label,
           items: [{ name: d.key === 'executive' ? 'Control Center' : `${d.label} overview`, href: d.href, icon: DEPT_ICONS[d.key] }, ...d.tools.map(tool)],
-        }))
+        }))]
       : viewAs === 'broker'
         ? [
-            { items: [{ name: 'My dashboard', href: '/dashboard', icon: HomeIcon }] },
+            { items: [{ name: 'My dashboard', href: '/dashboard', icon: HomeIcon }, messages] },
             { heading: 'Sales', items: toolsOf('sales') },
             { heading: 'Marketing', items: toolsOf('marketing') },
           ]
         : [{ items: [
             { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
             { name: 'My deals', href: '/dashboard/my-deals', icon: BriefcaseIcon },
+            messages,
             { name: 'Refer a seller', href: '/dashboard/listings/new', icon: HomeModernIcon },
           ] }];
 
