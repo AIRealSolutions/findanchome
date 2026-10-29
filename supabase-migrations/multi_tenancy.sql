@@ -223,7 +223,6 @@ BEGIN
 END $$;
 
 -- Uniqueness that was company-wide is now per brokerage.
-DROP INDEX IF EXISTS public.fanc_calendar_completions_event_key_occurs_on_key;
 ALTER TABLE public.fanc_calendar_completions DROP CONSTRAINT IF EXISTS fanc_calendar_completions_event_key_occurs_on_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_fanc_calendar_completions_unique ON public.fanc_calendar_completions (brokerage_id, event_key, occurs_on);
 DROP INDEX IF EXISTS public.idx_fanc_clients_flexmls_id;
