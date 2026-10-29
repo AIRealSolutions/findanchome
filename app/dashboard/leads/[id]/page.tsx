@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Phone, MessageCircle, Mail, ExternalLink, CalendarClock, UserPlus, UserCheck, House } from 'lucide-react';
+import { ArrowLeft, Phone, MessageCircle, Mail, ExternalLink, CalendarClock, UserPlus, UserCheck, House, Trash2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { communities, communityPath } from '@/lib/communities';
@@ -159,6 +159,17 @@ export default function LeadDetailPage() {
     setSaving(false);
     if (r.error) return setError(r.error);
     router.push(`/dashboard/clients/${r.id}`);
+  };
+
+  const deleteLead = async () => {
+    if (!lead) return;
+    const kept = clientId ? ' Their client record stays.' : '';
+    if (!confirm(`Permanently delete the lead from ${lead.name} and its timeline?${kept}`)) return;
+    setSaving(true);
+    const { error: err } = await createClient().from('fanc_consultation_requests').delete().eq('id', lead.id);
+    setSaving(false);
+    if (err) return setError(err.message);
+    router.push('/dashboard/leads');
   };
 
   const changeStatus = (status: LeadStatus) => {
@@ -406,6 +417,9 @@ export default function LeadDetailPage() {
             )}
             <p className="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-500">Lead submitted {formatDateTime(lead.created_at)}</p>
           </Section>
+          <div className="text-right">
+            <button onClick={deleteLead} disabled={saving} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 disabled:opacity-50"><Trash2 size={14} /> Delete lead</button>
+          </div>
         </div>
       </div>
     </div>

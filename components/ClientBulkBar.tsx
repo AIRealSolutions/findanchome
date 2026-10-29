@@ -85,8 +85,14 @@ export default function ClientBulkBar({
       return log(supabase, changing.map((c) => ({ client_id: c.id, kind: 'status', body: on ? 'Marked do not contact' : 'Removed do-not-contact flag' })));
     });
 
-  const remove = () => {
-    if (!confirm(`Permanently delete ${n} ${n === 1 ? 'client' : 'clients'}, with their closings, dates and timelines?`)) return;
+  const remove = async () => {
+    let deals = 0;
+    for (const part of chunks(ids, 200)) {
+      const { count } = await createClient().from('fanc_deals').select('id', { count: 'exact', head: true }).in('client_id', part);
+      deals += count ?? 0;
+    }
+    const withDeals = deals ? `, ${deals} ${deals === 1 ? 'deal' : 'deals'} (including any commission records)` : '';
+    if (!confirm(`Permanently delete ${n} ${n === 1 ? 'client' : 'clients'}, with their closings, dates and timelines${withDeals}?`)) return;
     run(async (supabase) => {
       for (const part of chunks(ids, 200)) {
         const { error } = await supabase.from('fanc_clients').delete().in('id', part);
