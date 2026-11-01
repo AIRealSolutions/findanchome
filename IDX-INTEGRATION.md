@@ -1,5 +1,12 @@
 # IDX Integration Guide for FindAnCHome.com
 
+## Current setup (live)
+
+`/search` embeds Marc's Flexmls IDX portal, https://my.flexmls.com/marcspencer, in a frame
+(`components/FlexmlsSearch.tsx`), with an "Open full-screen search" link and a new-tab fallback if the frame
+doesn't load. To point it at a different Flexmls link (for example a map search or saved search from
+Flexmls > IDX Links) set `NEXT_PUBLIC_FLEXMLS_SEARCH_URL` in Vercel and redeploy; no code change needed.
+
 ## Overview
 
 This document explains how to integrate third-party IDX (Internet Data Exchange) services to display MLS listings on your Next.js website.
