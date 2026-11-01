@@ -2,10 +2,29 @@
 
 ## Current setup (live)
 
-`/search` embeds Marc's Flexmls IDX portal, https://my.flexmls.com/marcspencer, in a frame
-(`components/FlexmlsSearch.tsx`), with an "Open full-screen search" link and a new-tab fallback if the frame
-doesn't load. To point it at a different Flexmls link (for example a map search or saved search from
-Flexmls > IDX Links) set `NEXT_PUBLIC_FLEXMLS_SEARCH_URL` in Vercel and redeploy; no code change needed.
+`/search` is findanchome's own MLS search, fed by the Flexmls Spark API (RESO Web API), with listing pages at
+`/listings/[ListingKey]`. Visitors never see a Flexmls login. "Schedule a tour" / "Ask a question" on each
+listing posts to `/api/consultation`, so the request lands in **Leads** (`/dashboard/leads`) tagged with the MLS
+number and emails Marc (when `RESEND_API_KEY` is set).
+
+| Vercel env var | Purpose |
+| --- | --- |
+| `SPARK_ACCESS_TOKEN` | Spark IDX access token (server-only, never `NEXT_PUBLIC_`). Turns the native search on. |
+| `SPARK_API_BASE` | Optional. Defaults to `https://sparkapi.com/Reso/OData`. |
+| `NEXT_PUBLIC_FLEXMLS_SEARCH_URL` | Optional. Flexmls page used as the fallback (default `https://my.flexmls.com/marcspencer`). |
+
+Until `SPARK_ACCESS_TOKEN` is set, or if the API errors, `/search` falls back to embedding the Flexmls portal
+(`components/FlexmlsSearch.tsx`).
+
+Search defaults to active listings in Onslow, Pender, New Hanover, Brunswick and Columbus counties. All query
+building lives in `buildFilter()` in `lib/mls.ts`; if your MLS uses different values for `PropertySubType` or
+`CountyOrParish`, adjust them there. Results are cached for 15 minutes.
+
+### Getting the token
+1. Sign in at https://sparkplatform.com with your Flexmls login and request an **IDX** API key (data access
+   for your own website). Your MLS may need to approve it.
+2. Once approved, copy the **access token** and add it to Vercel as `SPARK_ACCESS_TOKEN` (Production and
+   Preview), then redeploy.
 
 ## Overview
 
