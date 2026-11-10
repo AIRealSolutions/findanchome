@@ -105,6 +105,7 @@ export default function SiteFooter() {
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <span>Equal Housing Opportunity</span>
             <Link href="/contact" className="hover:text-white">Contact</Link>
+            <Link href="/site-map" className="hover:text-white">Site map</Link>
           </div>
         </div>
       </div>
