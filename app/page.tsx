@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   Search,
   ArrowRight,
@@ -26,6 +26,8 @@ import {
   MapPin,
   FileCheck2,
   Gavel,
+  Pause,
+  Play,
   type LucideIcon,
 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -108,6 +110,54 @@ const hudSteps: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: Gavel, title: 'Bid with representation', text: 'HUD bids must go through a registered agent. We prepare and submit yours.' },
 ];
 
+/** Looping, muted background video of the water (wide crop on desktop, tall cut on phones). */
+function HeroVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(true);
+
+  // Respect "reduce motion": leave the poster frame up instead of playing.
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) ref.current?.pause();
+  }, []);
+
+  function toggle() {
+    const v = ref.current;
+    if (!v) return;
+    if (v.paused) v.play().catch(() => {});
+    else v.pause();
+  }
+
+  return (
+    <>
+      <video
+        ref={ref}
+        className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_50%]"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster="/video/hero-water-wide.jpg"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        aria-hidden
+      >
+        <source src="/video/hero-water-tall.mp4" type="video/mp4" media="(max-width: 767px)" />
+        <source src="/video/hero-water-wide.mp4" type="video/mp4" />
+      </video>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={playing ? 'Pause background video' : 'Play background video'}
+        className="absolute top-5 right-4 md:right-6 z-10 grid place-items-center h-9 w-9 rounded-full bg-white/10 ring-1 ring-white/20 text-white/80 backdrop-blur hover:bg-white/20 hover:text-white transition-colors"
+      >
+        {playing ? <Pause size={15} /> : <Play size={15} />}
+      </button>
+    </>
+  );
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [mode, setMode] = useState<SearchMode>('buy');
@@ -135,15 +185,9 @@ export default function HomePage() {
       <main className="flex-1">
         {/* ───────────── Hero ───────────── */}
         <section className="relative isolate overflow-hidden bg-ink text-white">
-          <Image
-            src="/hero-8.jpg"
-            alt="Sunset over a Southeastern North Carolina marina"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover -z-10 opacity-80"
-          />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/85 to-ink/20" />
+          <HeroVideo />
+          <div className="absolute inset-0 -z-10 bg-ink/25" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/80 to-ink/10" />
           <div className="absolute inset-x-0 bottom-0 h-40 -z-10 bg-gradient-to-t from-ink to-transparent" />
 
           <div className="container mx-auto px-4 pt-20 pb-16 md:pt-28 md:pb-20">
