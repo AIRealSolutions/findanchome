@@ -70,7 +70,7 @@ export default function ConsultationLauncher() {
         <button
           type="button"
           onClick={() => openConsultation()}
-          className="fixed z-40 bottom-4 right-4 inline-flex items-center gap-2 bg-[#fbbf24] text-[#1e3a8a] px-5 py-3 rounded-full shadow-lg hover:bg-[#fcd34d] font-bold"
+          className="fixed z-40 bottom-4 right-4 inline-flex items-center gap-2 bg-ink text-white ring-1 ring-white/10 px-5 py-3 rounded-full shadow-xl shadow-ink/30 hover:bg-navy font-semibold text-sm transition-colors"
         >
           <CalendarCheck size={20} /> Free Consultation
         </button>
@@ -86,7 +86,7 @@ export default function ConsultationLauncher() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 py-4 border-b bg-white">
-              <h2 id="consultation-dialog-title" className="text-xl font-bold text-[#1e3a8a]">Request a Free Consultation</h2>
+              <h2 id="consultation-dialog-title" className="text-xl font-semibold tracking-tight text-ink">Request a Free Consultation</h2>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="p-1 text-gray-500 hover:text-gray-800">
                 <X size={24} />
               </button>

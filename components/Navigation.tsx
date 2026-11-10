@@ -1,136 +1,191 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Menu, X, Phone, MessageCircle } from 'lucide-react';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, Phone, MessageCircle, Mail, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import LanternLogo from './LanternLogo';
+import { BROKERAGE } from '@/lib/site';
+
+const navItems = [
+  { label: 'Explore', href: '/explore' },
+  { label: 'Lifestyles', href: '/lifestyle' },
+  { label: 'Search Homes', href: '/search' },
+  { label: 'HUD Homes', href: '/hud' },
+  { label: 'Buy', href: '/buyers' },
+  { label: 'Sell', href: '/sellers' },
+  { label: 'Invest', href: '/investments' },
+  { label: 'About', href: '/about' },
+];
+
+function isActive(pathname: string | null, href: string) {
+  if (!pathname) return false;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export default function Navigation() {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Explore the Region', href: '/explore' },
-    { label: 'Find Your Lifestyle', href: '/lifestyle' },
-    { label: 'Search Homes', href: '/search' },
-    { label: 'HUD Homes', href: '/hud' },
-    { label: 'Buyers', href: '/buyers' },
-    { label: 'Sellers', href: '/sellers' },
-    { label: 'Investments', href: '/investments' },
-    { label: 'Our Leadership', href: '/about' },
-    { label: 'Contact', href: '/contact', isButton: true },
-  ];
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  const authItems = [
-    { label: 'Login', href: '/login', isAuth: true },
-  ];
+  // Lock page scroll while the mobile menu is open.
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   return (
-    <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-4">
-          {/* Logo and Site Name */}
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-            <div className="flex-shrink-0">
-              <LanternLogo size={50} />
-            </div>
-            <div className="hidden sm:block">
-              <div className="text-xl lg:text-2xl font-bold">FindaNChome.com</div>
-              <p className="text-xs opacity-90">Southeastern North Carolina</p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Menu */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={
-                  item.isButton
-                    ? 'bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium'
-                    : 'px-3 py-2 text-sm hover:text-[#fbbf24] transition-colors font-medium'
-                }
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div className="border-l border-white/20 ml-2 pl-2 flex items-center gap-2">
-              {authItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className='px-3 py-2 text-sm hover:text-[#fbbf24] transition-colors font-medium'
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </nav>
-
-          {/* Mobile Contact Bar & Menu Button */}
-          <div className="flex lg:hidden items-center gap-3">
-            <a
-              href="tel:+19103636147"
-              className="p-2 hover:bg-[#0ea5e9]/20 rounded transition-colors"
-              aria-label="Call"
-              title="Call (910) 363-6147"
-            >
-              <Phone size={20} />
+    <>
+      {/* Utility bar */}
+      <div className="hidden md:block bg-ink text-white/70 text-xs">
+        <div className="container mx-auto px-4 flex items-center justify-between h-9">
+          <div className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-brass" aria-hidden />
+            <span>
+              {BROKERAGE.name} <span className="text-white/30 mx-1">|</span> Registered HUD Buyer&apos;s Agency serving all of North Carolina
+            </span>
+          </div>
+          <div className="flex items-center gap-5">
+            <a href={`tel:${BROKERAGE.phoneE164}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
+              <Phone size={13} /> {BROKERAGE.phone}
             </a>
-            <a
-              href="sms:+19103636147"
-              className="p-2 hover:bg-[#0ea5e9]/20 rounded transition-colors"
-              aria-label="Text"
-              title="Text (910) 363-6147"
-            >
-              <MessageCircle size={20} />
+            <a href={`mailto:${BROKERAGE.email}`} className="hidden lg:inline-flex items-center gap-1.5 hover:text-white transition-colors">
+              <Mail size={13} /> Email us
             </a>
-            <button
-              className="p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            <Link href="/login" className="hover:text-white transition-colors">
+              Client login
+            </Link>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation Menu */}
-        {mobileMenuOpen && (
-          <nav className="lg:hidden py-4 border-t border-white/20">
-            <div className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={
-                    item.isButton
-                      ? 'bg-[#fbbf24] text-[#1e3a8a] px-4 py-3 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium text-center mt-2'
-                      : 'px-4 py-2 hover:text-[#fbbf24] transition-colors font-medium'
-                  }
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <div className="border-t border-white/20 mt-2 pt-2 flex flex-col gap-2">
-                {authItems.map((item) => (
+      {/* Main bar */}
+      <header
+        className={`sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b transition-shadow ${
+          scrolled ? 'border-stone shadow-[0_8px_30px_-12px_rgba(10,22,40,0.25)]' : 'border-transparent'
+        }`}
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-[72px]">
+            <Link href="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0" aria-label="FindaNChome.com home">
+              <span className="grid place-items-center h-11 w-11 rounded-xl bg-ink shadow-sm">
+                <LanternLogo size={30} />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-[17px] sm:text-[19px] font-semibold tracking-tight text-ink">
+                  FindaNC<span className="text-brass">home</span>
+                  <span className="text-slate-400 font-normal">.com</span>
+                </span>
+                <span className="block text-[10px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.16em] text-slate-500">Southeastern North Carolina</span>
+              </span>
+            </Link>
+
+            <nav className="hidden xl:flex items-center gap-1" aria-label="Main">
+              {navItems.map((item) => {
+                const active = isActive(pathname, item.href);
+                return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className='px-4 py-2 hover:text-[#fbbf24] transition-colors font-medium'
-                    onClick={() => setMobileMenuOpen(false)}
+                    aria-current={active ? 'page' : undefined}
+                    className={`relative px-3 py-2 text-[14px] font-medium transition-colors ${
+                      active ? 'text-ink' : 'text-slate-600 hover:text-ink'
+                    }`}
                   >
                     {item.label}
+                    <span
+                      className={`absolute left-3 right-3 -bottom-[1px] h-[2px] rounded-full bg-brass transition-opacity ${
+                        active ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
                   </Link>
-                ))}
-              </div>
+                );
+              })}
+            </nav>
+
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Link
+                href="/contact"
+                className="hidden sm:inline-flex items-center gap-2 bg-ink text-white text-sm font-medium pl-5 pr-4 py-2.5 rounded-full hover:bg-navy transition-colors"
+              >
+                Book a consultation <ArrowRight size={15} />
+              </Link>
+              <a
+                href={`tel:${BROKERAGE.phoneE164}`}
+                className="xl:hidden p-2.5 rounded-full text-ink hover:bg-sand transition-colors"
+                aria-label={`Call ${BROKERAGE.phone}`}
+              >
+                <Phone size={20} />
+              </a>
+              <a
+                href={`sms:${BROKERAGE.phoneE164}`}
+                className="hidden sm:inline-flex xl:hidden p-2.5 rounded-full text-ink hover:bg-sand transition-colors"
+                aria-label={`Text ${BROKERAGE.phone}`}
+              >
+                <MessageCircle size={20} />
+              </a>
+              <button
+                className="xl:hidden p-2.5 rounded-full text-ink hover:bg-sand transition-colors"
+                onClick={() => setMobileMenuOpen((o) => !o)}
+                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <nav
+            className="xl:hidden fixed inset-x-0 top-[72px] bottom-0 bg-white overflow-y-auto border-t border-stone"
+            aria-label="Mobile"
+          >
+            <div className="container mx-auto px-4 py-6 flex flex-col">
+              {[{ label: 'Home', href: '/' }, ...navItems].map((item) => {
+                const active = item.href === '/' ? pathname === '/' : isActive(pathname, item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between py-4 border-b border-stone text-lg ${
+                      active ? 'text-ink font-semibold' : 'text-slate-700'
+                    }`}
+                  >
+                    {item.label}
+                    <ArrowRight size={18} className={active ? 'text-brass' : 'text-slate-300'} />
+                  </Link>
+                );
+              })}
+              <Link
+                href="/contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-6 inline-flex items-center justify-center gap-2 bg-ink text-white font-medium px-5 py-3.5 rounded-full"
+              >
+                Book a consultation <ArrowRight size={16} />
+              </Link>
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-3 text-center py-3 text-slate-600 font-medium"
+              >
+                Client login
+              </Link>
             </div>
           </nav>
         )}
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
