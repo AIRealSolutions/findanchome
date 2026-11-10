@@ -38,8 +38,13 @@ export default function Navigation() {
   // Lock page scroll while the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    if (mobileMenuOpen) window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
     };
   }, [mobileMenuOpen]);
 
@@ -135,23 +140,42 @@ export default function Navigation() {
               </a>
               <button
                 className="xl:hidden p-2.5 rounded-full text-ink hover:bg-sand transition-colors"
-                onClick={() => setMobileMenuOpen((o) => !o)}
-                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                onClick={() => setMobileMenuOpen(true)}
+                aria-label="Open menu"
                 aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                <Menu size={22} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <nav
-            className="xl:hidden fixed inset-x-0 top-[72px] bottom-0 bg-white overflow-y-auto border-t border-stone"
-            aria-label="Mobile"
-          >
-            <div className="container mx-auto px-4 py-6 flex flex-col">
+      </header>
+
+      {/* Mobile menu: rendered outside <header> because the header's backdrop blur
+          would otherwise become the containing block for this fixed panel and clip it. */}
+      {mobileMenuOpen && (
+        <div className="xl:hidden fixed inset-0 z-[70] bg-white flex flex-col" role="dialog" aria-modal="true" aria-label="Site menu">
+          <div className="container mx-auto px-4 flex items-center justify-between h-[72px] border-b border-stone shrink-0">
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5" aria-label="FindaNChome.com home">
+              <span className="grid place-items-center h-11 w-11 rounded-xl bg-ink">
+                <LanternLogo size={30} />
+              </span>
+              <span className="text-[17px] font-semibold tracking-tight text-ink">
+                FindaNC<span className="text-brass">home</span>
+                <span className="text-slate-400 font-normal">.com</span>
+              </span>
+            </Link>
+            <button
+              className="p-2.5 rounded-full text-ink hover:bg-sand transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+          </div>
+          <nav className="flex-1 overflow-y-auto" aria-label="Mobile">
+            <div className="container mx-auto px-4 py-4 flex flex-col">
               {[{ label: 'Home', href: '/' }, ...navItems].map((item) => {
                 const active = item.href === '/' ? pathname === '/' : isActive(pathname, item.href);
                 return (
@@ -175,6 +199,14 @@ export default function Navigation() {
               >
                 Book a consultation <ArrowRight size={16} />
               </Link>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <a href={`tel:${BROKERAGE.phoneE164}`} className="inline-flex items-center justify-center gap-2 rounded-full ring-1 ring-stone py-3 text-ink font-medium">
+                  <Phone size={16} /> Call
+                </a>
+                <a href={`sms:${BROKERAGE.phoneE164}`} className="inline-flex items-center justify-center gap-2 rounded-full ring-1 ring-stone py-3 text-ink font-medium">
+                  <MessageCircle size={16} /> Text
+                </a>
+              </div>
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
@@ -184,8 +216,8 @@ export default function Navigation() {
               </Link>
             </div>
           </nav>
-        )}
-      </header>
+        </div>
+      )}
     </>
   );
 }
