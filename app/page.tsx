@@ -110,7 +110,7 @@ const hudSteps: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: Gavel, title: 'Bid with representation', text: 'HUD bids must go through a registered agent. We prepare and submit yours.' },
 ];
 
-/** Looping, muted background video of the water (wide crop on desktop, tall cut on phones). */
+/** Looping, muted background video: Southport sunrise on desktop, vertical water clip on phones. */
 function HeroVideo() {
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(true);
@@ -132,28 +132,34 @@ function HeroVideo() {
     <>
       <video
         ref={ref}
-        className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_50%]"
+        className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_50%] md:object-center"
         autoPlay
         muted
         loop
         playsInline
         preload="metadata"
-        poster="/video/hero-water-wide.jpg"
+        poster="/video/hero-sunrise-wide.jpg"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         aria-hidden
       >
         <source src="/video/hero-water-tall.mp4" type="video/mp4" media="(max-width: 767px)" />
-        <source src="/video/hero-water-wide.mp4" type="video/mp4" />
+        <source src="/video/hero-sunrise-wide.mp4" type="video/mp4" />
       </video>
-      <button
-        type="button"
-        onClick={toggle}
-        aria-label={playing ? 'Pause background video' : 'Play background video'}
-        className="absolute top-5 right-4 md:right-6 z-10 grid place-items-center h-9 w-9 rounded-full bg-white/10 ring-1 ring-white/20 text-white/80 backdrop-blur hover:bg-white/20 hover:text-white transition-colors"
-      >
-        {playing ? <Pause size={15} /> : <Play size={15} />}
-      </button>
+      <div className="absolute top-5 right-4 md:right-6 z-10 flex items-center gap-3">
+        <span className="hidden md:inline-flex items-center gap-2 rounded-full bg-ink/40 ring-1 ring-white/15 backdrop-blur px-3 py-1.5 text-xs text-white/80">
+          <span className="h-1.5 w-1.5 rounded-full bg-brass" aria-hidden />
+          Sunrise on the Southport waterfront
+        </span>
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={playing ? 'Pause background video' : 'Play background video'}
+          className="grid place-items-center h-9 w-9 rounded-full bg-white/10 ring-1 ring-white/20 text-white/80 backdrop-blur hover:bg-white/20 hover:text-white transition-colors"
+        >
+          {playing ? <Pause size={15} /> : <Play size={15} />}
+        </button>
+      </div>
     </>
   );
 }
@@ -186,8 +192,8 @@ export default function HomePage() {
         {/* ───────────── Hero ───────────── */}
         <section className="relative isolate overflow-hidden bg-ink text-white">
           <HeroVideo />
-          <div className="absolute inset-0 -z-10 bg-ink/25" />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/80 to-ink/10" />
+          <div className="absolute inset-0 -z-10 bg-ink/30 md:bg-transparent" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/95 via-ink/65 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-40 -z-10 bg-gradient-to-t from-ink to-transparent" />
 
           <div className="container mx-auto px-4 pt-20 pb-16 md:pt-28 md:pb-20">
