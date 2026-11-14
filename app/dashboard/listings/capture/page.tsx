@@ -41,7 +41,7 @@ export default function CapturePage() {
   };
 
   const save = async () => {
-    if (!photos.length && !loc.point) return setError('Add a photo or a location first.');
+    if (!photos.length && !loc.point && !loc.address?.address) return setError('Add a photo, a location or an address first.');
     setBusy('Saving…');
     setError('');
     const p = loc.parcel;
@@ -80,7 +80,7 @@ export default function CapturePage() {
     <div className="max-w-2xl">
       <Link href="/dashboard/listings" className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 mb-4"><ArrowLeft size={16} /> Listing opportunities</Link>
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Snap a house</h1>
-      <p className="mt-1 mb-6 text-gray-600">See a house that might sell? Take a photo, confirm the pin, and see who owns it.</p>
+      <p className="mt-1 mb-6 text-gray-600">See a house that might sell? Take a photo, confirm the pin (or type the address), and see who owns it.</p>
 
       <div className="space-y-5">
         <section className="bg-white border border-gray-200 rounded-xl p-4">

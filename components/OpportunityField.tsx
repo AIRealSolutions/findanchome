@@ -120,12 +120,14 @@ export function LocationOwner({ opp, editable, author, onChanged }: { opp: Listi
   const [msg, setMsg] = useState('');
 
   const save = async () => {
+    // A typed address replaces the old one; otherwise fill only what's missing on the opportunity.
+    const typed = loc.source === 'address' || (!loc.point && !!loc.address?.address);
+    const a = loc.address;
     const updates: Partial<ListingOpportunity> = {
-      ...locationColumns(loc),
-      // Fill only what's missing on the opportunity.
-      ...(!opp.property_address && loc.address?.address ? { property_address: loc.address.address } : {}),
-      ...(!opp.city && loc.address?.city ? { city: loc.address.city } : {}),
-      ...(!opp.zip_code && loc.address?.zip ? { zip_code: loc.address.zip.slice(0, 10) } : {}),
+      ...(loc.point || !point ? locationColumns(loc) : {}),
+      ...((typed || !opp.property_address) && a?.address ? { property_address: a.address } : {}),
+      ...((typed || !opp.city) && a?.city ? { city: a.city } : {}),
+      ...((typed || !opp.zip_code) && a?.zip ? { zip_code: a.zip.slice(0, 10) } : {}),
     };
     const { error } = await createClient().from('fanc_listing_opportunities').update(updates).eq('id', opp.id);
     if (error) return setMsg(error.message);
@@ -145,21 +147,21 @@ export function LocationOwner({ opp, editable, author, onChanged }: { opp: Listi
   return (
     <Section title="Location & ownership" action={editable && !editing && (
       <button onClick={() => { setLoc({ point, source: opp.location_source, parcel, address: null }); setEditing(true); }} className="text-sm text-blue-600 hover:underline">
-        {point ? 'Move pin / look up again' : 'Add location'}
+        {point ? 'Move pin / change address' : 'Add location or address'}
       </button>
     )}>
       {editing ? (
         <div>
           <LocationResearch value={loc} onChange={setLoc} />
           <div className="mt-3 flex gap-2">
-            <button onClick={save} disabled={!loc.point} className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">Save location</button>
+            <button onClick={save} disabled={!loc.point && !loc.address?.address} className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">Save location</button>
             <button onClick={() => setEditing(false)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm">Cancel</button>
           </div>
         </div>
       ) : (
         <div className="space-y-3">
           {point ? <LocationMap point={point} height={220} /> : <p className="text-sm text-gray-500">No location yet. Add one to see the map and look up the owner of record.</p>}
-          {parcel ? <ParcelCard parcel={parcel} /> : point && <p className="text-sm text-gray-500">No owner record saved. Use “Move pin / look up again”.</p>}
+          {parcel ? <ParcelCard parcel={parcel} /> : point && <p className="text-sm text-gray-500">No owner record saved. Use “Move pin / change address”.</p>}
           {(point || opp.property_address) && (
             <div className="flex flex-wrap gap-2">
               {links.map((l) => (

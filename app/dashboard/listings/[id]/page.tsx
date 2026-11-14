@@ -125,6 +125,7 @@ export default function ListingOpportunityPage() {
   }
 
   const meta = listingStageMeta(opp.stage);
+  const canDelete = isAdmin || (!!user && opp.created_by === user.id);
   const open = opp.review_status === 'approved' && OPEN_LISTING_STAGES.includes(opp.stage);
   const due = dueState(opp.follow_up_at);
   const eq = equity(opp);
@@ -163,7 +164,7 @@ export default function ListingOpportunityPage() {
     router.push(`/dashboard/deals/${r.dealId}`);
   };
 
-  /** Admins only: the opportunity, its timeline, tasks and photos (files included). A deal made from it stays. */
+  /** Admins, or the broker who entered it: the opportunity, its timeline, tasks and photos (files included). A deal made from it stays. */
   const deleteOpp = async () => {
     if (!confirm(`Permanently delete ${opportunityTitle(opp)}, its timeline, tasks and photos?`)) return;
     setSaving(true);
@@ -471,9 +472,9 @@ export default function ListingOpportunityPage() {
               Entered {formatDateTime(opp.created_at)} by {opp.created_by_name || (opp.created_by_role === 'public' ? 'a website visitor' : 'a client')}
             </p>
           </Section>
-          {isAdmin && (
+          {canDelete && (
             <div className="text-right">
-              <button onClick={deleteOpp} disabled={saving} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 disabled:opacity-50"><Trash2 size={14} /> Delete opportunity</button>
+              <button onClick={deleteOpp} disabled={saving} className="inline-flex items-center gap-1 px-3 py-2 border border-red-200 text-red-700 rounded-lg text-sm hover:bg-red-50 disabled:opacity-50"><Trash2 size={14} /> Delete opportunity</button>
             </div>
           )}
         </div>
