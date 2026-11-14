@@ -35,6 +35,7 @@ export function OpportunityPhotos({ oppId, editable, author }: { oppId: string; 
   const [adding, setAdding] = useState<PendingPhoto[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [arming, setArming] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const { data } = await createClient().from('fanc_listing_photos').select('*').eq('opportunity_id', oppId).order('sort').order('created_at');
@@ -67,7 +68,9 @@ export function OpportunityPhotos({ oppId, editable, author }: { oppId: string; 
     setBusy(false);
   };
   const remove = async (p: ListingPhoto) => {
-    if (!confirm('Delete this photo?')) return;
+    // Two taps instead of window.confirm, which some phone browsers skip.
+    if (arming !== p.id) return setArming(p.id);
+    setArming(null);
     const err = await deletePhoto(p);
     if (err) setError(err);
     apply(await load());
@@ -88,7 +91,10 @@ export function OpportunityPhotos({ oppId, editable, author }: { oppId: string; 
               ) : <div className="w-full aspect-square rounded-lg bg-gray-100" />}
               {p.taken_at && <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/60 text-white text-[10px]">{formatDate(p.taken_at, { month: 'short', day: 'numeric' })}</span>}
               {editable && (
-                <button onClick={() => remove(p)} aria-label="Delete photo" className="absolute top-1 right-1 p-1 rounded-full bg-black/60 text-white opacity-80 hover:opacity-100"><Trash2 size={12} /></button>
+                <button onClick={() => remove(p)} aria-label={arming === p.id ? 'Tap again to delete photo' : 'Delete photo'}
+                  className={`absolute top-1 right-1 rounded-full text-white ${arming === p.id ? 'px-2 py-1 bg-red-600 text-xs font-medium' : 'p-1 bg-black/60 opacity-80 hover:opacity-100'}`}>
+                  {arming === p.id ? 'Delete?' : <Trash2 size={12} />}
+                </button>
               )}
             </li>
           ))}

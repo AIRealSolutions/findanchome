@@ -71,6 +71,9 @@ export default function ListingOpportunityPage() {
   const [listPrice, setListPrice] = useState('');
   const [lostReason, setLostReason] = useState('');
   const [closing, setClosing] = useState<'won' | 'lost' | null>(null);
+  // In-page confirm: some phone browsers (home-screen apps, blocked dialogs) silently skip window.confirm.
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   const author = { id: user?.id ?? '', name: [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || user?.email || 'Broker' };
 
@@ -166,15 +169,14 @@ export default function ListingOpportunityPage() {
 
   /** Admins, or the broker who entered it: the opportunity, its timeline, tasks and photos (files included). A deal made from it stays. */
   const deleteOpp = async () => {
-    if (!confirm(`Permanently delete ${opportunityTitle(opp)}, its timeline, tasks and photos?`)) return;
     setSaving(true);
-    setError('');
+    setDeleteError('');
     const supabase = createClient();
     const { data: photos } = await supabase.from('fanc_listing_photos').select('path').eq('opportunity_id', opp.id);
     if (photos?.length) await supabase.storage.from(PHOTO_BUCKET).remove(photos.map((p) => p.path));
     const { data, error: err } = await supabase.from('fanc_listing_opportunities').delete().eq('id', opp.id).select('id');
     setSaving(false);
-    if (err || !data?.length) return setError(err?.message ?? 'This opportunity could not be deleted.');
+    if (err || !data?.length) return setDeleteError(err?.message ?? 'This opportunity could not be deleted.');
     router.push('/dashboard/listings');
   };
 
@@ -474,7 +476,18 @@ export default function ListingOpportunityPage() {
           </Section>
           {canDelete && (
             <div className="text-right">
-              <button onClick={deleteOpp} disabled={saving} className="inline-flex items-center gap-1 px-3 py-2 border border-red-200 text-red-700 rounded-lg text-sm hover:bg-red-50 disabled:opacity-50"><Trash2 size={14} /> Delete opportunity</button>
+              {confirmDelete ? (
+                <div className="inline-block text-left p-3 rounded-lg border border-red-200 bg-red-50">
+                  <p className="text-sm text-red-800 mb-2">Permanently delete {opportunityTitle(opp)}, its timeline, tasks and photos? This can’t be undone.</p>
+                  <div className="flex gap-2">
+                    <button onClick={deleteOpp} disabled={saving} className="inline-flex items-center gap-1 px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"><Trash2 size={14} /> {saving ? 'Deleting…' : 'Yes, delete'}</button>
+                    <button onClick={() => { setConfirmDelete(false); setDeleteError(''); }} disabled={saving} className="px-3 py-2 border border-gray-300 bg-white rounded-lg text-sm">Cancel</button>
+                  </div>
+                  {deleteError && <p className="mt-2 text-sm text-red-700">{deleteError}</p>}
+                </div>
+              ) : (
+                <button onClick={() => setConfirmDelete(true)} disabled={saving} className="inline-flex items-center gap-1 px-3 py-2 border border-red-200 text-red-700 rounded-lg text-sm hover:bg-red-50 disabled:opacity-50"><Trash2 size={14} /> Delete opportunity</button>
+              )}
             </div>
           )}
         </div>
