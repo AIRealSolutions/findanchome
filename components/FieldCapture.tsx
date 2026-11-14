@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { Camera, Crosshair, ImagePlus, Loader2, MapPin, Search, X } from 'lucide-react';
 import { formatDate, formatMoney } from '@/lib/clients';
 import {
-  deviceLocation, lookupParcel, preparePhotos, researchLinks, reverseGeocode,
+  deviceLocation, geocodeAddress, lookupParcel, parseTypedAddress, preparePhotos, researchLinks, reverseGeocode,
   type LatLng, type ParcelRecord, type PendingPhoto,
 } from '@/lib/field';
 
@@ -69,7 +69,8 @@ export interface Located {
 export function LocationResearch({ value, onChange, photos = [], autoLocate = false }: {
   value: Located; onChange: (v: Located) => void; photos?: PendingPhoto[]; autoLocate?: boolean;
 }) {
-  const [busy, setBusy] = useState<'' | 'locating' | 'looking'>('');
+  const [busy, setBusy] = useState<'' | 'locating' | 'looking' | 'finding'>('');
+  const [typed, setTyped] = useState('');
   const [error, setError] = useState('');
   const valueRef = useRef(value);
   useEffect(() => {
@@ -77,13 +78,13 @@ export function LocationResearch({ value, onChange, photos = [], autoLocate = fa
   }, [value]);
   const photoPoint = photos.find((p) => p.point)?.point ?? null;
 
-  const lookup = async (point: LatLng, source: Located['source']) => {
+  const lookup = async (point: LatLng, source: Located['source'], knownAddress?: Located['address']) => {
     setBusy('looking');
     setError('');
     const r = await lookupParcel(point);
     let address: Located['address'] = null;
     if (r.parcel?.siteAddress) address = { address: r.parcel.siteAddress, city: r.parcel.city, zip: r.parcel.zip, county: r.parcel.county };
-    else address = await reverseGeocode(point);
+    else address = knownAddress ?? await reverseGeocode(point);
     if (r.error) setError(r.error);
     else if (!r.parcel) setError('No parcel found exactly here. Drag the pin onto the house (not the street) and look up again.');
     setBusy('');
@@ -101,6 +102,24 @@ export function LocationResearch({ value, onChange, photos = [], autoLocate = fa
       setError(e instanceof Error ? e.message : 'Couldn’t get your location.');
       setBusy('');
     }
+  };
+
+  /** The broker typed the address (location off, or standing somewhere else). */
+  const findAddress = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault();
+    const text = typed.trim();
+    if (!text) return;
+    setBusy('finding');
+    setError('');
+    const hit = await geocodeAddress(text);
+    if (!hit) {
+      setBusy('');
+      onChange({ ...valueRef.current, address: parseTypedAddress(text) });
+      setError('Couldn’t find that address on the map. It will be saved as typed. Tap the map on the house to look up the owner.');
+      return;
+    }
+    onChange({ ...valueRef.current, point: hit.point, source: 'address', parcel: null, address: hit.address });
+    await lookup(hit.point, 'address', hit.address);
   };
 
   // A photo with GPS places the pin by itself; otherwise the phone's location can (field capture).
@@ -122,6 +141,14 @@ export function LocationResearch({ value, onChange, photos = [], autoLocate = fa
 
   return (
     <div className="space-y-3">
+      <div className="flex gap-2">
+        <input value={typed} onChange={(e) => setTyped(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') findAddress(e); }}
+          placeholder="Type an address, e.g. 123 Main St, Wilmington" aria-label="Property address" autoComplete="street-address"
+          className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+        <button type="button" onClick={() => findAddress()} disabled={!!busy || !typed.trim()} className="inline-flex items-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+          <Search size={16} /> Find
+        </button>
+      </div>
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={locateMe} disabled={!!busy} className="inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50">
           <Crosshair size={16} /> Use my location
@@ -136,11 +163,11 @@ export function LocationResearch({ value, onChange, photos = [], autoLocate = fa
             <Search size={16} /> Look up owner here
           </button>
         )}
-        {busy && <span className="inline-flex items-center gap-1 text-sm text-gray-500"><Loader2 size={16} className="animate-spin" /> {busy === 'locating' ? 'Finding you…' : 'Looking up the owner…'}</span>}
+        {busy && <span className="inline-flex items-center gap-1 text-sm text-gray-500"><Loader2 size={16} className="animate-spin" /> {busy === 'locating' ? 'Finding you…' : busy === 'finding' ? 'Finding the address…' : 'Looking up the owner…'}</span>}
       </div>
       <LocationMap point={value.point} onMove={(pt) => onChange({ ...valueRef.current, point: pt, source: 'map', parcel: null })} photos={photos.filter((x) => x.point).map((x) => x.point!)} />
       <p className="text-xs text-gray-500">
-        {value.point ? `Pin at ${value.point.lat.toFixed(5)}, ${value.point.lng.toFixed(5)}${value.source === 'photo' ? ' (from the photo)' : value.source === 'device' ? ' (your location; drag it onto the house)' : ''}. ` : 'No location yet. '}
+        {value.point ? `Pin at ${value.point.lat.toFixed(5)}, ${value.point.lng.toFixed(5)}${value.source === 'photo' ? ' (from the photo)' : value.source === 'device' ? ' (your location; drag it onto the house)' : value.source === 'address' ? ' (from the address; drag it onto the house if needed)' : ''}. ` : value.address?.address ? `Address: ${[value.address.address, value.address.city, value.address.zip].filter(Boolean).join(', ')}. ` : 'No location yet. '}
         Tap the map or drag the pin onto the house, then look up the owner. Switch to Satellite to see roofs.
       </p>
       {error && <p className="text-sm text-amber-700">{error}</p>}

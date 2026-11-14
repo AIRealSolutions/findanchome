@@ -149,6 +149,44 @@ export async function reverseGeocode(point: LatLng) {
   }
 }
 
+/**
+ * A typed street address to a map point (OpenStreetMap Nominatim), biased to North Carolina. Returns null when the
+ * address can't be found, so the caller can still keep the address as typed.
+ */
+export async function geocodeAddress(text: string): Promise<{ point: LatLng; address: { address: string | null; city: string | null; zip: string | null; county: string | null } } | null> {
+  const q = text.trim();
+  if (!q) return null;
+  // Assume NC unless the broker typed a state.
+  const query = /\b(NC|North Carolina|[A-Z]{2}\s+\d{5})\b/i.test(q) ? q : `${q}, NC`;
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&countrycodes=us&viewbox=-84.33,36.59,-75.46,33.84&q=${encodeURIComponent(query)}`, {
+      headers: { 'Accept-Language': 'en-US' },
+    });
+    const [hit] = (await res.json()) as { lat: string; lon: string; address?: Record<string, string> }[];
+    if (!hit) return null;
+    const a = hit.address ?? {};
+    return {
+      point: { lat: Number(hit.lat), lng: Number(hit.lon) },
+      address: {
+        address: [a.house_number, a.road].filter(Boolean).join(' ') || q.split(',')[0].trim() || null,
+        city: a.city || a.town || a.village || a.hamlet || null,
+        zip: a.postcode || null,
+        county: (a.county || '').replace(/ County$/, '') || null,
+      },
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Split a typed "123 Main St, Wilmington, NC 28401" into parts, for when the map can't find it. */
+export function parseTypedAddress(text: string) {
+  const parts = text.split(',').map((s) => s.trim()).filter(Boolean);
+  const zip = text.match(/\b\d{5}(?:-\d{4})?\b/)?.[0] ?? null;
+  const city = parts.length > 1 && !/^(NC|North Carolina)?\s*\d{5}/i.test(parts[1]) ? parts[1] : null;
+  return { address: parts[0] ?? null, city, zip, county: null };
+}
+
 /** Where to dig deeper: maps, the county's records, the courts. */
 export function researchLinks(point: LatLng | null, opts: { county?: string | null; owner?: string | null; parcelId?: string | null; address?: string | null }) {
   const q = encodeURIComponent;
