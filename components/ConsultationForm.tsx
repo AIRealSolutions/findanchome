@@ -20,7 +20,7 @@ import {
 } from '@/lib/consultation';
 
 const input =
-  'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-transparent bg-white';
+  'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-transparent bg-white';
 const label = 'block text-sm font-semibold text-ink mb-1';
 
 function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
@@ -129,7 +129,7 @@ export default function ConsultationForm({
         <h3 className="text-2xl font-semibold text-ink mb-2">Thank you, {contact.name.split(' ')[0]}!</h3>
         <p className="text-gray-700 max-w-md mx-auto">
           Your request is on its way to {BROKERAGE.agent}. Expect a reply within one business day. Need us sooner? Call or
-          text <a href={`tel:${BROKERAGE.phoneE164}`} className="font-semibold text-[#0ea5e9]">{BROKERAGE.phone}</a>.
+          text <a href={`tel:${BROKERAGE.phoneE164}`} className="font-semibold text-[#0369a1]">{BROKERAGE.phone}</a>.
         </p>
       </div>
     );
@@ -233,7 +233,7 @@ export default function ConsultationForm({
             ))}
           </Fieldset>
           {neighborhoodOptions.length < neighborhoodPool.length && (
-            <button type="button" onClick={() => setShowAllNeighborhoods(true)} className="mt-2 text-sm font-semibold text-[#0ea5e9] hover:underline">
+            <button type="button" onClick={() => setShowAllNeighborhoods(true)} className="mt-2 text-sm font-semibold text-[#0369a1] hover:underline">
               Show all {neighborhoodPool.length} neighborhoods
             </button>
           )}

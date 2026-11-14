@@ -168,10 +168,10 @@ export function GoalsEditor({ ctx }: { ctx: AdminContext }) {
   return (
     <Card title="Annual goals">
       <div className="flex flex-wrap gap-2 mb-4">
-        <select value={year} onChange={(e) => setYear(+e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+        <select aria-label="Goal year" value={year} onChange={(e) => setYear(+e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           {[year - 1, new Date().getFullYear(), new Date().getFullYear() + 1].filter((y, i, a) => a.indexOf(y) === i).map((y) => <option key={y}>{y}</option>)}
         </select>
-        <select value={who} onChange={(e) => setWho(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+        <select aria-label="Goals for" value={who} onChange={(e) => setWho(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           <option value="">Company</option>
           {ctx.finance.staff.map((s) => <option key={s.id} value={s.id}>{staffName(s)}</option>)}
         </select>

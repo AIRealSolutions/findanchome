@@ -45,7 +45,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   return (
     <div className="grid grid-cols-[120px_1fr] gap-3 py-1.5 text-sm">
       <dt className="text-gray-500">{label}</dt>
-      <dd className="text-gray-900">{children || <span className="text-gray-400">—</span>}</dd>
+      <dd className="text-gray-900">{children || <span className="text-gray-500">—</span>}</dd>
     </div>
   );
 }
@@ -58,7 +58,7 @@ function Chips({ items }: { items: { key: string; label: string; href?: string }
         i.href ? (
           <a key={i.key} href={i.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-800 text-xs hover:bg-blue-100">
             {i.label} <ExternalLink size={10} />
-          </a>
+          <span className="sr-only"> (opens in a new tab)</span></a>
         ) : (
           <span key={i.key} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-800 text-xs">{i.label}</span>
         ),
@@ -334,7 +334,7 @@ export default function LeadDetailPage() {
                 {lead.source_page && (
                   <a href={absoluteUrl(lead.source_page)} target="_blank" rel="noopener" className="text-blue-600 hover:underline inline-flex items-center gap-1">
                     {lead.source_page} <ExternalLink size={12} />
-                  </a>
+                  <span className="sr-only"> (opens in a new tab)</span></a>
                 )}
               </Row>
               <Row label="Lead ID"><span className="font-mono text-xs">{lead.id}</span></Row>
@@ -348,7 +348,7 @@ export default function LeadDetailPage() {
             {fu === 'overdue' && <p className="mb-2 text-sm font-medium text-red-700">Overdue: {formatDateTime(lead.follow_up_at!)}</p>}
             {fu === 'today' && <p className="mb-2 text-sm font-medium text-yellow-700">Due today: {formatDateTime(lead.follow_up_at!)}</p>}
             <div className="flex gap-2">
-              <input type="datetime-local" value={followUp} onChange={(e) => setFollowUp(e.target.value)}
+              <input aria-label="Follow-up date and time" type="datetime-local" value={followUp} onChange={(e) => setFollowUp(e.target.value)}
                 className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg" />
               <button disabled={saving || !followUp} onClick={() => setFollowUpAt(new Date(followUp).toISOString())}
                 className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
@@ -384,7 +384,7 @@ export default function LeadDetailPage() {
                   </button>
                 ))}
               </div>
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
+              <textarea aria-label="Activity note" value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
                 placeholder={kind === 'note' ? 'Add a note…' : `What happened on the ${kind}?`}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
               <button type="submit" disabled={saving || !body.trim()}

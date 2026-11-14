@@ -222,7 +222,7 @@ export default function CalendarPage() {
             </button>
           ))}
         </div>
-        <select value={filter} onChange={(e) => setFilter(e.target.value as Filter)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
+        <select aria-label="Filter events" value={filter} onChange={(e) => setFilter(e.target.value as Filter)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
           {FILTERS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
         </select>
         <label className="flex items-center gap-2 text-sm text-gray-700">
@@ -278,14 +278,14 @@ export default function CalendarPage() {
                   return (
                     <button key={day} onClick={() => setSelected(day)}
                       className={`min-h-16 sm:min-h-24 p-1 sm:p-1.5 text-left align-top border-l border-gray-100 first:border-l-0 hover:bg-blue-50 ${selected === day ? 'bg-blue-50 ring-1 ring-inset ring-blue-400' : ''} ${inMonth ? '' : 'bg-gray-50/60'}`}>
-                      <span className={`inline-flex w-6 h-6 items-center justify-center rounded-full text-xs ${day === today ? 'bg-blue-600 text-white font-semibold' : inMonth ? 'text-gray-900' : 'text-gray-400'}`}>
+                      <span className={`inline-flex w-6 h-6 items-center justify-center rounded-full text-xs ${day === today ? 'bg-blue-600 text-white font-semibold' : inMonth ? 'text-gray-900' : 'text-gray-500'}`}>
                         {+day.slice(8)}
                       </span>
                       {/* Icons only on phones, titles from sm up. */}
                       <div className="sm:hidden flex flex-wrap gap-0.5 mt-0.5 text-xs leading-none">{list.slice(0, 4).map((e) => <span key={e.key}>{e.icon}</span>)}</div>
                       <div className="hidden sm:block space-y-0.5 mt-0.5">
                         {list.slice(0, 3).map((e) => (
-                          <div key={e.key} className={`text-xs truncate ${e.done ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{e.icon} {e.client ? e.client.first_name + ' ' + (e.client.last_name ?? '') : e.title}</div>
+                          <div key={e.key} className={`text-xs truncate ${e.done ? 'text-gray-500 line-through' : 'text-gray-700'}`}>{e.icon} {e.client ? e.client.first_name + ' ' + (e.client.last_name ?? '') : e.title}</div>
                         ))}
                         {list.length > 3 && <div className="text-xs text-gray-500">+{list.length - 3} more</div>}
                       </div>

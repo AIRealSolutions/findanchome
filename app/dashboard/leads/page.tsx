@@ -175,8 +175,8 @@ export default function LeadsPage() {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input aria-label="Search leads"
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -184,11 +184,11 @@ export default function LeadsPage() {
             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-        <select value={county} onChange={(e) => setCounty(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
+        <select aria-label="Filter by county" value={county} onChange={(e) => setCounty(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
           <option value="">All counties</option>
           {(Object.keys(COUNTY_NAMES) as CountySlug[]).map((c) => <option key={c} value={c}>{COUNTY_NAMES[c]}</option>)}
         </select>
-        <select value={intent} onChange={(e) => setIntent(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
+        <select aria-label="Filter by goal" value={intent} onChange={(e) => setIntent(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
           <option value="">All goals</option>
           {INTENT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>

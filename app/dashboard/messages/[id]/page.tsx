@@ -177,7 +177,7 @@ export default function ConversationPage() {
                                 {/* Signed links expire, so these aren't run through next/image. */}
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={links.get(a.path)} alt={a.name} className="h-32 w-auto max-w-full rounded-lg object-cover bg-white" />
-                              </a>
+                              <span className="sr-only"> (opens in a new tab)</span></a>
                             ))}
                           </div>
                         )}
@@ -187,7 +187,7 @@ export default function ConversationPage() {
                             <FileText size={16} className="shrink-0" />
                             <span className="truncate">{a.name}</span>
                             <span className={`shrink-0 text-xs ${mine ? 'text-blue-100' : 'text-gray-500'}`}>{fileSize(a.size)}</span>
-                          </a>
+                          <span className="sr-only"> (opens in a new tab)</span></a>
                         ))}
                       </div>
                     )}
@@ -200,7 +200,7 @@ export default function ConversationPage() {
 
           {me && (
             <form onSubmit={send} className="p-4 border-t border-gray-200 space-y-2">
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={20000} placeholder="Write a message…"
+              <textarea aria-label="Message" value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={20000} placeholder="Write a message…"
                 onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send(); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
               {error && <p className="text-sm text-red-600">{error}</p>}

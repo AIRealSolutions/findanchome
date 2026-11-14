@@ -48,7 +48,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   return (
     <div className="grid grid-cols-[130px_1fr] gap-3 py-1.5 text-sm">
       <dt className="text-gray-500">{label}</dt>
-      <dd className="text-gray-900 min-w-0 break-words">{children || <span className="text-gray-400">—</span>}</dd>
+      <dd className="text-gray-900 min-w-0 break-words">{children || <span className="text-gray-500">—</span>}</dd>
     </div>
   );
 }
@@ -466,7 +466,7 @@ export default function ClientDetailPage() {
                       </div>
                       {t.notes && <div className="text-gray-500 mt-0.5 whitespace-pre-wrap">{t.notes}</div>}
                     </div>
-                    <button onClick={() => deleteTxn(t)} title="Delete closing" className="p-1 text-gray-400 hover:text-red-600"><Trash2 size={16} /></button>
+                    <button onClick={() => deleteTxn(t)} title="Delete closing" className="p-1 text-gray-500 hover:text-red-600"><Trash2 size={16} /></button>
                   </li>
                 ))}
               </ul>
@@ -495,7 +495,7 @@ export default function ClientDetailPage() {
         <div className="space-y-6">
           <Section title="Follow-up">
             <div className="flex gap-2">
-              <input type="datetime-local" value={followUp} onChange={(e) => setFollowUp(e.target.value)} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg" />
+              <input aria-label="Follow-up date and time" type="datetime-local" value={followUp} onChange={(e) => setFollowUp(e.target.value)} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg" />
               <button disabled={saving || !followUp} onClick={() => setFollowUpAt(new Date(followUp).toISOString())}
                 className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">Save</button>
             </div>
@@ -526,7 +526,7 @@ export default function ClientDetailPage() {
                   </button>
                 ))}
               </div>
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
+              <textarea aria-label="Activity note" value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
                 placeholder={kind === 'note' ? 'Add a note…' : `What happened on the ${kind}?`} className={inputCls} />
               <button type="submit" disabled={saving || !body.trim()} className="mt-2 w-full py-2 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50">
                 {saving ? 'Saving…' : 'Log'}

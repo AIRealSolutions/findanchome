@@ -123,7 +123,7 @@ export default function BrokerHome() {
           </p>
           {link && (
             <div className="mt-3 flex gap-2">
-              <input readOnly value={link.url} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50" onFocus={(e) => e.target.select()} />
+              <input aria-label="Shareable link" readOnly value={link.url} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50" onFocus={(e) => e.target.select()} />
               <button onClick={copy} className="inline-flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                 {copied ? <Check size={16} className="text-green-600" /> : <Copy size={16} />} {copied ? 'Copied' : 'Copy'}
               </button>

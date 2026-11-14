@@ -72,7 +72,7 @@ function Inbox() {
 
       <div className="flex flex-wrap items-center gap-3 mb-3">
         <label className="relative flex-1 min-w-[200px]">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by subject or person" aria-label="Search conversations"
             className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm" />
         </label>

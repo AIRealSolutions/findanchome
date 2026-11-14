@@ -188,7 +188,7 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navigation />
 
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* ───────────── Hero ───────────── */}
         <section className="relative isolate overflow-hidden bg-ink text-white">
           <HeroVideo />
@@ -235,14 +235,14 @@ export default function HomePage() {
                 className="mt-3 flex flex-col sm:flex-row gap-2 rounded-2xl bg-white p-2 shadow-2xl shadow-black/40"
               >
                 <label className="flex flex-1 items-center gap-3 px-4">
-                  <Search size={20} className="text-slate-400 shrink-0" />
+                  <Search size={20} className="text-slate-600 shrink-0" />
                   <span className="sr-only">{activeMode.placeholder}</span>
                   <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={activeMode.placeholder}
-                    className="w-full py-3.5 bg-transparent text-ink placeholder:text-slate-400 outline-none text-base"
+                    className="w-full py-3.5 bg-transparent text-ink placeholder:text-slate-600 outline-none text-base"
                   />
                 </label>
                 <button
@@ -275,7 +275,7 @@ export default function HomePage() {
                   key={s.label}
                   className={`pt-6 pb-2 pr-4 ${i > 0 ? 'md:pl-8 md:border-l md:border-white/15' : ''} ${i % 2 === 1 ? 'pl-4 border-l border-white/15 md:border-l' : ''}`}
                 >
-                  <dt className="text-sm text-white/55">{s.label}</dt>
+                  <dt className="text-sm text-white/70">{s.label}</dt>
                   <dd className="mt-1 text-3xl md:text-4xl font-semibold tracking-tight">{s.value}</dd>
                 </div>
               ))}
@@ -322,7 +322,7 @@ export default function HomePage() {
                     <span className="grid place-items-center h-12 w-12 rounded-xl bg-ink text-brass-light">
                       <s.icon size={22} />
                     </span>
-                    <span className="text-sm font-mono text-slate-400">0{i + 1}</span>
+                    <span className="text-sm font-mono text-slate-600">0{i + 1}</span>
                   </div>
                   <h3 className="mt-8 text-xl font-semibold text-ink tracking-tight">{s.title}</h3>
                   <p className="mt-3 text-slate-600 leading-relaxed text-[15px]">{s.text}</p>
@@ -368,15 +368,15 @@ export default function HomePage() {
                       href={`/explore/${c.slug}`}
                       className="group grid grid-cols-[auto_1fr_auto] items-center gap-5 md:gap-8 py-7 md:py-9 border-b border-ink/15"
                     >
-                      <span className="font-mono text-sm text-slate-400 w-6">0{i + 1}</span>
+                      <span className="font-mono text-sm text-slate-600 w-6">0{i + 1}</span>
                       <span>
                         <span className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                           <span className="text-2xl md:text-4xl font-semibold tracking-tight text-ink group-hover:text-harbor transition-colors">
                             {c.name} County
                           </span>
-                          <span className="eyebrow text-brass !text-[10px]">{c.tag}</span>
+                          <span className="eyebrow text-brass-dark !text-[10px]">{c.tag}</span>
                         </span>
-                        <span className="mt-2 block text-slate-500 text-sm md:text-base">{c.towns}</span>
+                        <span className="mt-2 block text-slate-600 text-sm md:text-base">{c.towns}</span>
                       </span>
                       <span className="grid place-items-center h-11 w-11 md:h-12 md:w-12 rounded-full ring-1 ring-ink/15 text-ink group-hover:bg-ink group-hover:text-white group-hover:ring-ink transition-colors">
                         <ArrowUpRight size={18} />
@@ -488,7 +488,7 @@ export default function HomePage() {
                         <span className="grid place-items-center h-10 w-10 rounded-full bg-white/5 ring-1 ring-white/15 text-brass">
                           <s.icon size={18} />
                         </span>
-                        <span className="font-mono text-xs text-white/40">STEP {i + 1}</span>
+                        <span className="font-mono text-xs text-white/65">STEP {i + 1}</span>
                       </div>
                       <h3 className="mt-4 font-semibold">{s.title}</h3>
                       <p className="mt-1.5 text-sm text-white/60 leading-relaxed">{s.text}</p>
@@ -515,7 +515,7 @@ export default function HomePage() {
                   >
                     <span className="inline-flex items-center gap-3"><Home size={18} /> Browse NC HUD homes</span>
                     <ArrowUpRight size={18} />
-                  </a>
+                  <span className="sr-only"> (opens in a new tab)</span></a>
                   <a
                     href={usaHudHomes.alerts('home_hud_section')}
                     target="_blank"
@@ -524,7 +524,7 @@ export default function HomePage() {
                   >
                     <span className="inline-flex items-center gap-3"><Bell size={18} className="text-brass" /> Get new-listing alerts</span>
                     <ArrowUpRight size={18} className="text-white/50" />
-                  </a>
+                  <span className="sr-only"> (opens in a new tab)</span></a>
                   <a
                     href={usaHudHomes.allStates('home_hud_section')}
                     target="_blank"
@@ -533,7 +533,7 @@ export default function HomePage() {
                   >
                     <span className="inline-flex items-center gap-3"><Globe size={18} className="text-brass" /> HUD homes in all 50 states</span>
                     <ArrowUpRight size={18} className="text-white/50" />
-                  </a>
+                  <span className="sr-only"> (opens in a new tab)</span></a>
                 </div>
                 <Link href="/hud" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brass-light hover:text-white">
                   Learn how HUD bidding works <ArrowRight size={16} />

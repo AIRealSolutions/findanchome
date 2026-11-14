@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
+  --color-brass-dark: #7d5f1a; /* brass for text on light backgrounds (5.4:1 on sand) */
   --color-background: oklch(100% 0 0);
   --color-foreground: oklch(15% 0 0);
   --color-primary: oklch(55% 0.2 240); /* Ocean blue */
@@ -59,5 +60,20 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Visible keyboard focus everywhere (WCAG 2.4.7). Two-tone so it shows on light and dark
+   sections alike: a white halo fills the offset gap and a harbor-blue outline sits outside it.
+   In the base layer, so components with their own focus ring can still override it. */
+@layer base {
+  :focus-visible {
+    outline: 3px solid #1d4e89; /* harbor */
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #fff;
+  }
+  [tabindex="-1"]:focus {
+    outline: none;
+    box-shadow: none;
   }
 }

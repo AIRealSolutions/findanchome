@@ -31,7 +31,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   return (
     <div className="grid grid-cols-[130px_1fr] gap-3 py-1.5 text-sm">
       <dt className="text-gray-500">{label}</dt>
-      <dd className="text-gray-900">{children || <span className="text-gray-400">—</span>}</dd>
+      <dd className="text-gray-900">{children || <span className="text-gray-500">—</span>}</dd>
     </div>
   );
 }
@@ -196,10 +196,10 @@ export default function ListingOpportunityPage() {
           </p>
           {isAdmin && (
             <div className="mt-3 flex flex-col sm:flex-row gap-2">
-              <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+              <select aria-label="Assign to" value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
                 {staff.map((s) => <option key={s.id} value={s.id}>Assign to {staffName(s)}{s.id === user?.id ? ' (me)' : ''}</option>)}
               </select>
-              <input value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} placeholder="Note (optional)" className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+              <input aria-label="Review note (optional)" value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} placeholder="Note (optional)" className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
               <button disabled={saving} onClick={() => run(() => reviewOpportunity(opp, 'approved', assignTo, reviewNote, author, staffName(staff.find((s) => s.id === assignTo))))}
                 className="inline-flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium disabled:opacity-50"><Check size={16} /> Approve</button>
               <button disabled={saving} onClick={() => run(() => reviewOpportunity(opp, 'rejected', null, reviewNote, author))}
@@ -354,7 +354,7 @@ export default function ListingOpportunityPage() {
                 {opp.appointment_at ? <>Booked for <strong>{formatDateTime(opp.appointment_at)}</strong>. Bring the CMA, net sheet, and listing agreement.</> : 'Book it as soon as they agree to meet; it moves the opportunity to Appointment set.'}
               </p>
               <div className="flex gap-2">
-                <input type="datetime-local" value={appointment} onChange={(e) => setAppointment(e.target.value)} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg" />
+                <input aria-label="Appointment date and time" type="datetime-local" value={appointment} onChange={(e) => setAppointment(e.target.value)} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg" />
                 <button disabled={saving || !appointment} onClick={saveAppointment} className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
                   {opp.appointment_at ? 'Move' : 'Book'}
                 </button>
@@ -381,7 +381,7 @@ export default function ListingOpportunityPage() {
                 </div>
               ) : closing === 'lost' ? (
                 <div className="space-y-2">
-                  <input value={lostReason} onChange={(e) => setLostReason(e.target.value)} placeholder="Why? (listed with another agent, decided not to sell…)" className={input} />
+                  <input aria-label="Reason the listing was lost" value={lostReason} onChange={(e) => setLostReason(e.target.value)} placeholder="Why? (listed with another agent, decided not to sell…)" className={input} />
                   <div className="flex gap-2">
                     <button disabled={saving} onClick={() => run(() => changeListingStage(opp, 'lost', author, { lost_reason: lostReason.trim() || null }, lostReason.trim())).then(() => setClosing(null))}
                       className="px-3 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium disabled:opacity-50">Mark lost</button>
@@ -412,7 +412,7 @@ export default function ListingOpportunityPage() {
               {due === 'overdue' && <p className="mb-2 text-sm font-medium text-red-700">Overdue: {formatDateTime(opp.follow_up_at!)}</p>}
               {due === 'today' && <p className="mb-2 text-sm font-medium text-yellow-700">Due today: {formatDateTime(opp.follow_up_at!)}</p>}
               <div className="flex gap-2">
-                <input type="datetime-local" value={followUp} onChange={(e) => setFollowUp(e.target.value)} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg" />
+                <input aria-label="Follow-up date and time" type="datetime-local" value={followUp} onChange={(e) => setFollowUp(e.target.value)} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg" />
                 <button disabled={saving || !followUp} onClick={() => setFollowUpAt(new Date(followUp).toISOString())} className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">Save</button>
               </div>
               <div className="flex flex-wrap gap-2 mt-3">
@@ -438,7 +438,7 @@ export default function ListingOpportunityPage() {
                     </button>
                   ))}
                 </div>
-                <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
+                <textarea aria-label="Activity note" value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
                   placeholder={kind === 'note' ? 'Add a note…' : 'What happened?'}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                 <button type="submit" disabled={saving || !body.trim()} className="mt-2 w-full py-2 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50">

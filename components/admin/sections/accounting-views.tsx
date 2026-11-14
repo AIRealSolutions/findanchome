@@ -81,14 +81,14 @@ export function LedgerView({ data, from, to, broker, branches, branch, onChanged
     <div className="space-y-6">
       <Card title="Record income or an expense">
         <form onSubmit={add} className="grid sm:grid-cols-2 lg:grid-cols-6 gap-3 text-sm">
-          <input type="date" value={form.entry_date} onChange={(e) => setForm({ ...form, entry_date: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg" />
-          <select value={form.kind} onChange={(e) => { const kind = e.target.value as 'income' | 'expense'; setForm({ ...form, kind, category: (kind === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)[0] }); }}
+          <input aria-label="Entry date" type="date" value={form.entry_date} onChange={(e) => setForm({ ...form, entry_date: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg" />
+          <select aria-label="Income or expense" value={form.kind} onChange={(e) => { const kind = e.target.value as 'income' | 'expense'; setForm({ ...form, kind, category: (kind === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)[0] }); }}
             className="px-3 py-2 border border-gray-300 rounded-lg bg-white"><option value="expense">Expense</option><option value="income">Income</option></select>
-          <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg bg-white lg:col-span-2">
+          <select aria-label="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg bg-white lg:col-span-2">
             {cats.map((c) => <option key={c}>{c}</option>)}
           </select>
-          <input inputMode="decimal" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="Amount $" className="px-3 py-2 border border-gray-300 rounded-lg" />
-          <select value={form.broker_id} onChange={(e) => setForm({ ...form, broker_id: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
+          <input aria-label="Amount in dollars" inputMode="decimal" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="Amount $" className="px-3 py-2 border border-gray-300 rounded-lg" />
+          <select aria-label="Broker" value={form.broker_id} onChange={(e) => setForm({ ...form, broker_id: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg bg-white">
             <option value="">Company</option>
             {data.staff.map((s) => <option key={s.id} value={s.id}>{staffName(s)}</option>)}
           </select>
@@ -98,7 +98,7 @@ export function LedgerView({ data, from, to, broker, branches, branch, onChanged
               {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
             </select>
           )}
-          <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description (vendor, what it was for)" className="px-3 py-2 border border-gray-300 rounded-lg sm:col-span-2 lg:col-span-5" />
+          <input aria-label="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description (vendor, what it was for)" className="px-3 py-2 border border-gray-300 rounded-lg sm:col-span-2 lg:col-span-5" />
           <button disabled={busy} className="px-3 py-2 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50">Add</button>
         </form>
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
@@ -115,7 +115,7 @@ export function LedgerView({ data, from, to, broker, branches, branch, onChanged
                     <td className="pr-3 text-gray-600">{e.broker_id ? nameOf(e.broker_id) : 'Company'}
                       {branches.length > 0 && <div className="text-xs text-gray-500">{branchName(branches, e.office_id)}</div>}</td>
                     <td className={`pr-3 text-right font-medium ${e.kind === 'expense' ? 'text-gray-900' : 'text-green-800'}`}>{e.kind === 'expense' ? `(${money(Number(e.amount))})` : money(Number(e.amount))}</td>
-                    <td className="text-right"><button onClick={() => remove(e.id)} aria-label="Delete entry" className="p-1 text-gray-400 hover:text-red-600"><Trash2 size={16} /></button></td>
+                    <td className="text-right"><button onClick={() => remove(e.id)} aria-label="Delete entry" className="p-1 text-gray-500 hover:text-red-600"><Trash2 size={16} /></button></td>
                   </tr>
                 ))}
               </tbody>

@@ -35,7 +35,7 @@ function RecordEditor({ broker, record, onSaved }: { broker: AdminContext['finan
   const date = (k: 'license_expires' | 'ce_completed_on' | 'eo_expires' | 'start_date', label: string, hint?: string) => (
     <label className="text-xs text-gray-600">{label}
       <input type="date" value={f[k] ?? ''} onChange={(e) => set(k, e.target.value || null)} className="mt-0.5 w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-900" />
-      {hint && <span className="block text-[11px] text-gray-400 mt-0.5">{hint}</span>}
+      {hint && <span className="block text-[11px] text-gray-500 mt-0.5">{hint}</span>}
     </label>
   );
   const save = async () => {

@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import Navigation from '@/components/Navigation'
+import SiteFooter from '@/components/SiteFooter'
 import { Home, DollarSign, Shield, TrendingDown, Users, CheckCircle, ArrowRight } from 'lucide-react'
 
 export default function FinancingPage() {
@@ -79,37 +80,11 @@ export default function FinancingPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
-            <Link href="/" className="flex items-center gap-3">
-              <Image 
-                src="/lightkeeper-logo.jpg" 
-                alt="Lightkeeper Realty Logo" 
-                width={50} 
-                height={50}
-                className="object-contain"
-              />
-              <div>
-                <h1 className="text-2xl font-bold">FindaNChome.com</h1>
-                <p className="text-xs opacity-90">From the Coast to the Mountains - Your NC Real Estate Connection</p>
-              </div>
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
-              <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
-              <Link href="/agents" className="hover:text-[#fbbf24] transition-colors">Agents</Link>
-              <Link href="/education" className="hover:text-[#fbbf24] transition-colors">Education</Link>
-              <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <section className="bg-gradient-to-br from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -144,7 +119,7 @@ export default function FinancingPage() {
               return (
                 <div key={program.name} className="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-[#0ea5e9] hover:shadow-xl transition-all">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-[#0ea5e9] rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-[#0369a1] rounded-full flex items-center justify-center flex-shrink-0">
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -159,14 +134,14 @@ export default function FinancingPage() {
                     <ul className="space-y-2">
                       {program.benefits.map((benefit, index) => (
                         <li key={index} className="flex items-start gap-2 text-gray-700">
-                          <CheckCircle className="w-5 h-5 text-[#0ea5e9] flex-shrink-0 mt-0.5" />
+                          <CheckCircle className="w-5 h-5 text-[#0369a1] flex-shrink-0 mt-0.5" />
                           <span>{benefit}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                   
-                  <div className="bg-[#0ea5e9]/5 p-4 rounded-lg">
+                  <div className="bg-[#0369a1]/5 p-4 rounded-lg">
                     <p className="text-sm text-gray-700">
                       <span className="font-semibold text-[#1e3a8a]">Ideal for:</span> {program.idealFor}
                     </p>
@@ -179,7 +154,7 @@ export default function FinancingPage() {
       </section>
 
       {/* Down Payment Assistance Programs */}
-      <section className="py-16 bg-gradient-to-br from-[#0ea5e9]/5 to-[#fbbf24]/5">
+      <section className="py-16 bg-gradient-to-br from-[#0369a1]/5 to-[#fbbf24]/5">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-4 text-[#1e3a8a]">
@@ -198,10 +173,10 @@ export default function FinancingPage() {
                     href={program.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#0ea5e9] font-medium hover:underline inline-flex items-center gap-1"
+                    className="text-[#0369a1] font-medium hover:underline inline-flex items-center gap-1"
                   >
                     Learn More <ArrowRight className="w-4 h-4" />
-                  </a>
+                  <span className="sr-only"> (opens in a new tab)</span></a>
                 </div>
               ))}
             </div>
@@ -217,13 +192,13 @@ export default function FinancingPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link 
                   href="/contact"
-                  className="inline-block bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white px-8 py-3 rounded-lg hover:opacity-90 font-medium transition-opacity shadow-md text-center"
+                  className="inline-block bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white px-8 py-3 rounded-lg hover:opacity-90 font-medium transition-opacity shadow-md text-center"
                 >
                   Schedule a Consultation
                 </Link>
                 <Link 
                   href="/education"
-                  className="inline-block border-2 border-[#0ea5e9] text-[#0ea5e9] px-8 py-3 rounded-lg hover:bg-[#0ea5e9] hover:text-white transition-colors font-medium text-center"
+                  className="inline-block border-2 border-[#0ea5e9] text-[#0369a1] px-8 py-3 rounded-lg hover:bg-[#0369a1] hover:text-white transition-colors font-medium text-center"
                 >
                   More Education Resources
                 </Link>
@@ -243,7 +218,7 @@ export default function FinancingPage() {
             
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-[#0ea5e9] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#0369a1] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="font-bold text-lg mb-2 text-[#1e3a8a]">Credit Counseling</h3>
@@ -276,53 +251,8 @@ export default function FinancingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12 mt-auto">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <Image 
-                  src="/lightkeeper-logo.jpg" 
-                  alt="Lightkeeper Realty Logo" 
-                  width={40} 
-                  height={40}
-                  className="object-contain"
-                />
-                <div className="font-bold text-lg">Lightkeeper Realty</div>
-              </div>
-              <p className="text-gray-300">
-                Your trusted HUD Buyer's Agency in North Carolina
-              </p>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Quick Links</div>
-              <div className="space-y-2">
-                <Link href="/properties" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Properties</Link>
-                <Link href="/communities" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Communities</Link>
-                <Link href="/agents" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Agents</Link>
-              </div>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Resources</div>
-              <div className="space-y-2">
-                <Link href="/education" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Education Center</Link>
-                <Link href="/contact" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Contact Us</Link>
-              </div>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Contact</div>
-              <div className="text-gray-300 space-y-2">
-                <div>Phone: (910) 363-6147</div>
-                <div>Email: marcspencer28461@gmail.com</div>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-[#0ea5e9]/30 mt-8 pt-8 text-center text-gray-300">
-            © 2026 Lightkeeper Realty. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      </main>
+      <SiteFooter />
     </div>
   )
 }

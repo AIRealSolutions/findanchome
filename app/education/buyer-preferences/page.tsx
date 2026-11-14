@@ -1,41 +1,15 @@
-import Link from 'next/link'
-import Image from 'next/image'
+import Navigation from '@/components/Navigation'
+import SiteFooter from '@/components/SiteFooter'
 import BuyerPreferenceTool from '@/components/BuyerPreferenceTool'
 
 export default function BuyerPreferencesPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
-            <Link href="/" className="flex items-center gap-3">
-              <Image 
-                src="/lightkeeper-logo.jpg" 
-                alt="Lightkeeper Realty Logo" 
-                width={50} 
-                height={50}
-                className="object-contain"
-              />
-              <div>
-                <h1 className="text-2xl font-bold">FindaNChome.com</h1>
-                <p className="text-xs opacity-90">From the Coast to the Mountains - Your NC Real Estate Connection</p>
-              </div>
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
-              <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
-              <Link href="/agents" className="hover:text-[#fbbf24] transition-colors">Agents</Link>
-              <Link href="/education" className="hover:text-[#fbbf24] transition-colors">Education</Link>
-              <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <section className="bg-gradient-to-br from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -59,7 +33,7 @@ export default function BuyerPreferencesPage() {
       </section>
 
       {/* Why Use This Tool Section */}
-      <section className="py-16 bg-gradient-to-br from-[#0ea5e9]/5 to-[#fbbf24]/5">
+      <section className="py-16 bg-gradient-to-br from-[#0369a1]/5 to-[#fbbf24]/5">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12 text-[#1e3a8a]">
@@ -68,7 +42,7 @@ export default function BuyerPreferencesPage() {
             
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-16 h-16 bg-[#0ea5e9] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#0369a1] rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">🎯</span>
                 </div>
                 <h3 className="font-bold text-lg mb-2 text-[#1e3a8a]">Personalized Matches</h3>
@@ -101,53 +75,8 @@ export default function BuyerPreferencesPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12 mt-auto">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <Image 
-                  src="/lightkeeper-logo.jpg" 
-                  alt="Lightkeeper Realty Logo" 
-                  width={40} 
-                  height={40}
-                  className="object-contain"
-                />
-                <div className="font-bold text-lg">Lightkeeper Realty</div>
-              </div>
-              <p className="text-gray-300">
-                Your trusted HUD Buyer's Agency in North Carolina
-              </p>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Quick Links</div>
-              <div className="space-y-2">
-                <Link href="/properties" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Properties</Link>
-                <Link href="/communities" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Communities</Link>
-                <Link href="/agents" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Agents</Link>
-              </div>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Resources</div>
-              <div className="space-y-2">
-                <Link href="/education" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Education Center</Link>
-                <Link href="/contact" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Contact Us</Link>
-              </div>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Contact</div>
-              <div className="text-gray-300 space-y-2">
-                <div>Phone: (910) 363-6147</div>
-                <div>Email: marcspencer28461@gmail.com</div>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-[#0ea5e9]/30 mt-8 pt-8 text-center text-gray-300">
-            © 2026 Lightkeeper Realty. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      </main>
+      <SiteFooter />
     </div>
   )
 }

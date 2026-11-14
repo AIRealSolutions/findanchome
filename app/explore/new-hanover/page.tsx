@@ -12,6 +12,7 @@ export default function NewHanoverPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       <section className="bg-gradient-to-r from-purple-600 to-pink-500 text-white py-16">
         <div className="container mx-auto px-4">
@@ -31,11 +32,11 @@ export default function NewHanoverPage() {
           </p>
           <div className="grid sm:grid-cols-3 gap-4 bg-purple-50 p-6 rounded-lg">
             <div>
-              <div className="text-2xl font-bold text-[#0ea5e9]">~230,000</div>
+              <div className="text-2xl font-bold text-[#0369a1]">~230,000</div>
               <div className="text-gray-700 text-sm">Population</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-[#fbbf24]">~201 sq mi</div>
+              <div className="text-2xl font-bold text-amber-700">~201 sq mi</div>
               <div className="text-gray-700 text-sm">Area</div>
             </div>
             <div>
@@ -52,11 +53,11 @@ export default function NewHanoverPage() {
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {communities.map((community) => (
               <Link key={community.slug} href={communityPath(community)} className="block p-6 bg-purple-50 border-2 border-purple-200 rounded-lg hover:shadow-lg transition-all group">
-                <MapPin className="w-5 h-5 text-[#0ea5e9] mb-3" />
-                <h3 className="font-bold text-xl text-[#1e3a8a] mb-2 group-hover:text-[#0ea5e9]">{community.name}</h3>
+                <MapPin className="w-5 h-5 text-[#0369a1] mb-3" />
+                <h3 className="font-bold text-xl text-[#1e3a8a] mb-2 group-hover:text-[#0369a1]">{community.name}</h3>
                 <p className="text-gray-700 mb-3">{community.summary}</p>
                 <div className="text-sm text-gray-600">{community.population.startsWith('~') ? `Population: ${community.population}` : community.type}</div>
-                <div className="mt-3 text-sm font-semibold text-[#0ea5e9]">Explore {community.name} →</div>
+                <div className="mt-3 text-sm font-semibold text-[#0369a1]">Explore {community.name} →</div>
               </Link>
             ))}
           </div>
@@ -69,6 +70,7 @@ export default function NewHanoverPage() {
         context={{ counties: ['new-hanover'] }}
       />
 
+      </main>
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

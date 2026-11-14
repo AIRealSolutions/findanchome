@@ -110,26 +110,26 @@ export default function ClientBulkBar({
       <button onClick={onClear} title="Clear selection" className="p-1 text-blue-700 hover:text-blue-900"><X size={16} /></button>
       <span className="hidden sm:block w-px h-6 bg-blue-200 mx-1" />
 
-      <select value="" disabled={busy} onChange={(e) => e.target.value && setStatus(e.target.value as ClientStatus)} className={sel}>
+      <select aria-label="Set status for selected clients" value="" disabled={busy} onChange={(e) => e.target.value && setStatus(e.target.value as ClientStatus)} className={sel}>
         <option value="">Set status…</option>
         {CLIENT_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
       </select>
 
       <form onSubmit={(e) => { e.preventDefault(); addTag(); }} className="flex gap-1">
-        <input value={newTag} onChange={(e) => setNewTag(e.target.value)} list="bulk-tags" placeholder="Add tag" disabled={busy}
+        <input aria-label="Tag to add" value={newTag} onChange={(e) => setNewTag(e.target.value)} list="bulk-tags" placeholder="Add tag" disabled={busy}
           className="w-32 px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
         <datalist id="bulk-tags">{allTags.map((t) => <option key={t} value={t} />)}</datalist>
         <button type="submit" disabled={busy || !newTag.trim()} className="px-2.5 py-1.5 bg-blue-600 text-white rounded-lg disabled:opacity-50">Add</button>
       </form>
 
       {presentTags.length > 0 && (
-        <select value="" disabled={busy} onChange={(e) => { const t = e.target.value; if (t) editTags((tags) => tags.filter((x) => x !== t)); }} className={sel}>
+        <select aria-label="Tag to remove" value="" disabled={busy} onChange={(e) => { const t = e.target.value; if (t) editTags((tags) => tags.filter((x) => x !== t)); }} className={sel}>
           <option value="">Remove tag…</option>
           {presentTags.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
       )}
 
-      <select value="" disabled={busy} onChange={(e) => e.target.value && setDnc(e.target.value === 'on')} className={sel}>
+      <select aria-label="Do not contact setting" value="" disabled={busy} onChange={(e) => e.target.value && setDnc(e.target.value === 'on')} className={sel}>
         <option value="">Do not contact…</option>
         <option value="on">Mark do not contact</option>
         <option value="off">Clear do not contact</option>

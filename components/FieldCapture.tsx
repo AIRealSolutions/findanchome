@@ -149,7 +149,7 @@ export function LocationResearch({ value, onChange, photos = [], autoLocate = fa
         <div className="flex flex-wrap gap-2">
           {links.map((l) => (
             <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" title={l.hint}
-              className="px-2.5 py-1 rounded-full border border-gray-300 text-xs text-gray-700 hover:border-blue-400 hover:text-blue-700">{l.label} ↗</a>
+              className="px-2.5 py-1 rounded-full border border-gray-300 text-xs text-gray-700 hover:border-blue-400 hover:text-blue-700">{l.label} ↗<span className="sr-only"> (opens in a new tab)</span></a>
           ))}
         </div>
       )}

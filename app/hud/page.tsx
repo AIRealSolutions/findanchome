@@ -10,8 +10,9 @@ export default function HUDPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">HUD Homes Throughout North Carolina</h1>
           <p className="text-xl opacity-90">Statewide buyer representation for HUD properties at competitive prices</p>
@@ -27,15 +28,15 @@ export default function HUDPage() {
               { icon: DollarSign, title: "Financing Options", desc: "Explore FHA loans and down payment assistance programs" },
               { icon: CheckCircle, title: "Expert Guidance", desc: "Get representation from an experienced HUD specialist" }
             ].map((item, idx) => (
-              <div key={idx} className="p-6 bg-gradient-to-br from-[#0ea5e9]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
-                <item.icon className="w-8 h-8 text-[#0ea5e9] mb-4" />
-                <h3 className="font-bold text-lg text-[#1e3a8a] mb-2">{item.title}</h3>
+              <div key={idx} className="p-6 bg-gradient-to-br from-[#0369a1]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
+                <item.icon className="w-8 h-8 text-[#0369a1] mb-4" />
+                <h2 className="font-bold text-lg text-[#1e3a8a] mb-2">{item.title}</h2>
                 <p className="text-gray-700">{item.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="bg-[#0ea5e9]/5 p-8 rounded-lg border-2 border-[#0ea5e9]/20 mb-8">
+          <div className="bg-[#0369a1]/5 p-8 rounded-lg border-2 border-[#0ea5e9]/20 mb-8">
             <h2 className="text-2xl font-bold text-[#1e3a8a] mb-6">Why Choose Lightkeeper Realty for HUD Homes?</h2>
             <ul className="space-y-4">
               {[
@@ -56,22 +57,22 @@ export default function HUDPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <a href={usaHudHomes.ncListings('hud_page_card')} target="_blank" rel="noopener" className="block p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-[#0ea5e9] rounded-lg hover:shadow-lg transition-all text-center">
-              <Home className="w-8 h-8 text-[#0ea5e9] mx-auto mb-3" />
+              <Home className="w-8 h-8 text-[#0369a1] mx-auto mb-3" />
               <h3 className="font-bold text-[#1e3a8a] mb-2">Search HUD Listings</h3>
               <p className="text-gray-700 text-sm mb-4">Browse live NC HUD homes on our sister site, USAhudhomes.com</p>
-              <div className="text-[#0ea5e9] font-medium inline-flex items-center gap-1">Browse <ExternalLink size={14} /></div>
-            </a>
+              <div className="text-[#0369a1] font-medium inline-flex items-center gap-1">Browse <ExternalLink size={14} /></div>
+            <span className="sr-only"> (opens in a new tab)</span></a>
 
             <Link href="/contact" className="block p-6 bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-[#fbbf24] rounded-lg hover:shadow-lg transition-all text-center">
               <BookOpen className="w-8 h-8 text-[#fbbf24] mx-auto mb-3" />
               <h3 className="font-bold text-[#1e3a8a] mb-2">Get Buyer Representation</h3>
               <p className="text-gray-700 text-sm mb-4">Request representation for a property</p>
-              <div className="text-[#0ea5e9] font-medium">Contact Marc →</div>
+              <div className="text-[#0369a1] font-medium">Contact Marc →</div>
             </Link>
           </div>
 
           {/* USAhudhomes.com sister site */}
-          <div className="mt-8 p-8 rounded-lg bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white shadow-lg">
+          <div className="mt-8 p-8 rounded-lg bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white shadow-lg">
             <div className="flex items-center gap-2 text-[#fbbf24] text-sm font-semibold uppercase tracking-wide mb-2">
               <Globe size={16} /> Our Sister Site
             </div>
@@ -98,7 +99,7 @@ export default function HUDPage() {
                   }
                 >
                   <link.icon size={18} /> {link.label}
-                </a>
+                <span className="sr-only"> (opens in a new tab)</span></a>
               ))}
             </div>
           </div>
@@ -107,6 +108,7 @@ export default function HUDPage() {
 
       <ConsultationCTA title="Get Help Buying a HUD Home" context={{ intent: ['hud'] }} />
 
+      </main>
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -128,7 +130,7 @@ export default function HUDPage() {
                 <Link href="/buyers" className="block text-gray-300 hover:text-[#fbbf24]">Buyers</Link>
                 <Link href="/sellers" className="block text-gray-300 hover:text-[#fbbf24]">Sellers</Link>
                 <Link href="/hud" className="block text-gray-300 hover:text-[#fbbf24]">HUD Homes</Link>
-                <a href={usaHudHomes.home('footer')} target="_blank" rel="noopener" className="block text-gray-300 hover:text-[#fbbf24]">USAhudhomes.com (Sister Site)</a>
+                <a href={usaHudHomes.home('footer')} target="_blank" rel="noopener" className="block text-gray-300 hover:text-[#fbbf24]">USAhudhomes.com (Sister Site)<span className="sr-only"> (opens in a new tab)</span></a>
               </div>
             </div>
             <div>

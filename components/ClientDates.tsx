@@ -160,7 +160,7 @@ export default function ClientDates({ clientId, suggestedWarrantyEnd }: { client
                   </div>
                   {(d.provider || d.notes) && <div className="text-gray-500">{[d.provider, d.notes].filter(Boolean).join(' · ')}</div>}
                 </div>
-                <button onClick={() => remove(d)} title="Delete date" className="p-1 text-gray-400 hover:text-red-600"><Trash2 size={16} /></button>
+                <button onClick={() => remove(d)} title="Delete date" className="p-1 text-gray-500 hover:text-red-600"><Trash2 size={16} /></button>
               </li>
             );
           })}

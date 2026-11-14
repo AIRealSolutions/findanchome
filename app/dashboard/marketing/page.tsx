@@ -115,7 +115,7 @@ function Composer({ sender, linkFor, deals, onSaved, draft }: {
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">2. Fill in the details</h2>
             {myListings.length > 0 && (
-              <select defaultValue="" onChange={(e) => fromDeal(e.target.value)} className="px-2 py-1.5 border border-gray-300 rounded-lg bg-white text-sm">
+              <select aria-label="Fill from one of my deals" defaultValue="" onChange={(e) => fromDeal(e.target.value)} className="px-2 py-1.5 border border-gray-300 rounded-lg bg-white text-sm">
                 <option value="" disabled>Fill from one of my deals…</option>
                 {myListings.map((d) => <option key={d.id} value={d.id}>{dealTitle(d)} ({d.stage.replace(/_/g, ' ')})</option>)}
               </select>
@@ -141,7 +141,7 @@ function Composer({ sender, linkFor, deals, onSaved, draft }: {
 
       <section className="bg-white border border-gray-200 rounded-xl p-5 lg:sticky lg:top-6 self-start">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-3">3. Review & share</h2>
-        <textarea rows={14} value={body} onChange={(e) => { setText(e.target.value); setEdited(true); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+        <textarea aria-label="Post text" rows={14} value={body} onChange={(e) => { setText(e.target.value); setEdited(true); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
         <div className="flex justify-between text-xs text-gray-500 mt-1">
           <span>{body.length} characters{body.length > 280 && ' · too long for X'}</span>
           {edited && <button onClick={() => setEdited(false)} className="text-blue-600 hover:underline">Reset to template</button>}
@@ -160,7 +160,7 @@ function Composer({ sender, linkFor, deals, onSaved, draft }: {
         <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
           <button onClick={() => save('posted')} className="w-full px-3 py-2 bg-pink-600 text-white rounded-lg text-sm font-medium hover:bg-pink-700">I posted it: log it</button>
           <div className="flex gap-2">
-            <input type="date" value={schedule} onChange={(e) => setSchedule(e.target.value)} className="flex-1 min-w-0 px-2 py-2 border border-gray-300 rounded-lg text-sm" />
+            <input aria-label="Schedule date" type="date" value={schedule} onChange={(e) => setSchedule(e.target.value)} className="flex-1 min-w-0 px-2 py-2 border border-gray-300 rounded-lg text-sm" />
             <button onClick={() => save('scheduled')} className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Schedule</button>
             <button onClick={() => save('draft')} className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Save draft</button>
           </div>
@@ -303,7 +303,7 @@ function MarketingPage() {
                       <div className="flex gap-1 shrink-0 items-start">
                         <button onClick={() => openPost(p)} className="px-2 py-1 text-xs border border-gray-300 rounded-lg hover:bg-gray-50">Open</button>
                         <button onClick={() => markPosted(p)} className="px-2 py-1 text-xs border border-green-300 text-green-800 rounded-lg hover:bg-green-50">Posted</button>
-                        <button onClick={() => remove(p)} aria-label="Delete post" className="p-1 text-gray-400 hover:text-red-600"><Trash2 size={16} /></button>
+                        <button onClick={() => remove(p)} aria-label="Delete post" className="p-1 text-gray-500 hover:text-red-600"><Trash2 size={16} /></button>
                       </div>
                     </li>
                   ))}
@@ -352,7 +352,7 @@ function MarketingPage() {
                     <p className="font-medium text-gray-900">{l.label} {l.tracked && <span className="ml-1 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800">tagged for you</span>}</p>
                     {l.hint && <p className="text-sm text-gray-600">{l.hint}</p>}
                     <div className="mt-2 flex gap-2">
-                      <input readOnly value={l.url} onFocus={(e) => e.target.select()} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50" />
+                      <input aria-label="Shareable link" readOnly value={l.url} onFocus={(e) => e.target.select()} className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50" />
                       <button onClick={() => copyLink(l.url)} className="inline-flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                         {copied === l.url ? <Check size={16} className="text-green-600" /> : <Copy size={16} />} Copy
                       </button>

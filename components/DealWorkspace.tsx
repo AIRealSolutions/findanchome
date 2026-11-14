@@ -114,19 +114,19 @@ function Feed({ d, posts, staff, me, onChanged }: { d: WorkspaceDeal; posts: Dea
             {p.internal && <span className="ml-1 px-1.5 py-0.5 rounded bg-gray-800 text-white">Internal</span>}
           </p>
           <p className={`mt-0.5 whitespace-pre-wrap ${p.author_role === 'system' ? 'font-medium text-gray-900' : 'text-gray-800'}`}>{p.body}</p>
-          {p.link_url && <a href={p.link_url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline break-all">{p.link_url}</a>}
+          {p.link_url && <a href={p.link_url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline break-all">{p.link_url}<span className="sr-only"> (opens in a new tab)</span></a>}
           {!nested && (
             <div className="mt-1 flex gap-3 text-xs">
               <button onClick={() => { setReplyTo(replyTo === p.id ? null : p.id); setReply(''); }} className="text-gray-500 hover:text-blue-600">Reply</button>
-              {(p.author_id === me.id || staff) && p.author_role !== 'system' && <button onClick={() => remove(p)} className="text-gray-400 hover:text-red-600">Delete</button>}
+              {(p.author_id === me.id || staff) && p.author_role !== 'system' && <button onClick={() => remove(p)} className="text-gray-500 hover:text-red-600">Delete</button>}
             </div>
           )}
           {!nested && replies(p.id).map((r) => renderPost(r, true))}
           {replyTo === p.id && (
             <div className="mt-2 flex gap-2">
-              <input autoFocus value={reply} onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sendReply(p)} placeholder="Write a reply…"
+              <input aria-label="Reply" autoFocus value={reply} onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sendReply(p)} placeholder="Write a reply…"
                 className="flex-1 min-w-0 px-3 py-1.5 border border-gray-300 rounded-lg text-sm" />
-              <button onClick={() => sendReply(p)} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm"><Send size={14} /></button>
+              <button onClick={() => sendReply(p)} aria-label="Send reply" className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm"><Send size={14} /></button>
             </div>
           )}
         </div>
@@ -146,10 +146,10 @@ function Feed({ d, posts, staff, me, onChanged }: { d: WorkspaceDeal; posts: Dea
               </button>
             ))}
           </div>
-          <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
+          <textarea aria-label="Update" value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={5000}
             placeholder={staff ? 'What happened today? (showing feedback, inspection results, next steps…)' : 'Ask a question or share an update with your broker…'}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-          <input value={link} onChange={(e) => setLink(e.target.value)} placeholder="Link (optional): a document, photo album or listing" className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+          <input aria-label="Link (optional)" value={link} onChange={(e) => setLink(e.target.value)} placeholder="Link (optional): a document, photo album or listing" className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
           <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-4 text-sm text-gray-700">
               {staff && <label className="flex items-center gap-1.5"><input type="checkbox" checked={internal} onChange={(e) => setInternal(e.target.checked)} className="rounded" /> Internal note (brokers only)</label>}
@@ -224,7 +224,7 @@ function Todo({ d, tasks, staff, me, onChanged }: { d: WorkspaceDeal; tasks: Dea
                   {t.done_at && <Check size={14} />}
                 </button>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm ${t.done_at ? 'line-through text-gray-400' : 'text-gray-900'}`}>{t.title}</p>
+                  <p className={`text-sm ${t.done_at ? 'line-through text-gray-500' : 'text-gray-900'}`}>{t.title}</p>
                   <p className={`text-xs ${late ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
                     {on ? `${late ? 'Overdue · ' : ''}Due ${formatDate(on, { weekday: 'short', month: 'short', day: 'numeric' })}` : 'No due date'}
                     {staff && !t.shared && ' · internal'}
@@ -243,7 +243,7 @@ function Todo({ d, tasks, staff, me, onChanged }: { d: WorkspaceDeal; tasks: Dea
                   </div>
                 )}
                 {!staff && t.created_by === me.id && (
-                  <button onClick={() => run(createClient().from('fanc_deal_tasks').delete().eq('id', t.id))} aria-label="Delete" className="p-1 text-gray-400 hover:text-red-600"><Trash2 size={14} /></button>
+                  <button onClick={() => run(createClient().from('fanc_deal_tasks').delete().eq('id', t.id))} aria-label="Delete" className="p-1 text-gray-500 hover:text-red-600"><Trash2 size={14} /></button>
                 )}
               </li>
             );
@@ -257,10 +257,10 @@ function Todo({ d, tasks, staff, me, onChanged }: { d: WorkspaceDeal; tasks: Dea
     <div className="space-y-6">
       <Card>
         <form onSubmit={add} className="flex flex-col sm:flex-row gap-2">
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Add a to-do…" className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
-          <input type="date" value={due} onChange={(e) => setDue(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+          <input aria-label="New to-do" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Add a to-do…" className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+          <input aria-label="To-do due date" type="date" value={due} onChange={(e) => setDue(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm" />
           {staff && (
-            <select value={assignee} onChange={(e) => setAssignee(e.target.value as 'broker' | 'client')} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+            <select aria-label="Assign to-do to" value={assignee} onChange={(e) => setAssignee(e.target.value as 'broker' | 'client')} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
               <option value="client">Client’s to-do</option><option value="broker">My to-do</option>
             </select>
           )}
@@ -308,7 +308,7 @@ function SharedCalendar({ d, tasks }: { d: WorkspaceDeal; tasks: DealTask[] }) {
             <div key={day} className={`bg-white min-h-16 sm:min-h-20 p-1 ${day.slice(0, 7) !== month ? 'opacity-40' : ''}`}>
               <div className={`text-[11px] ${day === today ? 'inline-block px-1.5 rounded-full bg-blue-600 text-white' : 'text-gray-500'}`}>{+day.slice(8)}</div>
               {byDay(day).slice(0, 3).map((e) => (
-                <div key={e.key} title={e.title} className={`mt-0.5 truncate rounded px-1 ${e.kind === 'deal_date' ? 'bg-purple-100 text-purple-900' : e.done ? 'bg-gray-100 text-gray-400 line-through' : 'bg-blue-50 text-blue-900'}`}>
+                <div key={e.key} title={e.title} className={`mt-0.5 truncate rounded px-1 ${e.kind === 'deal_date' ? 'bg-purple-100 text-purple-900' : e.done ? 'bg-gray-100 text-gray-500 line-through' : 'bg-blue-50 text-blue-900'}`}>
                   {e.icon} {e.title}
                 </div>
               ))}
@@ -379,13 +379,13 @@ function Members({ dealId, members, defaultEmail, defaultName, onChanged }: {
                 <button onClick={async () => setMsg((await sendInvite(m.id)) || 'Invite re-sent.')} className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"><Mail size={12} /> Resend</button>
               </>
             )}
-            <button onClick={() => remove(m)} aria-label="Remove" className="p-1 text-gray-400 hover:text-red-600"><Trash2 size={14} /></button>
+            <button onClick={() => remove(m)} aria-label="Remove" className="p-1 text-gray-500 hover:text-red-600"><Trash2 size={14} /></button>
           </li>
         ))}
       </ul>
       <form onSubmit={invite} className="flex flex-col sm:flex-row gap-2">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="sm:w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
-        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="client@email.com" type="email" className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+        <input aria-label="Client name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="sm:w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+        <input aria-label="Client email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="client@email.com" type="email" className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
         <button className="inline-flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium"><UserPlus size={16} /> Invite</button>
       </form>
       {msg && <p className="mt-2 text-sm text-gray-700">{msg}</p>}
@@ -412,8 +412,8 @@ function Details({ d, staff, members, clientEmail, onChanged }: { d: WorkspaceDe
             return (
               <li key={f.field} className="flex items-center gap-3 text-sm">
                 <span aria-hidden className={past ? 'opacity-50' : ''}>{f.icon}</span>
-                <span className={`flex-1 ${past ? 'text-gray-400' : 'text-gray-700'}`}>{f.label}</span>
-                <span className={on ? 'font-medium text-gray-900' : 'text-gray-400'}>{on ? formatDate(on, { weekday: 'short', month: 'short', day: 'numeric' }) : 'TBD'}</span>
+                <span className={`flex-1 ${past ? 'text-gray-500' : 'text-gray-700'}`}>{f.label}</span>
+                <span className={on ? 'font-medium text-gray-900' : 'text-gray-500'}>{on ? formatDate(on, { weekday: 'short', month: 'short', day: 'numeric' }) : 'TBD'}</span>
               </li>
             );
           })}

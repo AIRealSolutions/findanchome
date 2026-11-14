@@ -44,9 +44,10 @@ export default function LifestylePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }}
       />
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Header */}
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Find Your Lifestyle in Southeastern North Carolina</h1>
@@ -84,7 +85,7 @@ export default function LifestylePage() {
                 <div className="h-full bg-white border-2 border-gray-200 hover:border-[#0ea5e9] rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col p-6">
                   <div className="text-6xl mb-4" aria-hidden>{lifestyle.emoji}</div>
 
-                  <h3 className="text-2xl font-bold text-[#1e3a8a] group-hover:text-[#0ea5e9] transition-colors mb-3">
+                  <h3 className="text-2xl font-bold text-[#1e3a8a] group-hover:text-[#0369a1] transition-colors mb-3">
                     {lifestyle.name}
                   </h3>
                   <p className="text-gray-700 text-sm flex-1 mb-4">{lifestyle.description}</p>
@@ -93,7 +94,7 @@ export default function LifestylePage() {
                     <div className="text-xs font-medium text-[#1e3a8a] mb-2 uppercase">Where to find it</div>
                     <div className="flex flex-wrap gap-1">
                       {lifestyle.areas.map((area) => (
-                        <span key={area} className="text-xs bg-[#0ea5e9]/10 text-[#0ea5e9] px-2 py-1 rounded">
+                        <span key={area} className="text-xs bg-[#0369a1]/10 text-[#0369a1] px-2 py-1 rounded">
                           {area}
                         </span>
                       ))}
@@ -117,7 +118,7 @@ export default function LifestylePage() {
                     {lifestyle.bestFor}
                   </div>
 
-                  <div className="flex items-center gap-1 text-[#0ea5e9] font-medium text-sm group-hover:gap-2 transition-all mt-auto">
+                  <div className="flex items-center gap-1 text-[#0369a1] font-medium text-sm group-hover:gap-2 transition-all mt-auto">
                     Read the {lifestyle.name} guide <ChevronRight size={16} />
                   </div>
                 </div>
@@ -129,7 +130,7 @@ export default function LifestylePage() {
             <p className="text-gray-700 mb-6 text-lg">Found your lifestyle? Let&apos;s find your home.</p>
             <Link
               href="/search"
-              className="inline-block bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white px-8 py-3 rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md"
+              className="inline-block bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white px-8 py-3 rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md"
             >
               Start Your Search
             </Link>
@@ -139,6 +140,7 @@ export default function LifestylePage() {
 
       <ConsultationCTA title="Not Sure Which Lifestyle Fits?" />
 
+      </main>
       <SiteFooter />
     </div>
   );

@@ -121,7 +121,7 @@ export default function CapturePage() {
                   className={`px-3 py-1.5 rounded-full text-sm border ${signs.includes(s) ? 'bg-amber-500 border-amber-500 text-white' : 'border-gray-300 text-gray-700'}`}>{s}</button>
               ))}
             </div>
-            <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Anything else (a neighbor mentioned…, estate sale sign…)"
+            <textarea aria-label="Additional notes" value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Anything else (a neighbor mentioned…, estate sale sign…)"
               className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
           </div>
           <label className="block text-sm">

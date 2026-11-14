@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Phone, MessageCircle, Mail, ArrowRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
 import LanternLogo from './LanternLogo';
 import { BROKERAGE } from '@/lib/site';
 
@@ -27,6 +28,8 @@ export default function Navigation() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(menuRef, mobileMenuOpen);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -51,17 +54,17 @@ export default function Navigation() {
   return (
     <>
       {/* Utility bar */}
-      <div className="hidden md:block bg-ink text-white/70 text-xs">
+      <aside aria-label="Contact" className="hidden md:block bg-ink text-white/70 text-xs">
         <div className="container mx-auto px-4 flex items-center justify-between h-9">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-brass" aria-hidden />
             <span>
-              {BROKERAGE.name} <span className="text-white/30 mx-1">|</span> Registered HUD Buyer&apos;s Agency serving all of North Carolina
+              {BROKERAGE.name} <span className="text-white/30 mx-1" aria-hidden>|</span> Registered HUD Buyer&apos;s Agency serving all of North Carolina
             </span>
           </div>
           <div className="flex items-center gap-5">
             <a href={`tel:${BROKERAGE.phoneE164}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
-              <Phone size={13} /> {BROKERAGE.phone}
+              <Phone size={13} aria-hidden /> {BROKERAGE.phone}
             </a>
             <a href={`mailto:${BROKERAGE.email}`} className="hidden lg:inline-flex items-center gap-1.5 hover:text-white transition-colors">
               <Mail size={13} /> Email us
@@ -71,7 +74,7 @@ export default function Navigation() {
             </Link>
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* Main bar */}
       <header
@@ -87,8 +90,8 @@ export default function Navigation() {
               </span>
               <span className="leading-tight">
                 <span className="block text-[17px] sm:text-[19px] font-semibold tracking-tight text-ink">
-                  FindaNC<span className="text-brass">home</span>
-                  <span className="text-slate-400 font-normal">.com</span>
+                  FindaNC<span className="text-brass-dark">home</span>
+                  <span className="text-slate-600 font-normal">.com</span>
                 </span>
                 <span className="block text-[10px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.16em] text-slate-500">Southeastern North Carolina</span>
               </span>
@@ -143,6 +146,7 @@ export default function Navigation() {
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open menu"
                 aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
               >
                 <Menu size={22} />
               </button>
@@ -155,15 +159,15 @@ export default function Navigation() {
       {/* Mobile menu: rendered outside <header> because the header's backdrop blur
           would otherwise become the containing block for this fixed panel and clip it. */}
       {mobileMenuOpen && (
-        <div className="xl:hidden fixed inset-0 z-[70] bg-white flex flex-col" role="dialog" aria-modal="true" aria-label="Site menu">
+        <div ref={menuRef} id="mobile-menu" className="xl:hidden fixed inset-0 z-[70] bg-white flex flex-col" role="dialog" aria-modal="true" aria-label="Site menu">
           <div className="container mx-auto px-4 flex items-center justify-between h-[72px] border-b border-stone shrink-0">
             <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5" aria-label="FindaNChome.com home">
               <span className="grid place-items-center h-11 w-11 rounded-xl bg-ink">
                 <LanternLogo size={30} />
               </span>
               <span className="text-[17px] font-semibold tracking-tight text-ink">
-                FindaNC<span className="text-brass">home</span>
-                <span className="text-slate-400 font-normal">.com</span>
+                FindaNC<span className="text-brass-dark">home</span>
+                <span className="text-slate-600 font-normal">.com</span>
               </span>
             </Link>
             <button
