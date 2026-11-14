@@ -46,7 +46,7 @@ function Join() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-sky-100 px-4">
+    <main id="main-content" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-sky-100 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <div className="flex items-center gap-3 mb-6">
           <Image src="/lightkeeper-logo.jpg" alt="Lightkeeper Realty" width={48} height={48} className="rounded-full" />
@@ -80,6 +80,6 @@ function Join() {
         )}
         <p className="mt-6 text-xs text-gray-500">Brokers: <Link href="/login" className="text-blue-600 hover:underline">sign in here</Link>.</p>
       </div>
-    </div>
+    </main>
   );
 }

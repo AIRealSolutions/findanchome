@@ -19,8 +19,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-12">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Search Homes in Southeastern North Carolina</h1>
           <p className="text-xl opacity-90">Live MLS listings for Onslow, Pender, New Hanover, Brunswick and Columbus counties</p>
@@ -44,26 +45,26 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
           <div className="grid md:grid-cols-3 gap-6 mt-10">
             <div className="bg-white p-6 rounded-lg border-l-4 border-[#0ea5e9] shadow-sm">
-              <h3 className="font-bold text-[#1e3a8a] mb-2">Save Your Search</h3>
+              <h2 className="font-bold text-[#1e3a8a] mb-2">Save Your Search</h2>
               <p className="text-gray-700 text-sm">Create a free account in the search to save homes and get emailed when new listings match.</p>
             </div>
             <div className="bg-white p-6 rounded-lg border-l-4 border-[#fbbf24] shadow-sm">
-              <h3 className="font-bold text-[#1e3a8a] mb-2">Looking for a HUD Home?</h3>
+              <h2 className="font-bold text-[#1e3a8a] mb-2">Looking for a HUD Home?</h2>
               <p className="text-gray-700 text-sm">
-                Government-owned homes are listed separately. <Link href="/hud" className="text-[#0ea5e9] hover:underline">See how HUD homes work</Link>.
+                Government-owned homes are listed separately. <Link href="/hud" className="text-[#0369a1] underline underline-offset-2 hover:no-underline">See how HUD homes work</Link>.
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg border-l-4 border-[#0ea5e9] shadow-sm">
-              <h3 className="font-bold text-[#1e3a8a] mb-2">Get Expert Help</h3>
+              <h2 className="font-bold text-[#1e3a8a] mb-2">Get Expert Help</h2>
               <p className="text-gray-700 text-sm">
-                Found one you like? Call Marc at <a href={`tel:${BROKERAGE.phoneE164}`} className="text-[#0ea5e9] hover:underline">{BROKERAGE.phone}</a> to schedule a showing.
+                Found one you like? Call Marc at <a href={`tel:${BROKERAGE.phoneE164}`} className="text-[#0369a1] underline underline-offset-2 hover:no-underline">{BROKERAGE.phone}</a> to schedule a showing.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-12 bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white">
+      <section className="py-12 bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-4">Not Sure Where to Start?</h2>
           <p className="text-lg opacity-90 mb-6">Let&apos;s find your lifestyle first, then your perfect home.</p>
@@ -78,6 +79,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
       <ConsultationCTA title="Can't Find the Right Home?" />
 
+      </main>
       <SiteFooter />
     </div>
   );

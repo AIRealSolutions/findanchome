@@ -9,7 +9,8 @@ export default function SellersPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Seller Services</h1>
           <p className="text-xl opacity-90">Prepare, market, and sell your home for maximum value</p>
@@ -25,9 +26,9 @@ export default function SellersPage() {
               { icon: TrendingUp, title: "Pricing Strategy", desc: "Professional pricing analysis for your market" },
               { icon: FileText, title: "Marketing Plan", desc: "Strategic marketing to attract buyers" }
             ].map((item, idx) => (
-              <div key={idx} className="p-6 bg-gradient-to-br from-[#0ea5e9]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
-                <item.icon className="w-8 h-8 text-[#0ea5e9] mb-4" />
-                <h3 className="font-bold text-lg text-[#1e3a8a] mb-2">{item.title}</h3>
+              <div key={idx} className="p-6 bg-gradient-to-br from-[#0369a1]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
+                <item.icon className="w-8 h-8 text-[#0369a1] mb-4" />
+                <h2 className="font-bold text-lg text-[#1e3a8a] mb-2">{item.title}</h2>
                 <p className="text-gray-700">{item.desc}</p>
               </div>
             ))}
@@ -47,6 +48,7 @@ export default function SellersPage() {
 
       <ConsultationCTA title="Thinking About Selling?" context={{ intent: ['sell'] }} />
 
+      </main>
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

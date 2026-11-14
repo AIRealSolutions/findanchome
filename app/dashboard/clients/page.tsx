@@ -167,8 +167,8 @@ export default function ClientsPage() {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input aria-label="Search clients"
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -176,7 +176,7 @@ export default function ClientsPage() {
             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-        <select value={tag} onChange={(e) => setTag(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white md:max-w-xs">
+        <select aria-label="Filter by tag" value={tag} onChange={(e) => setTag(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white md:max-w-xs">
           <option value="">All tags</option>
           {allTags.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>

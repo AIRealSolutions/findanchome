@@ -11,8 +11,9 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Request a Free Consultation</h1>
           <p className="text-xl opacity-90">Have questions? Let&apos;s talk about your real estate goals and the areas you love.</p>
@@ -37,10 +38,10 @@ export default function ContactPage() {
 
               <div className="space-y-6">
                 <div className="flex gap-4">
-                  <Phone className="w-6 h-6 text-[#0ea5e9] flex-shrink-0 mt-1" />
+                  <Phone className="w-6 h-6 text-[#0369a1] flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-[#1e3a8a] mb-1">Phone</h3>
-                    <a href="tel:+19103636147" className="text-gray-700 hover:text-[#0ea5e9] font-medium">
+                    <a href="tel:+19103636147" className="text-gray-700 hover:text-[#0369a1] font-medium">
                       (910) 363-6147
                     </a>
                   </div>
@@ -50,14 +51,14 @@ export default function ContactPage() {
                   <Mail className="w-6 h-6 text-[#fbbf24] flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-[#1e3a8a] mb-1">Email</h3>
-                    <a href="mailto:marcspencer28461@gmail.com" className="text-gray-700 hover:text-[#0ea5e9] font-medium">
+                    <a href="mailto:marcspencer28461@gmail.com" className="text-gray-700 hover:text-[#0369a1] font-medium">
                       marcspencer28461@gmail.com
                     </a>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
-                  <MapPin className="w-6 h-6 text-[#0ea5e9] flex-shrink-0 mt-1" />
+                  <MapPin className="w-6 h-6 text-[#0369a1] flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-[#1e3a8a] mb-1">Location</h3>
                     <p className="text-gray-700">Southport, North Carolina</p>
@@ -77,13 +78,13 @@ export default function ContactPage() {
               <div className="mt-8 pt-8 border-t border-gray-200">
                 <h3 className="font-bold text-[#1e3a8a] mb-4">Quick Links</h3>
                 <div className="space-y-2">
-                  <Link href="/search" className="block text-[#0ea5e9] hover:underline">
+                  <Link href="/search" className="block text-[#0369a1] hover:underline">
                     Search Homes →
                   </Link>
-                  <Link href="/lifestyle" className="block text-[#0ea5e9] hover:underline">
+                  <Link href="/lifestyle" className="block text-[#0369a1] hover:underline">
                     Find Your Lifestyle →
                   </Link>
-                  <Link href="/hud" className="block text-[#0ea5e9] hover:underline">
+                  <Link href="/hud" className="block text-[#0369a1] hover:underline">
                     HUD Homes →
                   </Link>
                 </div>
@@ -93,6 +94,7 @@ export default function ContactPage() {
         </div>
       </section>
 
+      </main>
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

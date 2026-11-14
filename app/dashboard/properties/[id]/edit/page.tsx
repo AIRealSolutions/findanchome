@@ -168,10 +168,10 @@ export default function EditPropertyPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-title" className="block text-sm font-medium text-gray-700 mb-2">
                 Property Title *
               </label>
-              <input
+              <input id="field-title"
                 type="text"
                 name="title"
                 value={formData.title}
@@ -182,10 +182,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-description" className="block text-sm font-medium text-gray-700 mb-2">
                 Description
               </label>
-              <textarea
+              <textarea id="field-description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -195,10 +195,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-property-type" className="block text-sm font-medium text-gray-700 mb-2">
                 Property Type
               </label>
-              <select
+              <select id="field-property-type"
                 name="property_type"
                 value={formData.property_type}
                 onChange={handleChange}
@@ -214,10 +214,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-listing-type" className="block text-sm font-medium text-gray-700 mb-2">
                 Listing Type
               </label>
-              <select
+              <select id="field-listing-type"
                 name="listing_type"
                 value={formData.listing_type}
                 onChange={handleChange}
@@ -232,10 +232,10 @@ export default function EditPropertyPage() {
 
             {formData.listing_type === 'hud' && (
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="field-hud-case-number" className="block text-sm font-medium text-gray-700 mb-2">
                   HUD Case Number
                 </label>
-                <input
+                <input id="field-hud-case-number"
                   type="text"
                   name="hud_case_number"
                   value={formData.hud_case_number}
@@ -252,10 +252,10 @@ export default function EditPropertyPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Location</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-address-line1" className="block text-sm font-medium text-gray-700 mb-2">
                 Street Address *
               </label>
-              <input
+              <input id="field-address-line1"
                 type="text"
                 name="address_line1"
                 value={formData.address_line1}
@@ -266,10 +266,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-address-line2" className="block text-sm font-medium text-gray-700 mb-2">
                 Address Line 2
               </label>
-              <input
+              <input id="field-address-line2"
                 type="text"
                 name="address_line2"
                 value={formData.address_line2}
@@ -279,10 +279,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-city" className="block text-sm font-medium text-gray-700 mb-2">
                 City *
               </label>
-              <input
+              <input id="field-city"
                 type="text"
                 name="city"
                 value={formData.city}
@@ -293,10 +293,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-state" className="block text-sm font-medium text-gray-700 mb-2">
                 State *
               </label>
-              <input
+              <input id="field-state"
                 type="text"
                 name="state"
                 value={formData.state}
@@ -308,10 +308,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-zip-code" className="block text-sm font-medium text-gray-700 mb-2">
                 ZIP Code *
               </label>
-              <input
+              <input id="field-zip-code"
                 type="text"
                 name="zip_code"
                 value={formData.zip_code}
@@ -322,10 +322,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-county" className="block text-sm font-medium text-gray-700 mb-2">
                 County
               </label>
-              <input
+              <input id="field-county"
                 type="text"
                 name="county"
                 value={formData.county}
@@ -341,10 +341,10 @@ export default function EditPropertyPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Property Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
                 Bedrooms
               </label>
-              <input
+              <input id="field-bedrooms"
                 type="number"
                 name="bedrooms"
                 value={formData.bedrooms}
@@ -355,10 +355,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
                 Bathrooms
               </label>
-              <input
+              <input id="field-bathrooms"
                 type="number"
                 name="bathrooms"
                 value={formData.bathrooms}
@@ -370,10 +370,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-square-feet" className="block text-sm font-medium text-gray-700 mb-2">
                 Square Feet
               </label>
-              <input
+              <input id="field-square-feet"
                 type="number"
                 name="square_feet"
                 value={formData.square_feet}
@@ -384,10 +384,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-lot-size" className="block text-sm font-medium text-gray-700 mb-2">
                 Lot Size (acres)
               </label>
-              <input
+              <input id="field-lot-size"
                 type="number"
                 name="lot_size"
                 value={formData.lot_size}
@@ -399,10 +399,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-year-built" className="block text-sm font-medium text-gray-700 mb-2">
                 Year Built
               </label>
-              <input
+              <input id="field-year-built"
                 type="number"
                 name="year_built"
                 value={formData.year_built}
@@ -414,10 +414,10 @@ export default function EditPropertyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-price" className="block text-sm font-medium text-gray-700 mb-2">
                 Price *
               </label>
-              <input
+              <input id="field-price"
                 type="number"
                 name="price"
                 value={formData.price}
@@ -436,10 +436,10 @@ export default function EditPropertyPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Status & Visibility</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="field-status" className="block text-sm font-medium text-gray-700 mb-2">
                 Status
               </label>
-              <select
+              <select id="field-status"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
@@ -453,14 +453,14 @@ export default function EditPropertyPage() {
             </div>
 
             <div className="flex items-center pt-8">
-              <input
+              <input id="field-featured"
                 type="checkbox"
                 name="is_featured"
                 checked={formData.is_featured}
                 onChange={handleChange}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <label className="ml-2 text-sm font-medium text-gray-700">
+              <label htmlFor="field-featured" className="ml-2 text-sm font-medium text-gray-700">
                 Feature this property on homepage
               </label>
             </div>

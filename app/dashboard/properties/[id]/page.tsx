@@ -336,7 +336,7 @@ export default function PropertyDetailPage() {
                 target="_blank"
                 className="block w-full text-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                View on Website
+                View on Website<span className="sr-only"> (opens in a new tab)</span>
               </Link>
               <button
                 onClick={() => navigator.clipboard.writeText(`${window.location.origin}/properties/${property.id}`)}

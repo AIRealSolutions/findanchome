@@ -58,7 +58,7 @@ export function Commissions({ ctx }: { ctx: AdminContext }) {
       </div>
       <Card title="Commission register" action={
         <div className="flex items-center gap-2">
-          <select value={show} onChange={(e) => setShow(e.target.value as typeof show)} className="px-2 py-1 border border-gray-300 rounded-lg bg-white text-sm">
+          <select aria-label="Commissions to show" value={show} onChange={(e) => setShow(e.target.value as typeof show)} className="px-2 py-1 border border-gray-300 rounded-lg bg-white text-sm">
             <option value="outstanding">Outstanding only</option><option value="period">Closed {ctx.periodLabel}</option>
           </select>
           <button onClick={exportCsv} className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"><Download size={14} /> CSV</button>
@@ -92,7 +92,7 @@ export function Commissions({ ctx }: { ctx: AdminContext }) {
                         ? <button onClick={() => mark(d, 'agent_paid_on', null)} title="Undo" className="text-green-700">✓ {formatDate(d.agent_paid_on, { month: 'short', day: 'numeric' })}</button>
                         : m.agentPayout > 0
                           ? <button onClick={() => mark(d, 'agent_paid_on', toYmd(new Date()))} disabled={!d.commission_received_on} className="px-2 py-1 border border-gray-300 rounded-lg text-xs hover:bg-gray-50 disabled:opacity-40">Mark paid</button>
-                          : <span className="text-xs text-gray-400">nothing owed</span>}</td>
+                          : <span className="text-xs text-gray-500">nothing owed</span>}</td>
                     </tr>
                   );
                 })}
@@ -125,7 +125,7 @@ export function Form1099({ ctx }: { ctx: AdminContext }) {
   return (
     <Card title={`1099-NEC summary · ${year}`} action={
       <div className="flex items-center gap-2">
-        <select value={year} onChange={(e) => setYear(+e.target.value)} className="px-2 py-1 border border-gray-300 rounded-lg bg-white text-sm">
+        <select aria-label="Tax year" value={year} onChange={(e) => setYear(+e.target.value)} className="px-2 py-1 border border-gray-300 rounded-lg bg-white text-sm">
           {[0, 1, 2].map((i) => new Date().getFullYear() - i).map((y) => <option key={y}>{y}</option>)}
         </select>
         <button onClick={exportCsv} className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"><Download size={14} /> CSV</button>

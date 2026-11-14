@@ -47,6 +47,14 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Escape closes the mobile sidebar.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
   const [newLeads, setNewLeads] = useState(0);
   const [listingTodo, setListingTodo] = useState(0);
   const [unread, setUnread] = useState(0);
@@ -155,14 +163,15 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       {/* Mobile top bar */}
       <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
         <Link href="/dashboard" className="font-bold text-gray-900">FindaNChome</Link>
-        <button onClick={() => setMenuOpen(true)} aria-label="Open menu" className="p-2 -mr-2 text-gray-700">
+        <button onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-expanded={menuOpen} aria-controls="dashboard-sidebar" className="p-2 -mr-2 text-gray-700">
           <Bars3Icon className="w-6 h-6" />
         </button>
       </div>
       {menuOpen && <div className="lg:hidden fixed inset-0 z-40 bg-black/40" onClick={() => setMenuOpen(false)} />}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform lg:translate-x-0 ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      {/* Hidden (not just off-screen) when closed on mobile so keyboard focus can't land in it. */}
+      <div id="dashboard-sidebar" className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-[transform,visibility] lg:translate-x-0 lg:visible ${menuOpen ? 'translate-x-0 visible' : '-translate-x-full invisible'}`}>
         <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="lg:hidden absolute top-4 right-3 p-1 text-gray-500">
           <XMarkIcon className="w-6 h-6" />
         </button>
@@ -201,10 +210,10 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-3 overflow-y-auto max-h-[calc(100vh-15rem)]">
+        <nav aria-label="Dashboard" className="flex-1 px-4 py-3 overflow-y-auto max-h-[calc(100vh-15rem)]">
           {groups.map((g, gi) => (
             <div key={g.heading ?? gi} className={gi ? 'mt-3' : ''}>
-              {g.heading && <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">{g.heading}</p>}
+              {g.heading && <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500">{g.heading}</p>}
               <div className="space-y-0.5">
                 {g.items.map((item) => {
                   const isActive = item.href === '/dashboard' ? pathname === item.href : pathname === item.href || pathname?.startsWith(item.href + '/');
@@ -262,9 +271,9 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             <button onClick={() => { setViewAs('admin'); router.push('/dashboard'); }} className="underline font-medium">Back to the Control Center</button>
           </div>
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
+        <main id="main-content" tabIndex={-1} className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 focus:outline-none">
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

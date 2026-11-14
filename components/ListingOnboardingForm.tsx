@@ -176,7 +176,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
         {STEPS.map((s, i) => (
           <li key={s} className="flex-1">
             <button type="button" onClick={() => i < step && setStep(i)} disabled={i > step}
-              className={`w-full px-2 py-3 border-b-2 ${i === step ? 'border-blue-600 text-blue-700 font-medium' : i < step ? 'border-green-500 text-gray-700' : 'border-transparent text-gray-400'}`}>
+              className={`w-full px-2 py-3 border-b-2 ${i === step ? 'border-blue-600 text-blue-700 font-medium' : i < step ? 'border-green-500 text-gray-700' : 'border-transparent text-gray-500'}`}>
               <span className="hidden sm:inline">{i + 1}. </span>{s}
             </button>
           </li>
@@ -328,7 +328,7 @@ export default function ListingOnboardingForm({ mode, initial, links, author }: 
                 ] : []),
               ] as [string, string][]).map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[110px_1fr] gap-2 py-1">
-                  <dt className="text-gray-500">{k}</dt><dd className="text-gray-900">{v || <span className="text-gray-400">—</span>}</dd>
+                  <dt className="text-gray-500">{k}</dt><dd className="text-gray-900">{v || <span className="text-gray-500">—</span>}</dd>
                 </div>
               ))}
             </dl>

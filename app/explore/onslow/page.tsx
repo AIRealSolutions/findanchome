@@ -35,6 +35,7 @@ export default function OnslowPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Header */}
       <section className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-16">
@@ -57,11 +58,11 @@ export default function OnslowPage() {
             </p>
             <div className="grid sm:grid-cols-3 gap-4 bg-blue-50 p-6 rounded-lg">
               <div>
-                <div className="text-2xl font-bold text-[#0ea5e9]">~186,000</div>
+                <div className="text-2xl font-bold text-[#0369a1]">~186,000</div>
                 <div className="text-gray-700 text-sm">Population</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-[#fbbf24]">~745 sq mi</div>
+                <div className="text-2xl font-bold text-amber-700">~745 sq mi</div>
                 <div className="text-gray-700 text-sm">Area</div>
               </div>
               <div>
@@ -74,7 +75,7 @@ export default function OnslowPage() {
       </section>
 
       {/* Lifestyle Highlights */}
-      <section className="py-16 bg-gradient-to-br from-[#1e3a8a]/5 to-[#0ea5e9]/5">
+      <section className="py-16 bg-gradient-to-br from-[#1e3a8a]/5 to-[#0369a1]/5">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-[#1e3a8a] mb-12 text-center">What Makes Onslow County Special</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -100,8 +101,8 @@ export default function OnslowPage() {
                 href={communityPath(community)}
                 className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 hover:border-[#0ea5e9] rounded-lg hover:shadow-lg transition-all group"
               >
-                <MapPin className="w-5 h-5 text-[#0ea5e9] mb-3" />
-                <h3 className="font-bold text-xl text-[#1e3a8a] mb-2 group-hover:text-[#0ea5e9]">{community.name}</h3>
+                <MapPin className="w-5 h-5 text-[#0369a1] mb-3" />
+                <h3 className="font-bold text-xl text-[#1e3a8a] mb-2 group-hover:text-[#0369a1]">{community.name}</h3>
                 <p className="text-gray-700 mb-3">{community.summary}</p>
                 <div className="text-sm text-gray-600">{community.population.startsWith('~') ? `Population: ${community.population}` : community.type}</div>
               </Link>
@@ -116,6 +117,7 @@ export default function OnslowPage() {
         context={{ counties: ['onslow'] }}
       />
 
+      </main>
       {/* Footer */}
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">

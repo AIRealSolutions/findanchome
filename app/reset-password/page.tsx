@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
     'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition';
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
+    <main id="main-content" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -99,7 +99,7 @@ export default function ResetPasswordPage() {
               LK
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Choose a new password</h2>
+          <h1 className="text-3xl font-bold text-gray-900">Choose a new password</h1>
           <p className="mt-2 text-sm text-gray-600">Admin &amp; Broker Portal</p>
         </div>
 
@@ -154,6 +154,6 @@ export default function ResetPasswordPage() {
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

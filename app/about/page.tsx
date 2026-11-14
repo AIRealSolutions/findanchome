@@ -10,7 +10,8 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Our CEO/BIC Marc Spencer</h1>
           <p className="text-xl opacity-90">Local real estate expert serving Southeastern North Carolina</p>
@@ -30,7 +31,7 @@ export default function AboutPage() {
               />
             </div>
             <h2 className="text-3xl font-bold text-[#1e3a8a] mb-2">Marc Spencer</h2>
-            <p className="text-xl text-[#0ea5e9] font-medium mb-4">CEO & HUD Specialist</p>
+            <p className="text-xl text-[#0369a1] font-medium mb-4">CEO & HUD Specialist</p>
             <p className="text-gray-700">Based in Southport, North Carolina</p>
           </div>
 
@@ -53,8 +54,8 @@ export default function AboutPage() {
               { icon: Target, title: "Focus", desc: "Specialized in Southeastern North Carolina markets" },
               { icon: Users, title: "Support", desc: "Full-service representation and guidance" }
             ].map((item, idx) => (
-              <div key={idx} className="p-6 bg-gradient-to-br from-[#0ea5e9]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
-                <item.icon className="w-8 h-8 text-[#0ea5e9] mb-4" />
+              <div key={idx} className="p-6 bg-gradient-to-br from-[#0369a1]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
+                <item.icon className="w-8 h-8 text-[#0369a1] mb-4" />
                 <h3 className="font-bold text-lg text-[#1e3a8a] mb-2">{item.title}</h3>
                 <p className="text-gray-700">{item.desc}</p>
               </div>
@@ -67,10 +68,10 @@ export default function AboutPage() {
               Whether you're looking to buy, sell, or invest in property, Marc is here to help. Contact us to discuss your real estate goals and discover how we can assist you.
             </p>
             <div className="flex gap-4 flex-wrap">
-              <Link href="/contact" className="bg-[#0ea5e9] text-white px-8 py-3 rounded-lg hover:opacity-90 font-bold">
+              <Link href="/contact" className="bg-[#0369a1] text-white px-8 py-3 rounded-lg hover:opacity-90 font-bold">
                 Schedule a Consultation
               </Link>
-              <Link href="tel:+19103636147" className="bg-white text-[#0ea5e9] border-2 border-[#0ea5e9] px-8 py-3 rounded-lg hover:bg-[#0ea5e9]/5 font-bold">
+              <Link href="tel:+19103636147" className="bg-white text-[#0369a1] border-2 border-[#0ea5e9] px-8 py-3 rounded-lg hover:bg-[#0369a1]/5 font-bold">
                 Call Marc
               </Link>
             </div>
@@ -89,6 +90,7 @@ export default function AboutPage() {
 
       <ConsultationCTA title="Work With Lightkeeper Realty" />
 
+      </main>
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

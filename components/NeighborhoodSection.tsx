@@ -46,7 +46,7 @@ export function NeighborhoodCard({ n, showNearest = true }: { n: Neighborhood; s
       )}
       {n.builders && n.builders.length > 0 && (
         <p className="text-sm text-gray-700 mb-2 flex gap-2">
-          <Hammer size={16} className="text-[#0ea5e9] shrink-0 mt-0.5" /> <span>Builders: {n.builders.join(', ')}</span>
+          <Hammer size={16} className="text-[#0369a1] shrink-0 mt-0.5" /> <span>Builders: {n.builders.join(', ')}</span>
         </p>
       )}
 
@@ -65,12 +65,12 @@ export function NeighborhoodCard({ n, showNearest = true }: { n: Neighborhood; s
 
       <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
         {lifestyles.map((l) => (
-          <Link key={l.slug} href={`/lifestyle/${l.slug}`} className="text-[#0ea5e9] hover:underline">
+          <Link key={l.slug} href={`/lifestyle/${l.slug}`} className="text-[#0369a1] hover:underline">
             <span aria-hidden>{l.emoji}</span> {l.name}
           </Link>
         ))}
         {nearest && (
-          <Link href={communityPath(nearest)} className="ml-auto font-semibold text-[#1e3a8a] hover:text-[#0ea5e9]">
+          <Link href={communityPath(nearest)} className="ml-auto font-semibold text-[#1e3a8a] hover:text-[#0369a1]">
             Near {nearest.name} →
           </Link>
         )}

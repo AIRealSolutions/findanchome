@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
 import { usePathname } from 'next/navigation';
 import { CalendarCheck, X } from 'lucide-react';
 import ConsultationForm from './ConsultationForm';
@@ -39,6 +40,8 @@ export default function ConsultationLauncher() {
   const [open, setOpen] = useState(false);
   const [context, setContext] = useState<ConsultationContext | undefined>();
   const [formKey, setFormKey] = useState(0);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open);
 
   useEffect(() => {
     const onOpen = (e: Event) => {
@@ -66,19 +69,22 @@ export default function ConsultationLauncher() {
 
   return (
     <>
-      {!hidden && !open && (
+      {/* Hidden with CSS (not unmounted) while the dialog is open so focus can return to it on close. */}
+      {!hidden && (
         <button
           type="button"
           onClick={() => openConsultation()}
-          className="fixed z-40 bottom-4 right-4 inline-flex items-center gap-2 bg-ink text-white ring-1 ring-white/10 px-5 py-3 rounded-full shadow-xl shadow-ink/30 hover:bg-navy font-semibold text-sm transition-colors"
+          aria-haspopup="dialog"
+          className={`${open ? 'hidden' : 'inline-flex'} fixed z-40 bottom-4 right-4 items-center gap-2 bg-ink text-white ring-1 ring-white/10 px-5 py-3 rounded-full shadow-xl shadow-ink/30 hover:bg-navy font-semibold text-sm transition-colors`}
         >
-          <CalendarCheck size={20} /> Free Consultation
+          <CalendarCheck size={20} aria-hidden /> Free Consultation
         </button>
       )}
 
       {open && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 sm:p-4" onClick={() => setOpen(false)}>
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="consultation-dialog-title"
@@ -87,7 +93,7 @@ export default function ConsultationLauncher() {
           >
             <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 py-4 border-b bg-white">
               <h2 id="consultation-dialog-title" className="text-xl font-semibold tracking-tight text-ink">Request a Free Consultation</h2>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="p-1 text-gray-500 hover:text-gray-800">
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close consultation form" className="p-1 text-gray-600 hover:text-gray-800">
                 <X size={24} />
               </button>
             </div>

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 function Section({ section }: { section: SitemapSection }) {
   return (
     <div className="break-inside-avoid mb-10">
-      <h3 className="eyebrow text-harbor mb-4">{section.title}</h3>
+      <h2 className="eyebrow text-harbor mb-4">{section.title}</h2>
       <ul className="space-y-2">
         {section.links.map((link) => (
           <li key={link.path}>
@@ -40,7 +40,7 @@ export default function SiteMapPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navigation />
 
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         <section className="bg-sand border-b border-stone">
           <div className="container mx-auto px-4 py-16 md:py-20">
             <div className="eyebrow text-harbor">Site map</div>

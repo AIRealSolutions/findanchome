@@ -46,7 +46,7 @@ export default function SiteFooter() {
               </span>
               <span className="text-xl font-semibold tracking-tight">
                 FindaNC<span className="text-brass">home</span>
-                <span className="text-white/40 font-normal">.com</span>
+                <span className="text-white/65 font-normal">.com</span>
               </span>
             </Link>
             <p className="mt-5 max-w-sm text-white/60 text-sm leading-relaxed">
@@ -95,10 +95,10 @@ export default function SiteFooter() {
             className="inline-flex items-center gap-2 text-sm font-medium text-ink bg-brass hover:bg-brass-light px-5 py-2.5 rounded-full transition-colors self-start md:self-auto"
           >
             Visit {usaHudHomes.name} <ArrowUpRight size={16} />
-          </a>
+          <span className="sr-only"> (opens in a new tab)</span></a>
         </div>
 
-        <div className="mt-10 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-white/45">
+        <div className="mt-10 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-white/65">
           <div>
             © {new Date().getFullYear()} {BROKERAGE.name}. All rights reserved.
           </div>

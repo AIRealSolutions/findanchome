@@ -122,11 +122,11 @@ function ReviewCard({ o, staff, author, onChanged }: { o: ListingOpportunity; st
       </div>
       {o.message && <p className="mt-2 text-sm text-gray-800 bg-gray-50 rounded p-2 whitespace-pre-wrap">{o.message}</p>}
       <div className="mt-3 flex flex-col sm:flex-row gap-2">
-        <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+        <select aria-label="Assign to" value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           {staff.map((s) => <option key={s.id} value={s.id}>Assign to {staffName(s)}{s.id === author.id ? ' (me)' : ''}</option>)}
           {!staff.some((s) => s.id === author.id) && <option value={author.id}>Assign to me</option>}
         </select>
-        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+        <input aria-label="Review note (optional)" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
         <button disabled={busy} onClick={() => decide('approved')} className="inline-flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50">
           <Check size={16} /> Approve
         </button>
@@ -438,7 +438,7 @@ function ListingsPage() {
                             Follow-up {due === 'overdue' ? 'overdue' : due === 'today' ? 'today' : formatDateTime(o.follow_up_at)}
                           </div>
                         )}
-                        {!mineOnly && <div className="text-xs text-gray-400 mt-1">{staffName(staff.find((s) => s.id === o.assigned_to))}</div>}
+                        {!mineOnly && <div className="text-xs text-gray-500 mt-1">{staffName(staff.find((s) => s.id === o.assigned_to))}</div>}
                       </Link>
                     );
                   })}

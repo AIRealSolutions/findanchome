@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import Navigation from '@/components/Navigation'
+import SiteFooter from '@/components/SiteFooter'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -93,41 +95,15 @@ export default function SellPage() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex flex-col">
-        {/* Header */}
-        <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between py-4">
-              <Link href="/" className="flex items-center gap-3">
-                <Image 
-                  src="/lightkeeper-logo.jpg" 
-                  alt="Lightkeeper Realty Logo" 
-                  width={50} 
-                  height={50}
-                  className="object-contain"
-                />
-                <div>
-                  <h1 className="text-2xl font-bold">FindaNChome.com</h1>
-                  <p className="text-xs opacity-90">From the Coast to the Mountains - Your NC Real Estate Connection</p>
-                </div>
-              </Link>
-              
-              <nav className="hidden md:flex items-center gap-6">
-                <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
-                <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
-                <Link href="/agents" className="hover:text-[#fbbf24] transition-colors">Agents</Link>
-                <Link href="/education" className="hover:text-[#fbbf24] transition-colors">Education</Link>
-                <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>
-              </nav>
-            </div>
-          </div>
-        </header>
+        <Navigation />
+        <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
-        <div className="flex-1 flex items-center justify-center py-16 bg-gradient-to-br from-[#0ea5e9]/5 to-[#fbbf24]/5">
+        <div className="flex-1 flex items-center justify-center py-16 bg-gradient-to-br from-[#0369a1]/5 to-[#fbbf24]/5">
           <div className="max-w-2xl mx-auto text-center px-4">
             <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-3xl font-bold mb-4 text-[#1e3a8a]">Thank You!</h2>
+            <h1 className="text-3xl font-bold mb-4 text-[#1e3a8a]">Thank You!</h1>
             <p className="text-lg text-gray-700 mb-6">
               We've received your request. A member of our team will contact you within 24 hours to discuss your home selling needs.
             </p>
@@ -136,49 +112,25 @@ export default function SellPage() {
             </p>
             <Link 
               href="/"
-              className="inline-block bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white px-8 py-3 rounded-lg hover:opacity-90 transition-opacity font-medium"
+              className="inline-block bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white px-8 py-3 rounded-lg hover:opacity-90 transition-opacity font-medium"
             >
               Return to Homepage
             </Link>
           </div>
         </div>
+        </main>
+        <SiteFooter />
       </div>
     )
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-[#1e3a8a] text-white sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
-            <Link href="/" className="flex items-center gap-3">
-              <Image 
-                src="/lightkeeper-logo.jpg" 
-                alt="Lightkeeper Realty Logo" 
-                width={50} 
-                height={50}
-                className="object-contain"
-              />
-              <div>
-                <h1 className="text-2xl font-bold">FindaNChome.com</h1>
-                <p className="text-xs opacity-90">From the Coast to the Mountains - Your NC Real Estate Connection</p>
-              </div>
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/properties" className="hover:text-[#fbbf24] transition-colors">Properties</Link>
-              <Link href="/communities" className="hover:text-[#fbbf24] transition-colors">Communities</Link>
-              <Link href="/agents" className="hover:text-[#fbbf24] transition-colors">Agents</Link>
-              <Link href="/education" className="hover:text-[#fbbf24] transition-colors">Education</Link>
-              <Link href="/contact" className="bg-[#fbbf24] text-[#1e3a8a] px-4 py-2 rounded-lg hover:bg-[#fcd34d] transition-colors font-medium">Contact</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Hero Section with Testimonials */}
-      <section className="relative bg-gradient-to-br from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-20">
+      <section className="relative bg-gradient-to-br from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -222,7 +174,7 @@ export default function SellPage() {
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center">
-              <div className="w-16 h-16 bg-[#0ea5e9] rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-[#0369a1] rounded-full flex items-center justify-center mx-auto mb-4">
                 <DollarSign className="w-8 h-8 text-white" />
               </div>
               <h3 className="font-bold text-xl mb-3 text-[#1e3a8a]">Maximum Value</h3>
@@ -255,7 +207,7 @@ export default function SellPage() {
       </section>
 
       {/* CTA Forms Section */}
-      <section className="py-16 bg-gradient-to-br from-[#0ea5e9]/5 to-[#fbbf24]/5">
+      <section className="py-16 bg-gradient-to-br from-[#0369a1]/5 to-[#fbbf24]/5">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -270,7 +222,7 @@ export default function SellPage() {
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               {/* Free CMA Card */}
               <div className="bg-white p-8 rounded-lg shadow-lg border-t-4 border-[#0ea5e9]">
-                <div className="w-12 h-12 bg-[#0ea5e9] rounded-full flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-[#0369a1] rounded-full flex items-center justify-center mb-4">
                   <Home className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold mb-3 text-[#1e3a8a]">Free Home Valuation</h3>
@@ -279,15 +231,15 @@ export default function SellPage() {
                 </p>
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-start gap-2 text-sm text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-[#0ea5e9] flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-[#0369a1] flex-shrink-0 mt-0.5" />
                     <span>Detailed market analysis</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-[#0ea5e9] flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-[#0369a1] flex-shrink-0 mt-0.5" />
                     <span>Comparable sales data</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-[#0ea5e9] flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-[#0369a1] flex-shrink-0 mt-0.5" />
                     <span>Pricing recommendations</span>
                   </li>
                 </ul>
@@ -334,52 +286,52 @@ export default function SellPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700">Name *</label>
-                    <input
+                    <label htmlFor="field-name" className="block text-sm font-medium mb-2 text-gray-700">Name *</label>
+                    <input id="field-name"
                       type="text"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700">Email *</label>
-                    <input
+                    <label htmlFor="field-email" className="block text-sm font-medium mb-2 text-gray-700">Email *</label>
+                    <input id="field-email"
                       type="email"
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700">Phone *</label>
-                    <input
+                    <label htmlFor="field-phone" className="block text-sm font-medium mb-2 text-gray-700">Phone *</label>
+                    <input id="field-phone"
                       type="tel"
                       required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700">Property Address *</label>
-                    <input
+                    <label htmlFor="field-property-address" className="block text-sm font-medium mb-2 text-gray-700">Property Address *</label>
+                    <input id="field-property-address"
                       type="text"
                       required
                       value={formData.address}
                       onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">I'm interested in: *</label>
+                <fieldset>
+                  <legend className="block text-sm font-medium mb-2 text-gray-700">I'm interested in: *</legend>
                   <div className="grid md:grid-cols-2 gap-4">
                     <label className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#0ea5e9] transition-colors">
                       <input
@@ -388,7 +340,7 @@ export default function SellPage() {
                         value="cma"
                         checked={formData.requestType === 'cma'}
                         onChange={(e) => setFormData({ ...formData, requestType: e.target.value })}
-                        className="w-5 h-5 text-[#0ea5e9]"
+                        className="w-5 h-5 text-[#0369a1]"
                       />
                       <span className="font-medium">Free Home Valuation (CMA)</span>
                     </label>
@@ -399,28 +351,28 @@ export default function SellPage() {
                         value="appointment"
                         checked={formData.requestType === 'appointment'}
                         onChange={(e) => setFormData({ ...formData, requestType: e.target.value })}
-                        className="w-5 h-5 text-[#0ea5e9]"
+                        className="w-5 h-5 text-[#0369a1]"
                       />
                       <span className="font-medium">Schedule Consultation</span>
                     </label>
                   </div>
-                </div>
+                </fieldset>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">Additional Information (Optional)</label>
-                  <textarea
+                  <label htmlFor="field-additional-information" className="block text-sm font-medium mb-2 text-gray-700">Additional Information (Optional)</label>
+                  <textarea id="field-additional-information"
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Tell us about your selling timeline, goals, or any questions you have..."
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white px-8 py-4 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity font-bold text-lg shadow-lg"
+                  className="w-full bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white px-8 py-4 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity font-bold text-lg shadow-lg"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Request'}
                 </button>
@@ -434,54 +386,8 @@ export default function SellPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12 mt-auto">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <Image 
-                  src="/lightkeeper-logo.jpg" 
-                  alt="Lightkeeper Realty Logo" 
-                  width={40} 
-                  height={40}
-                  className="object-contain"
-                />
-                <div className="font-bold text-lg">Lightkeeper Realty</div>
-              </div>
-              <p className="text-gray-300">
-                Your trusted real estate partner in North Carolina
-              </p>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Quick Links</div>
-              <div className="space-y-2">
-                <Link href="/properties" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Properties</Link>
-                <Link href="/communities" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Communities</Link>
-                <Link href="/agents" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Agents</Link>
-              </div>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Resources</div>
-              <div className="space-y-2">
-                <Link href="/education" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Education Center</Link>
-                <Link href="/sell" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Sell Your Home</Link>
-                <Link href="/contact" className="block text-gray-300 hover:text-[#fbbf24] transition-colors">Contact Us</Link>
-              </div>
-            </div>
-            <div>
-              <div className="font-bold mb-4 text-[#fbbf24]">Contact</div>
-              <div className="text-gray-300 space-y-2">
-                <div>Phone: (910) 363-6147</div>
-                <div>Email: marcspencer28461@gmail.com</div>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-[#0ea5e9]/30 mt-8 pt-8 text-center text-gray-300">
-            © 2026 Lightkeeper Realty. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      </main>
+      <SiteFooter />
     </div>
   )
 }

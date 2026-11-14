@@ -215,7 +215,7 @@ export default function BuyerPreferenceTool() {
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div 
-            className="bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] h-2 rounded-full transition-all duration-300"
+            className="bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] h-2 rounded-full transition-all duration-300"
             style={{ width: `${(currentStep / steps.length) * 100}%` }}
           />
         </div>
@@ -235,14 +235,14 @@ export default function BuyerPreferenceTool() {
                 onClick={() => toggleSelection('programs', program)}
                 className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
                   preferences.programs.includes(program)
-                    ? 'border-[#0ea5e9] bg-[#0ea5e9]/10'
+                    ? 'border-[#0ea5e9] bg-[#0369a1]/10'
                     : 'border-gray-200 hover:border-[#0ea5e9]/50'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{program}</span>
                   {preferences.programs.includes(program) && (
-                    <CheckCircle2 className="w-5 h-5 text-[#0ea5e9]" />
+                    <CheckCircle2 className="w-5 h-5 text-[#0369a1]" />
                   )}
                 </div>
                 {program === 'HUD Homes' && (
@@ -266,14 +266,14 @@ export default function BuyerPreferenceTool() {
                   onClick={() => toggleSelection('financing', option)}
                   className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
                     preferences.financing.includes(option)
-                      ? 'border-[#0ea5e9] bg-[#0ea5e9]/10'
+                      ? 'border-[#0ea5e9] bg-[#0369a1]/10'
                       : 'border-gray-200 hover:border-[#0ea5e9]/50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{option}</span>
                     {preferences.financing.includes(option) && (
-                      <CheckCircle2 className="w-5 h-5 text-[#0ea5e9]" />
+                      <CheckCircle2 className="w-5 h-5 text-[#0369a1]" />
                     )}
                   </div>
                 </button>
@@ -285,7 +285,7 @@ export default function BuyerPreferenceTool() {
                   type="checkbox"
                   checked={preferences.needsAssistance}
                   onChange={(e) => setPreferences({ ...preferences, needsAssistance: e.target.checked })}
-                  className="w-5 h-5 text-[#0ea5e9] rounded"
+                  className="w-5 h-5 text-[#0369a1] rounded"
                 />
                 <span className="font-medium">I need down payment assistance</span>
               </label>
@@ -296,7 +296,7 @@ export default function BuyerPreferenceTool() {
                   type="checkbox"
                   checked={preferences.firstTimeBuyer}
                   onChange={(e) => setPreferences({ ...preferences, firstTimeBuyer: e.target.checked })}
-                  className="w-5 h-5 text-[#0ea5e9] rounded"
+                  className="w-5 h-5 text-[#0369a1] rounded"
                 />
                 <span className="font-medium">I am a first-time home buyer</span>
               </label>
@@ -313,14 +313,14 @@ export default function BuyerPreferenceTool() {
                 onClick={() => toggleSelection('propertyTypes', type)}
                 className={`p-4 rounded-lg border-2 text-left transition-all ${
                   preferences.propertyTypes.includes(type)
-                    ? 'border-[#0ea5e9] bg-[#0ea5e9]/10'
+                    ? 'border-[#0ea5e9] bg-[#0369a1]/10'
                     : 'border-gray-200 hover:border-[#0ea5e9]/50'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{type}</span>
                   {preferences.propertyTypes.includes(type) && (
-                    <CheckCircle2 className="w-5 h-5 text-[#0ea5e9]" />
+                    <CheckCircle2 className="w-5 h-5 text-[#0369a1]" />
                   )}
                 </div>
               </button>
@@ -338,29 +338,29 @@ export default function BuyerPreferenceTool() {
                   onClick={() => toggleSelection('locations', location)}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${
                     preferences.locations.includes(location)
-                      ? 'border-[#0ea5e9] bg-[#0ea5e9]/10'
+                      ? 'border-[#0ea5e9] bg-[#0369a1]/10'
                       : 'border-gray-200 hover:border-[#0ea5e9]/50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{location}</span>
                     {preferences.locations.includes(location) && (
-                      <CheckCircle2 className="w-5 h-5 text-[#0ea5e9]" />
+                      <CheckCircle2 className="w-5 h-5 text-[#0369a1]" />
                     )}
                   </div>
                 </button>
               ))}
             </div>
             <div className="pt-4">
-              <label className="block text-sm font-medium mb-2 text-gray-700">
+              <label htmlFor="field-specific-communities-or-cities" className="block text-sm font-medium mb-2 text-gray-700">
                 Specific communities or cities (optional)
               </label>
-              <input
+              <input id="field-specific-communities-or-cities"
                 type="text"
                 value={preferences.preferredCommunities}
                 onChange={(e) => setPreferences({ ...preferences, preferredCommunities: e.target.value })}
                 placeholder="e.g., Southport, Wilmington, Asheville"
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
               />
             </div>
           </div>
@@ -375,14 +375,14 @@ export default function BuyerPreferenceTool() {
                 onClick={() => toggleSelection('lifestyle', lifestyle)}
                 className={`p-4 rounded-lg border-2 text-left transition-all ${
                   preferences.lifestyle.includes(lifestyle)
-                    ? 'border-[#0ea5e9] bg-[#0ea5e9]/10'
+                    ? 'border-[#0ea5e9] bg-[#0369a1]/10'
                     : 'border-gray-200 hover:border-[#0ea5e9]/50'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{lifestyle}</span>
                   {preferences.lifestyle.includes(lifestyle) && (
-                    <CheckCircle2 className="w-5 h-5 text-[#0ea5e9]" />
+                    <CheckCircle2 className="w-5 h-5 text-[#0369a1]" />
                   )}
                 </div>
               </button>
@@ -394,24 +394,26 @@ export default function BuyerPreferenceTool() {
         {currentStep === 6 && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Budget Range</label>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div id="budget-range-label" className="block text-sm font-medium mb-2 text-gray-700">Budget Range</div>
+              <div role="group" aria-labelledby="budget-range-label" className="grid md:grid-cols-2 gap-4">
                 <div>
                   <input
+                    aria-label="Minimum budget"
                     type="number"
                     value={preferences.budgetMin}
                     onChange={(e) => setPreferences({ ...preferences, budgetMin: e.target.value })}
                     placeholder="Minimum"
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                   />
                 </div>
                 <div>
                   <input
+                    aria-label="Maximum budget"
                     type="number"
                     value={preferences.budgetMax}
                     onChange={(e) => setPreferences({ ...preferences, budgetMax: e.target.value })}
                     placeholder="Maximum"
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                   />
                 </div>
               </div>
@@ -419,11 +421,11 @@ export default function BuyerPreferenceTool() {
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700">Minimum Bedrooms</label>
-                <select
+                <label htmlFor="field-minimum-bedrooms" className="block text-sm font-medium mb-2 text-gray-700">Minimum Bedrooms</label>
+                <select id="field-minimum-bedrooms"
                   value={preferences.bedrooms}
                   onChange={(e) => setPreferences({ ...preferences, bedrooms: e.target.value })}
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                 >
                   <option value="">Any</option>
                   <option value="1">1+</option>
@@ -434,11 +436,11 @@ export default function BuyerPreferenceTool() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700">Minimum Bathrooms</label>
-                <select
+                <label htmlFor="field-minimum-bathrooms" className="block text-sm font-medium mb-2 text-gray-700">Minimum Bathrooms</label>
+                <select id="field-minimum-bathrooms"
                   value={preferences.bathrooms}
                   onChange={(e) => setPreferences({ ...preferences, bathrooms: e.target.value })}
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
                 >
                   <option value="">Any</option>
                   <option value="1">1+</option>
@@ -451,11 +453,11 @@ export default function BuyerPreferenceTool() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Timeline</label>
-              <select
+              <label htmlFor="field-timeline" className="block text-sm font-medium mb-2 text-gray-700">Timeline</label>
+              <select id="field-timeline"
                 value={preferences.timeline}
                 onChange={(e) => setPreferences({ ...preferences, timeline: e.target.value })}
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
               >
                 <option value="">Select timeline</option>
                 <option value="immediate">Ready to buy now</option>
@@ -466,13 +468,13 @@ export default function BuyerPreferenceTool() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Additional Notes (Optional)</label>
-              <textarea
+              <label htmlFor="field-additional-notes" className="block text-sm font-medium mb-2 text-gray-700">Additional Notes (Optional)</label>
+              <textarea id="field-additional-notes"
                 value={preferences.notes}
                 onChange={(e) => setPreferences({ ...preferences, notes: e.target.value })}
                 rows={3}
                 placeholder="Any other preferences or requirements?"
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
               />
             </div>
           </div>
@@ -482,33 +484,33 @@ export default function BuyerPreferenceTool() {
         {currentStep === 7 && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Full Name *</label>
-              <input
+              <label htmlFor="field-full-name" className="block text-sm font-medium mb-2 text-gray-700">Full Name *</label>
+              <input id="field-full-name"
                 type="text"
                 value={preferences.name}
                 onChange={(e) => setPreferences({ ...preferences, name: e.target.value })}
                 required
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Email Address *</label>
-              <input
+              <label htmlFor="field-email-address" className="block text-sm font-medium mb-2 text-gray-700">Email Address *</label>
+              <input id="field-email-address"
                 type="email"
                 value={preferences.email}
                 onChange={(e) => setPreferences({ ...preferences, email: e.target.value })}
                 required
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Phone Number *</label>
-              <input
+              <label htmlFor="field-phone-number" className="block text-sm font-medium mb-2 text-gray-700">Phone Number *</label>
+              <input id="field-phone-number"
                 type="tel"
                 value={preferences.phone}
                 onChange={(e) => setPreferences({ ...preferences, phone: e.target.value })}
                 required
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0369a1] focus:border-[#0ea5e9] outline-none"
               />
             </div>
             <p className="text-sm text-gray-600 mt-4">
@@ -532,7 +534,7 @@ export default function BuyerPreferenceTool() {
         {currentStep < steps.length ? (
           <button
             onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             Next
             <ChevronRight className="w-5 h-5" />
@@ -541,7 +543,7 @@ export default function BuyerPreferenceTool() {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !preferences.name || !preferences.email || !preferences.phone}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity font-medium"
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity font-medium"
           >
             {isSubmitting ? 'Submitting...' : 'Submit Preferences'}
           </button>

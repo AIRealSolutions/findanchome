@@ -126,9 +126,10 @@ export default async function LifestyleDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }}
       />
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-14 md:py-20">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-14 md:py-20">
         <div className="container mx-auto px-4">
           <nav aria-label="Breadcrumb" className="text-sm mb-6 text-white/80">
             <ol className="flex flex-wrap items-center gap-1">
@@ -175,7 +176,7 @@ export default async function LifestyleDetailPage({ params }: Props) {
         </div>
       </section>
 
-      <main className="flex-1 bg-white">
+      <div className="flex-1 bg-white">
         <div className="container mx-auto px-4 py-12 lg:py-16">
           <div className="grid lg:grid-cols-[1fr_280px] gap-12 max-w-6xl mx-auto">
             <article className="min-w-0">
@@ -198,17 +199,17 @@ export default async function LifestyleDetailPage({ params }: Props) {
                     return (
                     <div key={c.name} className="p-5 bg-sky-50 border border-sky-100 rounded-lg">
                       <h3 className="font-bold text-lg text-[#1e3a8a] mb-1">
-                        {guide ? <Link href={communityPath(guide)} className="hover:text-[#0ea5e9]">{c.name}</Link> : c.name}
+                        {guide ? <Link href={communityPath(guide)} className="hover:text-[#0369a1]">{c.name}</Link> : c.name}
                       </h3>
                       <Link
                         href={`/explore/${c.county}`}
-                        className="inline-flex items-center gap-1 text-sm text-[#0ea5e9] hover:underline mb-3"
+                        className="inline-flex items-center gap-1 text-sm text-[#0369a1] hover:underline mb-3"
                       >
                         <MapPin size={14} /> {COUNTY_NAMES[c.county]}
                       </Link>
                       <p className="text-gray-700 text-sm leading-relaxed">{c.description}</p>
                       {guide && (
-                        <Link href={communityPath(guide)} className="inline-block mt-3 text-sm font-semibold text-[#0ea5e9] hover:underline">
+                        <Link href={communityPath(guide)} className="inline-block mt-3 text-sm font-semibold text-[#0369a1] hover:underline">
                           {c.name} community guide →
                         </Link>
                       )}
@@ -235,7 +236,7 @@ export default async function LifestyleDetailPage({ params }: Props) {
                 <div className="grid sm:grid-cols-2 gap-6">
                   {lifestyle.living.map((item) => (
                     <div key={item.title} className="flex gap-3">
-                      <CheckCircle2 className="text-[#0ea5e9] shrink-0 mt-1" size={22} />
+                      <CheckCircle2 className="text-[#0369a1] shrink-0 mt-1" size={22} />
                       <div>
                         <h3 className="font-bold text-[#1e3a8a] mb-1">{item.title}</h3>
                         <p className="text-gray-700 text-sm leading-relaxed">{item.text}</p>
@@ -262,7 +263,7 @@ export default async function LifestyleDetailPage({ params }: Props) {
 
               {/* HUD call-out */}
               {lifestyle.showHud && (
-                <section className="mb-14 p-6 rounded-lg bg-gradient-to-r from-[#1e3a8a] to-[#0ea5e9] text-white">
+                <section className="mb-14 p-6 rounded-lg bg-gradient-to-r from-[#1e3a8a] to-[#0369a1] text-white">
                   <h2 className="text-xl md:text-2xl font-bold mb-2">HUD Homes: A Lightkeeper Realty Specialty</h2>
                   <p className="opacity-95 mb-4">
                     HUD homes can offer below-market prices, priority bidding for owner-occupants, and the $100 down FHA
@@ -279,7 +280,7 @@ export default async function LifestyleDetailPage({ params }: Props) {
                       className="inline-flex justify-center items-center gap-2 bg-white/20 hover:bg-white/30 px-5 py-2 rounded-lg border border-white/40 font-bold"
                     >
                       NC HUD Listings on USAhudhomes.com <ExternalLink size={16} />
-                    </a>
+                    <span className="sr-only"> (opens in a new tab)</span></a>
                   </div>
                 </section>
               )}
@@ -314,7 +315,7 @@ export default async function LifestyleDetailPage({ params }: Props) {
                     >
                       <span className="text-3xl" aria-hidden>{r.emoji}</span>
                       <span>
-                        <span className="block font-bold text-[#1e3a8a] group-hover:text-[#0ea5e9]">{r.name}</span>
+                        <span className="block font-bold text-[#1e3a8a] group-hover:text-[#0369a1]">{r.name}</span>
                         <span className="block text-sm text-gray-600">{r.description}</span>
                       </span>
                     </Link>
@@ -331,7 +332,7 @@ export default async function LifestyleDetailPage({ params }: Props) {
                   <ul className="space-y-2 text-sm">
                     {toc.map((t) => (
                       <li key={t.id}>
-                        <a href={`#${t.id}`} className="text-[#1e3a8a] hover:text-[#0ea5e9]">{t.label}</a>
+                        <a href={`#${t.id}`} className="text-[#1e3a8a] hover:text-[#0369a1]">{t.label}</a>
                       </li>
                     ))}
                   </ul>
@@ -355,10 +356,11 @@ export default async function LifestyleDetailPage({ params }: Props) {
             </aside>
           </div>
         </div>
-      </main>
+      </div>
 
       <ConsultationCTA title={lifestyle.ctaTitle} text={lifestyle.ctaText} context={{ lifestyles: [lifestyle.slug] }} />
 
+      </main>
       <SiteFooter />
     </div>
   );

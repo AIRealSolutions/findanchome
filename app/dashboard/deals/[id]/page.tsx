@@ -225,7 +225,7 @@ export default function DealDetailPage() {
                   <Field key={x.field} label={`${x.icon} ${x.label}`}>
                     <input type="date" value={v ?? ''} onChange={setField(x.field)} className={inputCls} />
                     {n != null && open && x.field !== 'effective_date' && (
-                      <span className={`block text-xs mt-1 ${n < 0 ? 'text-gray-400' : n <= 2 ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
+                      <span className={`block text-xs mt-1 ${n < 0 ? 'text-gray-500' : n <= 2 ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
                         {n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : n > 0 ? `In ${n} days` : `${-n} days ago`}
                       </span>
                     )}
@@ -298,16 +298,16 @@ export default function DealDetailPage() {
                   const late = !t.done_at && due && due < today;
                   return (
                     <li key={t.id} className="flex items-start gap-2 py-1 group">
-                      <input type="checkbox" checked={!!t.done_at} disabled={saving} className="rounded mt-1"
+                      <input aria-label={`Mark “${t.title}” done`} type="checkbox" checked={!!t.done_at} disabled={saving} className="rounded mt-1"
                         onChange={(e) => run(async () => (await createClient().from('fanc_deal_tasks').update({ done_at: e.target.checked ? new Date().toISOString() : null }).eq('id', t.id)).error?.message ?? '')} />
                       <div className="flex-1 min-w-0 text-sm">
-                        <span className={t.done_at ? 'line-through text-gray-400' : 'text-gray-900'}>{t.title}</span>
+                        <span className={t.done_at ? 'line-through text-gray-500' : 'text-gray-900'}>{t.title}</span>
                         {due ? (
                           <span className={`block text-xs ${late ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
                             {formatDate(due, { weekday: 'short', month: 'short', day: 'numeric' })}{late && ' · overdue'}
                           </span>
                         ) : t.anchor ? (
-                          <span className="block text-xs text-gray-400">Set the {DEAL_DATES.find((x) => x.field === t.anchor)?.label.toLowerCase()} to date this</span>
+                          <span className="block text-xs text-gray-500">Set the {DEAL_DATES.find((x) => x.field === t.anchor)?.label.toLowerCase()} to date this</span>
                         ) : null}
                       </div>
                       <button title="Delete task" disabled={saving} className="p-1 text-gray-300 hover:text-red-600 opacity-0 group-hover:opacity-100 focus:opacity-100"
@@ -327,8 +327,8 @@ export default function DealDetailPage() {
                 setNewTask({ title: '', due: '' });
                 run(async () => (await createClient().from('fanc_deal_tasks').insert(row)).error?.message ?? '');
               }}>
-              <input value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} placeholder="Add a task" className={`${inputCls} text-sm`} />
-              <input type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} className="px-2 py-2 border border-gray-300 rounded-lg text-sm w-36" />
+              <input aria-label="New task" value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} placeholder="Add a task" className={`${inputCls} text-sm`} />
+              <input aria-label="Task due date" type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} className="px-2 py-2 border border-gray-300 rounded-lg text-sm w-36" />
               <button type="submit" disabled={!newTask.title.trim()} className="p-2 bg-blue-600 text-white rounded-lg disabled:opacity-50" aria-label="Add task"><Plus size={16} /></button>
             </form>
           </Section>
@@ -340,7 +340,7 @@ export default function DealDetailPage() {
                 {deal.side !== 'seller' && ' and sets their home anniversary'}.
               </p>
               <div className="flex gap-2">
-                <input type="date" value={closingOn} onChange={(e) => setClosingOn(e.target.value)} className={`${inputCls} text-sm`} />
+                <input aria-label="Closing date" type="date" value={closingOn} onChange={(e) => setClosingOn(e.target.value)} className={`${inputCls} text-sm`} />
                 <button disabled={saving || !closingOn || !!dirty} onClick={() => run(() => closeDeal(deal, closingOn, author))}
                   className="shrink-0 inline-flex items-center gap-1 px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50">
                   <CheckCircle2 size={16} /> Mark closed

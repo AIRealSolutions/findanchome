@@ -129,9 +129,10 @@ export default async function CommunityDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }}
       />
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-14 md:py-20">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-14 md:py-20">
         <div className="container mx-auto px-4">
           <nav aria-label="Breadcrumb" className="text-sm mb-6 text-white/80">
             <ol className="flex flex-wrap items-center gap-1">
@@ -182,7 +183,7 @@ export default async function CommunityDetailPage({ params }: Props) {
         </div>
       </section>
 
-      <main className="flex-1 bg-white">
+      <div className="flex-1 bg-white">
         <div className="container mx-auto px-4 py-12 lg:py-16">
           <div className="grid lg:grid-cols-[1fr_280px] gap-12 max-w-6xl mx-auto">
             <article className="min-w-0">
@@ -200,7 +201,7 @@ export default async function CommunityDetailPage({ params }: Props) {
                 <div className="grid sm:grid-cols-2 gap-6">
                   {community.highlights.map((item) => (
                     <div key={item.title} className="flex gap-3">
-                      <CheckCircle2 className="text-[#0ea5e9] shrink-0 mt-1" size={22} />
+                      <CheckCircle2 className="text-[#0369a1] shrink-0 mt-1" size={22} />
                       <div>
                         <h3 className="font-bold text-[#1e3a8a] mb-1">{item.title}</h3>
                         <p className="text-gray-700 text-sm leading-relaxed">{item.text}</p>
@@ -289,7 +290,7 @@ export default async function CommunityDetailPage({ params }: Props) {
                       href={communityPath(c)}
                       className="group block p-4 border-2 border-gray-200 hover:border-[#0ea5e9] rounded-lg transition-colors"
                     >
-                      <span className="block font-bold text-[#1e3a8a] group-hover:text-[#0ea5e9]">{c.name}</span>
+                      <span className="block font-bold text-[#1e3a8a] group-hover:text-[#0369a1]">{c.name}</span>
                       <span className="block text-xs text-gray-500 mb-1">{COUNTY_NAMES[c.county]}</span>
                       <span className="block text-sm text-gray-600">{c.summary}</span>
                     </Link>
@@ -306,7 +307,7 @@ export default async function CommunityDetailPage({ params }: Props) {
                   <ul className="space-y-2 text-sm">
                     {toc.map((t) => (
                       <li key={t.id}>
-                        <a href={`#${t.id}`} className="text-[#1e3a8a] hover:text-[#0ea5e9]">{t.label}</a>
+                        <a href={`#${t.id}`} className="text-[#1e3a8a] hover:text-[#0369a1]">{t.label}</a>
                       </li>
                     ))}
                   </ul>
@@ -330,7 +331,7 @@ export default async function CommunityDetailPage({ params }: Props) {
             </aside>
           </div>
         </div>
-      </main>
+      </div>
 
       <ConsultationCTA
         title={`Ready to Find Your Home in ${community.name}?`}
@@ -338,6 +339,7 @@ export default async function CommunityDetailPage({ params }: Props) {
         context={{ counties: [community.county], communities: [community.slug] }}
       />
 
+      </main>
       <SiteFooter />
     </div>
   );

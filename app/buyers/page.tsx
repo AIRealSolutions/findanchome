@@ -9,7 +9,8 @@ export default function BuyersPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-16">
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Buyer Resources & Guides</h1>
           <p className="text-xl opacity-90">Everything you need to know about buying a home in Southeastern North Carolina</p>
@@ -25,9 +26,9 @@ export default function BuyersPage() {
               { icon: Home, title: "Regional Guides", desc: "Explore each county and community in detail" },
               { icon: Users, title: "Buyer Services", desc: "Learn about representation and support" }
             ].map((item, idx) => (
-              <div key={idx} className="p-6 bg-gradient-to-br from-[#0ea5e9]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
-                <item.icon className="w-8 h-8 text-[#0ea5e9] mb-4" />
-                <h3 className="font-bold text-lg text-[#1e3a8a] mb-2">{item.title}</h3>
+              <div key={idx} className="p-6 bg-gradient-to-br from-[#0369a1]/10 to-[#fbbf24]/10 border-l-4 border-[#0ea5e9] rounded-lg">
+                <item.icon className="w-8 h-8 text-[#0369a1] mb-4" />
+                <h2 className="font-bold text-lg text-[#1e3a8a] mb-2">{item.title}</h2>
                 <p className="text-gray-700">{item.desc}</p>
               </div>
             ))}
@@ -39,10 +40,10 @@ export default function BuyersPage() {
               We offer full buyer representation to help you navigate the home buying process. From initial consultation to closing, we're here to help you find the right home.
             </p>
             <div className="flex gap-4 flex-wrap">
-              <Link href="/search" className="bg-[#0ea5e9] text-white px-6 py-2 rounded-lg hover:opacity-90 font-medium">
+              <Link href="/search" className="bg-[#0369a1] text-white px-6 py-2 rounded-lg hover:opacity-90 font-medium">
                 Search Homes
               </Link>
-              <Link href="/lifestyle" className="bg-white text-[#0ea5e9] border-2 border-[#0ea5e9] px-6 py-2 rounded-lg hover:bg-[#0ea5e9]/5 font-medium">
+              <Link href="/lifestyle" className="bg-white text-[#0369a1] border-2 border-[#0ea5e9] px-6 py-2 rounded-lg hover:bg-[#0369a1]/5 font-medium">
                 Find Your Lifestyle
               </Link>
             </div>
@@ -52,6 +53,7 @@ export default function BuyersPage() {
 
       <ConsultationCTA title="Start Your Home Search With a Plan" context={{ intent: ['buy'] }} />
 
+      </main>
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

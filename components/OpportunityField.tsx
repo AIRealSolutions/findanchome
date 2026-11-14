@@ -84,7 +84,7 @@ export function OpportunityPhotos({ oppId, editable, author }: { oppId: string; 
                 <a href={urls[p.path]} target="_blank" rel="noopener noreferrer">
                   {/* eslint-disable-next-line @next/next/no-img-element -- private signed URL */}
                   <img src={urls[p.path]} alt={p.caption ?? 'Property photo'} className="w-full aspect-square object-cover rounded-lg border border-gray-200" />
-                </a>
+                <span className="sr-only"> (opens in a new tab)</span></a>
               ) : <div className="w-full aspect-square rounded-lg bg-gray-100" />}
               {p.taken_at && <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/60 text-white text-[10px]">{formatDate(p.taken_at, { month: 'short', day: 'numeric' })}</span>}
               {editable && (
@@ -164,7 +164,7 @@ export function LocationOwner({ opp, editable, author, onChanged }: { opp: Listi
             <div className="flex flex-wrap gap-2">
               {links.map((l) => (
                 <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" title={l.hint}
-                  className="px-2.5 py-1 rounded-full border border-gray-300 text-xs text-gray-700 hover:border-blue-400 hover:text-blue-700">{l.label} ↗</a>
+                  className="px-2.5 py-1 rounded-full border border-gray-300 text-xs text-gray-700 hover:border-blue-400 hover:text-blue-700">{l.label} ↗<span className="sr-only"> (opens in a new tab)</span></a>
               ))}
             </div>
           )}
@@ -292,7 +292,7 @@ export function SituationPanel({ opp, editable, author, onChanged }: { opp: List
                     {t.done_at && <Check size={14} />}
                   </button>
                   <div className="min-w-0">
-                    <p className={`text-sm ${t.done_at ? 'line-through text-gray-400' : 'text-gray-900'}`}>{t.title}</p>
+                    <p className={`text-sm ${t.done_at ? 'line-through text-gray-500' : 'text-gray-900'}`}>{t.title}</p>
                     {t.detail && !t.done_at && <p className="text-xs text-gray-500">{t.detail}</p>}
                     {t.due_date && !t.done_at && <p className={`text-xs ${late ? 'text-red-600 font-medium' : 'text-gray-500'}`}>{late ? 'Overdue · ' : ''}Due {formatDate(t.due_date, { weekday: 'short', month: 'short', day: 'numeric' })}</p>}
                   </div>
@@ -302,8 +302,8 @@ export function SituationPanel({ opp, editable, author, onChanged }: { opp: List
           </ul>
           {editable && (
             <form onSubmit={addTask} className="mt-2 flex gap-2">
-              <input value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} placeholder="Add a step…" className="flex-1 min-w-0 px-3 py-1.5 border border-gray-300 rounded-lg text-sm" />
-              <input type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} className="px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
+              <input aria-label="New step" value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} placeholder="Add a step…" className="flex-1 min-w-0 px-3 py-1.5 border border-gray-300 rounded-lg text-sm" />
+              <input aria-label="Step due date" type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} className="px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
               <button className="p-2 bg-blue-600 text-white rounded-lg" aria-label="Add step"><Plus size={16} /></button>
             </form>
           )}

@@ -89,7 +89,7 @@ export default function ClientReferrals({ client, author, onChanged }: {
 
       {picking && (
         <div className="mt-2">
-          <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your clients by name"
+          <input aria-label="Search your clients by name" autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your clients by name"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
           {matches.length > 0 && (
             <ul className="mt-1 border border-gray-200 rounded-lg divide-y divide-gray-100">
@@ -107,7 +107,7 @@ export default function ClientReferrals({ client, author, onChanged }: {
       <div className="mt-3 text-sm">
         <span className="text-gray-500">Has referred: </span>
         {referrals.length === 0 ? (
-          <span className="text-gray-400">no one yet</span>
+          <span className="text-gray-500">no one yet</span>
         ) : (
           <>
             <strong>{referrals.length}</strong>

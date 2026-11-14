@@ -92,9 +92,10 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col focus:outline-none">
 
       {/* Page Header */}
-      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0ea5e9] to-[#1e3a8a] text-white py-12">
+      <section className="bg-gradient-to-r from-[#1e3a8a] via-[#0369a1] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Explore Southeastern North Carolina</h1>
@@ -121,7 +122,7 @@ export default function ExplorePage() {
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="mb-2">
                       <div className="text-4xl mb-2">{county.icon}</div>
-                      <h2 className="text-2xl font-bold text-[#1e3a8a] group-hover:text-[#0ea5e9] transition-colors">{county.name}</h2>
+                      <h2 className="text-2xl font-bold text-[#1e3a8a] group-hover:text-[#0369a1] transition-colors">{county.name}</h2>
                     </div>
 
                     <p className="text-gray-700 text-sm mb-4 flex-1">{county.description}</p>
@@ -129,7 +130,7 @@ export default function ExplorePage() {
                     {/* Key Stats */}
                     <div className="space-y-3 mb-4 text-sm">
                       <div className="flex items-start gap-2">
-                        <Users size={16} className="text-[#0ea5e9] mt-0.5 flex-shrink-0" />
+                        <Users size={16} className="text-[#0369a1] mt-0.5 flex-shrink-0" />
                         <div>
                           <div className="font-medium text-[#1e3a8a]">Population</div>
                           <div className="text-gray-600">{county.population}</div>
@@ -149,7 +150,7 @@ export default function ExplorePage() {
                       <div className="font-medium text-[#1e3a8a] text-sm mb-2">Key Communities</div>
                       <div className="flex flex-wrap gap-2">
                         {county.highlights.slice(0, 3).map((highlight, idx) => (
-                          <span key={idx} className="text-xs bg-[#0ea5e9]/10 text-[#0ea5e9] px-2 py-1 rounded">
+                          <span key={idx} className="text-xs bg-[#0369a1]/10 text-[#0369a1] px-2 py-1 rounded">
                             {highlight}
                           </span>
                         ))}
@@ -157,7 +158,7 @@ export default function ExplorePage() {
                     </div>
 
                     {/* CTA */}
-                    <div className="flex items-center gap-1 text-[#0ea5e9] font-medium text-sm group-hover:gap-2 transition-all">
+                    <div className="flex items-center gap-1 text-[#0369a1] font-medium text-sm group-hover:gap-2 transition-all">
                       Explore County <ChevronRight size={16} />
                     </div>
                   </div>
@@ -181,6 +182,7 @@ export default function ExplorePage() {
 
       <ConsultationCTA title="Not Sure Which County Fits You?" />
 
+      </main>
       {/* Footer */}
       <footer className="bg-gradient-to-r from-[#1e3a8a] via-[#0c4a6e] to-[#1e3a8a] text-white py-12">
         <div className="container mx-auto px-4">
