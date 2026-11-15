@@ -41,6 +41,8 @@ export async function convertLead(l: Lead, author: { id: string; name: string })
   const supabase = createClient();
   const { data: already } = await supabase.from('fanc_clients').select('id').eq('consultation_id', l.id).maybeSingle();
   if (already) return { id: already.id, linked: true };
+  // Attached to a contact record when the request came in.
+  if (l.client_id) return { id: l.client_id, linked: true };
 
   const email = cleanEmail(l.email);
   const note = (client_id: string, body: string) =>

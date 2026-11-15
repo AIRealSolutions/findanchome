@@ -31,6 +31,8 @@ export interface Lead {
   follow_up_at: string | null;
   last_contacted_at: string | null;
   notes: string | null;
+  /** Their contact record in the client database, attached when the request came in (unified_intake.sql). */
+  client_id?: string | null;
 }
 
 export interface LeadActivity {

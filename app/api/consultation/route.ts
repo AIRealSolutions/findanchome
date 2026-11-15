@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { BROKERAGE, absoluteUrl } from '@/lib/site';
+import { absoluteUrl } from '@/lib/site';
 import { VALID, labelFor, type ConsultationPayload } from '@/lib/consultation';
+import { CALL_US, alertTeam, fail, intakeDb, isBot, readBody, userAgent } from '@/lib/intake-server';
 
-// Saves consultation requests to Supabase (fanc_consultation_requests, insert-only for the public)
-// and, when RESEND_API_KEY is set, emails a summary to CONSULTATION_NOTIFY_EMAIL (default: the broker).
+// Consultation requests and buyer preference answers. Saved to fanc_consultation_requests (insert-only for the
+// public), attached to the person's contact record by the database, and emailed to the team (lib/intake-server.ts).
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,20 +21,14 @@ function pick(v: unknown, allowed: Set<string>) {
 }
 
 export async function POST(request: Request) {
-  let body: Partial<ConsultationPayload>;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
-  }
-
-  // Bots fill in the hidden field; pretend it worked.
-  if (str(body.company, 200)) return NextResponse.json({ ok: true });
+  const body = await readBody<ConsultationPayload>(request);
+  if (!body) return fail('Invalid request.');
+  if (isBot(body)) return NextResponse.json({ ok: true });
 
   const name = str(body.name, 200);
   const email = str(body.email, 320);
-  if (!name) return NextResponse.json({ error: 'Please enter your name.' }, { status: 400 });
-  if (!EMAIL_RE.test(email)) return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 });
+  if (!name) return fail('Please enter your name.');
+  if (!EMAIL_RE.test(email)) return fail('Please enter a valid email address.');
 
   const row = {
     name,
@@ -52,67 +46,41 @@ export async function POST(request: Request) {
     must_haves: list(body.mustHaves, VALID.mustHaves),
     message: str(body.message, 5000) || null,
     source_page: str(body.sourcePage, 300) || null,
-    user_agent: str(request.headers.get('user-agent'), 500) || null,
+    user_agent: userAgent(request),
   };
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) {
-    console.error('Consultation request: Supabase environment variables are missing');
-    return NextResponse.json({ error: 'We could not send your request. Please call us instead.' }, { status: 500 });
-  }
-
-  const supabase = createClient(url, key, { auth: { persistSession: false } });
-  const { error } = await supabase.from('fanc_consultation_requests').insert(row);
+  const db = await intakeDb(request, { anonymous: true });
+  if ('error' in db) return db.error;
+  const { error } = await db.supabase.from('fanc_consultation_requests').insert(row);
   if (error) {
     console.error('Consultation request insert failed:', error.message);
-    return NextResponse.json({ error: 'We could not send your request. Please call us instead.' }, { status: 500 });
+    return fail(CALL_US, 500);
   }
 
-  await notify(row).catch((err) => console.error('Consultation notification failed:', err));
+  const join = (kind: Parameters<typeof labelFor>[0], values: string[]) => values.map((v) => labelFor(kind, v)).join(', ') || '—';
+  await alertTeam({
+    subject: `New consultation request: ${row.name}`,
+    heading: 'New consultation request',
+    replyTo: row.email,
+    action: { label: 'Open Leads in the dashboard', url: absoluteUrl('/dashboard/leads') },
+    lines: [
+      ['Name', row.name],
+      ['Email', row.email],
+      ['Phone', row.phone ?? '—'],
+      ['Preferred contact', row.preferred_contact ?? '—'],
+      ['Looking to', join('intent', row.intent)],
+      ['Timeframe', row.timeframe ?? '—'],
+      ['Price range', row.price_range ?? '—'],
+      ['Financing', row.financing ?? '—'],
+      ['Counties', join('counties', row.counties)],
+      ['Communities', join('communities', row.communities)],
+      ['Neighborhoods', join('neighborhoods', row.neighborhoods)],
+      ['Lifestyles', join('lifestyles', row.lifestyles)],
+      ['Must-haves', row.must_haves.join(', ') || '—'],
+      ['Message', row.message ?? '—'],
+      ['Submitted from', row.source_page ? absoluteUrl(row.source_page) : '—'],
+    ],
+  });
 
   return NextResponse.json({ ok: true });
-}
-
-async function notify(row: Record<string, unknown>) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return;
-
-  const join = (kind: Parameters<typeof labelFor>[0], values: unknown) =>
-    (values as string[]).map((v) => labelFor(kind, v)).join(', ') || '—';
-  const lines: [string, string][] = [
-    ['Name', String(row.name)],
-    ['Email', String(row.email)],
-    ['Phone', String(row.phone ?? '—')],
-    ['Preferred contact', String(row.preferred_contact ?? '—')],
-    ['Looking to', join('intent', row.intent)],
-    ['Timeframe', String(row.timeframe ?? '—')],
-    ['Price range', String(row.price_range ?? '—')],
-    ['Financing', String(row.financing ?? '—')],
-    ['Counties', join('counties', row.counties)],
-    ['Communities', join('communities', row.communities)],
-    ['Neighborhoods', join('neighborhoods', row.neighborhoods)],
-    ['Lifestyles', join('lifestyles', row.lifestyles)],
-    ['Must-haves', (row.must_haves as string[]).join(', ') || '—'],
-    ['Message', String(row.message ?? '—')],
-    ['Submitted from', row.source_page ? absoluteUrl(String(row.source_page)) : '—'],
-  ];
-  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: process.env.CONSULTATION_FROM_EMAIL || 'FindaNChome.com <onboarding@resend.dev>',
-      to: [process.env.CONSULTATION_NOTIFY_EMAIL || BROKERAGE.email],
-      reply_to: String(row.email),
-      subject: `New consultation request: ${row.name}`,
-      text: lines.map(([k, v]) => `${k}: ${v}`).join('\n'),
-      html: `<h2>New consultation request</h2><table cellpadding="6">${lines
-        .map(([k, v]) => `<tr><td><strong>${esc(k)}</strong></td><td>${esc(v).replace(/\n/g, '<br>')}</td></tr>`)
-        .join('')}</table>`,
-    }),
-  }).then((res) => {
-    if (!res.ok) throw new Error(`Resend responded ${res.status}`);
-  });
 }

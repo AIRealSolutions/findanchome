@@ -227,6 +227,7 @@ export default function LeadsPage() {
                     </Link>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${st.className}`}>{st.label}</span>
                     {l.priority !== 'warm' && <span className={`text-xs px-2 py-0.5 rounded-full ${pr.className}`}>{pr.label}</span>}
+                    {l.client_id && <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800">In client database</span>}
                     {fu === 'overdue' && <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-800">Follow-up overdue</span>}
                     {fu === 'today' && <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Follow up today</span>}
                   </div>

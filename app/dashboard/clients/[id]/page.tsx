@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import ClientDates from '@/components/ClientDates';
 import ClientReferrals from '@/components/ClientReferrals';
 import ClientDeals from '@/components/ClientDeals';
+import ClientRequests from '@/components/ClientRequests';
 import { createClient } from '@/lib/supabase/client';
 import { ACTIVITY_KINDS, dialable, formatDateTime, relativeTime, toLocalInput } from '@/lib/leads';
 import { NO_YEAR, cleanEmail, cleanPhone, cleanState, splitList } from '@/lib/client-import';
@@ -405,9 +406,6 @@ export default function ClientDetailPage() {
                 <Row label="Source">
                   {client.source}
                   {client.source_created_at && <span className="text-gray-500"> · added {formatDate(client.source_created_at)}</span>}
-                  {client.consultation_id && (
-                    <Link href={`/dashboard/leads/${client.consultation_id}`} className="block text-blue-600 hover:underline">View their consultation request</Link>
-                  )}
                 </Row>
               </dl>
               {client.notes && (
@@ -415,6 +413,8 @@ export default function ClientDetailPage() {
               )}
             </Section>
           )}
+
+          <ClientRequests clientId={client.id} consultationId={client.consultation_id} />
 
           <ClientDeals client={client} author={{ id: user?.id ?? '', name: authorName }} />
 
