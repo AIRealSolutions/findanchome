@@ -8,6 +8,7 @@ import { OPEN_LISTING_STAGES } from '@/lib/listings';
 import { unreadCount } from '@/lib/messages';
 import { ViewAsProvider, useViewAs, type ViewRole } from '@/lib/view-as';
 import { DEPARTMENTS, type DeptKey } from '@/components/admin/departments';
+import EmailStatusNotice from '@/components/EmailStatusNotice';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -271,6 +272,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             <button onClick={() => { setViewAs('admin'); router.push('/dashboard'); }} className="underline font-medium">Back to the Control Center</button>
           </div>
         )}
+        {isAdmin && <EmailStatusNotice />}
         <main id="main-content" tabIndex={-1} className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 focus:outline-none">
           {children}
         </main>
