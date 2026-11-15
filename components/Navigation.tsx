@@ -69,7 +69,7 @@ export default function Navigation() {
             <a href={`mailto:${BROKERAGE.email}`} className="hidden lg:inline-flex items-center gap-1.5 hover:text-white transition-colors">
               <Mail size={13} /> Email us
             </a>
-            <Link href="/login" className="hover:text-white transition-colors">
+            <Link href="/join" className="hover:text-white transition-colors">
               Client login
             </Link>
           </div>
@@ -212,7 +212,7 @@ export default function Navigation() {
                 </a>
               </div>
               <Link
-                href="/login"
+                href="/join"
                 onClick={() => setMobileMenuOpen(false)}
                 className="mt-3 text-center py-3 text-slate-600 font-medium"
               >

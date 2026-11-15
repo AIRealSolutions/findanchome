@@ -147,9 +147,9 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-500">
-            Client portal?{' '}
-            <a href="/" className="text-blue-600 hover:text-blue-800 font-medium">
-              Return to main site
+            Buying or selling with us?{' '}
+            <a href="/join" className="text-blue-600 hover:text-blue-800 font-medium">
+              Get a client sign-in link
             </a>
           </p>
         </div>

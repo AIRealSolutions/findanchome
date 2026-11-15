@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
 interface PreferenceData {
   // Contact
@@ -83,10 +82,25 @@ const steps = [
   }
 ]
 
+// The tool's own wording → the lead form's options (lib/consultation.ts).
+const TIMELINES: Record<string, string> = {
+  immediate: 'As soon as possible',
+  '3-6 months': '3–6 months',
+  '6-12 months': '6–12 months',
+  'just browsing': 'Just exploring',
+}
+const FINANCING: Record<string, string> = {
+  'FHA Loan': 'FHA loan',
+  'VA Loan': 'VA loan',
+  'USDA Loan': 'USDA loan',
+  'Conventional Loan': 'Conventional',
+}
+
 export default function BuyerPreferenceTool() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   
   const [preferences, setPreferences] = useState<PreferenceData>({
     name: '',
@@ -125,64 +139,87 @@ export default function BuyerPreferenceTool() {
     }
   }
 
+  // Sends the answers to the same place as every other consultation request, so they show up under
+  // Leads in the dashboard and trigger the new-lead email. Answers that have no matching lead field
+  // (property type, beds/baths, region…) go in the message.
   const handleSubmit = async () => {
     setIsSubmitting(true)
-    
-    try {
-      const supabase = createClient()
-      
-      const { error } = await supabase
-        .from('buyer_preferences')
-        .insert([
-          {
-            name: preferences.name,
-            email: preferences.email,
-            phone: preferences.phone,
-            interested_in_hud_homes: preferences.programs.includes('HUD Homes'),
-            interested_in_reo_properties: preferences.programs.includes('REO Properties'),
-            interested_in_conventional: preferences.programs.includes('Conventional Homes'),
-            interested_in_new_construction: preferences.programs.includes('New Construction'),
-            interested_in_fha: preferences.financing.includes('FHA Loan'),
-            interested_in_va: preferences.financing.includes('VA Loan'),
-            interested_in_usda: preferences.financing.includes('USDA Loan'),
-            interested_in_conventional_loan: preferences.financing.includes('Conventional Loan'),
-            needs_down_payment_assistance: preferences.needsAssistance,
-            property_type_single_family: preferences.propertyTypes.includes('Single Family'),
-            property_type_condo: preferences.propertyTypes.includes('Condo'),
-            property_type_townhouse: preferences.propertyTypes.includes('Townhouse'),
-            property_type_land: preferences.propertyTypes.includes('Land'),
-            property_type_manufactured: preferences.propertyTypes.includes('Manufactured'),
-            location_coastal: preferences.locations.includes('Coastal'),
-            location_mountains: preferences.locations.includes('Mountains'),
-            location_piedmont: preferences.locations.includes('Piedmont'),
-            location_triangle: preferences.locations.includes('Triangle'),
-            location_charlotte: preferences.locations.includes('Charlotte'),
-            preferred_communities: preferences.preferredCommunities,
-            lifestyle_waterfront: preferences.lifestyle.includes('Waterfront'),
-            lifestyle_golf_community: preferences.lifestyle.includes('Golf Community'),
-            lifestyle_rural: preferences.lifestyle.includes('Rural'),
-            lifestyle_urban: preferences.lifestyle.includes('Urban'),
-            lifestyle_suburban: preferences.lifestyle.includes('Suburban'),
-            lifestyle_retirement: preferences.lifestyle.includes('Retirement'),
-            budget_min: preferences.budgetMin ? parseInt(preferences.budgetMin) : null,
-            budget_max: preferences.budgetMax ? parseInt(preferences.budgetMax) : null,
-            bedrooms_min: preferences.bedrooms ? parseInt(preferences.bedrooms) : null,
-            bathrooms_min: preferences.bathrooms ? parseFloat(preferences.bathrooms) : null,
-            timeline: preferences.timeline,
-            is_first_time_buyer: preferences.firstTimeBuyer,
-            additional_notes: preferences.notes
-          }
-        ])
+    setSubmitError('')
+    const p = preferences
+    const has = (list: string[], v: string) => list.includes(v)
 
-      if (error) {
-        console.error('Error submitting preferences:', error)
-        alert('There was an error submitting your preferences. Please try again.')
-      } else {
-        setIsComplete(true)
-      }
-    } catch (error) {
-      console.error('Error:', error)
-      alert('There was an error submitting your preferences. Please try again.')
+    const intent = ['buy']
+    if (has(p.programs, 'HUD Homes')) intent.push('hud')
+    if (has(p.programs, 'New Construction') || has(p.propertyTypes, 'Land')) intent.push('build')
+
+    const lifestyles = [
+      has(p.lifestyle, 'Waterfront') && 'waterfront',
+      has(p.lifestyle, 'Golf Community') && 'golf',
+      has(p.lifestyle, 'Retirement') && 'retirement',
+      has(p.lifestyle, 'Rural') && 'acreage',
+      has(p.programs, 'New Construction') && 'new-construction',
+      p.firstTimeBuyer && 'first-time',
+    ].filter(Boolean)
+    const mustHaves = [
+      has(p.lifestyle, 'Waterfront') && 'Waterfront or deep-water dock',
+      has(p.lifestyle, 'Golf Community') && 'Golf course community',
+      has(p.lifestyle, 'Rural') && 'Acreage / no HOA',
+      has(p.programs, 'New Construction') && 'New construction',
+    ].filter(Boolean)
+
+    const max = parseInt(p.budgetMax)
+    const priceRange = !max ? undefined
+      : max < 250000 ? 'Under $250k'
+      : max <= 400000 ? '$250k–$400k'
+      : max <= 600000 ? '$400k–$600k'
+      : max <= 850000 ? '$600k–$850k'
+      : max <= 1200000 ? '$850k–$1.2M'
+      : '$1.2M+'
+    const money = (v: string) => (parseInt(v) ? `$${parseInt(v).toLocaleString('en-US')}` : '')
+    const budget = [money(p.budgetMin), money(p.budgetMax)].filter(Boolean).join(' to ')
+
+    const details: [string, string][] = [
+      ['Programs', p.programs.join(', ')],
+      ['Financing', p.financing.join(', ')],
+      ['Down payment assistance', p.needsAssistance ? 'Yes' : ''],
+      ['First-time buyer', p.firstTimeBuyer ? 'Yes' : ''],
+      ['Property types', p.propertyTypes.join(', ')],
+      ['Regions', p.locations.join(', ')],
+      ['Preferred communities', p.preferredCommunities.trim()],
+      ['Lifestyle', p.lifestyle.join(', ')],
+      ['Budget', budget],
+      ['Bedrooms', p.bedrooms ? `${p.bedrooms}+` : ''],
+      ['Bathrooms', p.bathrooms ? `${p.bathrooms}+` : ''],
+      ['Notes', p.notes.trim()],
+    ]
+    const message = ['From the Buyer Preference Tool', ...details.filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`)].join('\n')
+
+    try {
+      const res = await fetch('/api/consultation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: p.name,
+          email: p.email,
+          phone: p.phone,
+          intent,
+          timeframe: TIMELINES[p.timeline],
+          priceRange,
+          financing: p.financing.length === 1 ? FINANCING[p.financing[0]] : undefined,
+          counties: [],
+          communities: [],
+          neighborhoods: [],
+          lifestyles,
+          mustHaves,
+          message,
+          sourcePage: '/education/buyer-preferences',
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'We could not send your preferences. Please try again or call us.')
+      setIsComplete(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'We could not send your preferences. Please try again or call us.')
     } finally {
       setIsSubmitting(false)
     }
@@ -519,6 +556,8 @@ export default function BuyerPreferenceTool() {
           </div>
         )}
       </div>
+
+      {submitError && <p role="alert" className="mt-4 text-red-700 font-medium">{submitError}</p>}
 
       {/* Navigation Buttons */}
       <div className="flex justify-between mt-6">
