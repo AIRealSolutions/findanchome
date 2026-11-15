@@ -77,7 +77,7 @@ async function fetchLead(id: string) {
   return {
     lead: (l as Lead | null) ?? null,
     activity: (a ?? []) as LeadActivity[],
-    clientId: (c?.id as string | undefined) ?? null,
+    clientId: (c?.id as string | undefined) ?? (l as Lead | null)?.client_id ?? null,
     error: (e1 || e2)?.message ?? '',
   };
 }
@@ -265,7 +265,7 @@ export default function LeadDetailPage() {
               )}
               {clientId ? (
                 <Link href={`/dashboard/clients/${clientId}`} className="inline-flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-900">
-                  <UserCheck size={16} /> In the client database: view client record
+                  <UserCheck size={16} /> View their client record
                 </Link>
               ) : (
                 <button onClick={toClient} disabled={saving} className="inline-flex items-center gap-2 px-3 py-2 border border-green-300 text-green-800 rounded-lg text-sm font-medium hover:bg-green-50 disabled:opacity-50">
