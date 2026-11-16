@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Briefcase, Building2, GraduationCap, HousePlus, Mail, Phone, Search } from 'lucide-react';
+import { Briefcase, Building2, GraduationCap, House, HousePlus, Mail, Phone, Search } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { BROKERAGE } from '@/lib/site';
 
@@ -9,6 +9,7 @@ import { BROKERAGE } from '@/lib/site';
 export default function ClientHome() {
   const { profile } = useAuth();
   const links = [
+    { href: '/dashboard/my-home', label: 'My home', text: 'Your home, key dates like insurance and tax deadlines, and a hurricane checklist.', icon: House },
     { href: '/dashboard/my-deals', label: 'My deals', text: 'Daily updates, shared to-dos and key dates for your purchase or sale.', icon: Briefcase },
     { href: '/search', label: 'Search homes', text: 'Browse homes for sale in Southeastern NC.', icon: Search },
     { href: '/hud', label: 'HUD homes', text: 'Government-owned homes, often below market value.', icon: Building2 },

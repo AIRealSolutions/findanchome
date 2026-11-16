@@ -30,7 +30,8 @@ async function fetchRequests(clientId: string, consultationId: string | null): P
       key: `lead-${l.id}`,
       href: `/dashboard/leads/${l.id}`,
       date: l.created_at,
-      title: l.source_page === '/education/buyer-preferences' ? 'Buyer preferences' : 'Consultation request',
+      title: l.source_page === '/education/buyer-preferences' ? 'Buyer preferences'
+        : l.source_page === '/dashboard/my-home' ? 'Home value check-up' : 'Consultation request',
       detail: [labels('intent', l.intent).join(', '), l.price_range, l.timeframe].filter(Boolean).join(' · '),
       badge: { label: statusMeta(l.status).label, className: statusMeta(l.status).className },
     })),

@@ -9,6 +9,7 @@ import ClientDates from '@/components/ClientDates';
 import ClientReferrals from '@/components/ClientReferrals';
 import ClientDeals from '@/components/ClientDeals';
 import ClientRequests from '@/components/ClientRequests';
+import ClientPortalAccess from '@/components/ClientPortalAccess';
 import { createClient } from '@/lib/supabase/client';
 import { ACTIVITY_KINDS, dialable, formatDateTime, relativeTime, toLocalInput } from '@/lib/leads';
 import { NO_YEAR, cleanEmail, cleanPhone, cleanState, splitList } from '@/lib/client-import';
@@ -419,6 +420,8 @@ export default function ClientDetailPage() {
           <ClientDeals client={client} author={{ id: user?.id ?? '', name: authorName }} />
 
           <ClientReferrals client={client} author={{ id: user?.id ?? '', name: authorName }} onChanged={load} />
+
+          <ClientPortalAccess client={client} onChanged={load} />
 
           <ClientDates clientId={client.id} suggestedWarrantyEnd={lastClosing && `${+lastClosing.slice(0, 4) + 1}${lastClosing.slice(4, 10)}`} />
 
