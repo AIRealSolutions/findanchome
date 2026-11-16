@@ -26,6 +26,7 @@ function Join() {
   const nextParam = params.get('next') ?? '';
   const next = /^\/dashboard\/[\w\-/]*$/.test(nextParam) ? nextParam : '/dashboard/my-deals';
   const forMessages = next.startsWith('/dashboard/messages');
+  const forHome = next.startsWith('/dashboard/my-home');
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'blocked'>('idle');
 
   const submit = async (ev: React.FormEvent) => {
@@ -51,7 +52,7 @@ function Join() {
         <div className="flex items-center gap-3 mb-6">
           <Image src="/lightkeeper-logo.jpg" alt="Lightkeeper Realty" width={48} height={48} className="rounded-full" />
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{forMessages ? 'Your messages' : 'Your deal workspace'}</h1>
+            <h1 className="text-xl font-bold text-gray-900">{forMessages ? 'Your messages' : forHome ? 'Your home page' : 'Your deal workspace'}</h1>
             <p className="text-sm text-gray-600">{BROKERAGE.name}</p>
           </div>
         </div>
@@ -59,7 +60,7 @@ function Join() {
           <div>
             <p className="text-gray-900 font-medium">Check your email.</p>
             <p className="mt-2 text-sm text-gray-600">
-              If your broker has invited {email.trim()}, we just sent a sign-in link. Open it on this device to see your {forMessages ? 'messages' : 'deal'}. The link expires in an hour.
+              If your broker has invited {email.trim()}, we just sent a sign-in link. Open it on this device to see your {forMessages ? 'messages' : forHome ? 'home page' : 'deal'}. The link expires in an hour.
             </p>
             <button onClick={() => setState('idle')} className="mt-4 text-sm text-blue-600 hover:underline">Use a different email</button>
           </div>
@@ -69,7 +70,7 @@ function Join() {
           </p>
         ) : (
           <form onSubmit={submit}>
-            <p className="text-sm text-gray-600 mb-4">{forMessages ? 'Read and reply to your private conversation with us, including shared documents and photos.' : 'Follow your purchase or sale: daily updates, shared to-dos and key dates.'} Enter the email your broker invited and we’ll send you a sign-in link. No password needed.</p>
+            <p className="text-sm text-gray-600 mb-4">{forMessages ? 'Read and reply to your private conversation with us, including shared documents and photos.' : forHome ? 'Your home, your key dates and the homeowner calendar for our area.' : 'Follow your purchase or sale: daily updates, shared to-dos and key dates.'} Enter the email your broker invited and we’ll send you a sign-in link. No password needed.</p>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
             <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />

@@ -40,6 +40,11 @@ export interface Client {
   import_raw: Record<string, string> | null;
   consultation_id: string | null;
   referred_by_id: string | null;
+  /** Their portal login, once they have signed in (supabase-migrations/my_home.sql). */
+  user_id?: string | null;
+  /** The broker gave them access to My Home; their email can get a sign-in link. */
+  portal_access?: boolean;
+  portal_invited_at?: string | null;
 }
 
 export interface ClientTransaction {

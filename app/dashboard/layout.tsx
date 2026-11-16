@@ -149,9 +149,10 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           ]
         : [{ items: [
             { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+            { name: 'My home', href: '/dashboard/my-home', icon: HomeModernIcon },
             { name: 'My deals', href: '/dashboard/my-deals', icon: BriefcaseIcon },
             messages,
-            { name: 'Refer a seller', href: '/dashboard/listings/new', icon: HomeModernIcon },
+            { name: 'Refer a seller', href: '/dashboard/listings/new', icon: UserGroupIcon },
           ] }];
 
   const handleSignOut = async () => {
